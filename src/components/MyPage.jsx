@@ -67,6 +67,42 @@ const MyPage = () => {
     navigate("/login");
   };
 
+  const handleDeactivate = async () => {
+    const userId = localStorage.getItem("userId"); // ✅ userId 가져오기
+  
+    if (!userId) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+  
+    const confirmDelete = window.confirm("정말 회원탈퇴를 진행하시겠습니까?");
+    if (!confirmDelete) return;
+  
+    try {
+      const response = await fetch("http://localhost:8080/api/deactivateUser", {
+        method: "POST",  // ✅ POST 요청 유지
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: userId }), // ✅ 쿼리 파라미터 대신 JSON body로 보냄
+      });
+  
+      const text = await response.text();
+      if (response.ok) {
+        alert("⚠️ 회원탈퇴가 완료되었습니다.");
+        localStorage.removeItem("userId");
+        navigate("/login");
+      } else {
+        alert(text || "⚠️ 회원탈퇴 실패");
+      }
+    } catch (error) {
+      console.error("API 요청 오류:", error);
+      alert("⚠️ 서버 오류 발생");
+    }
+  };
+  
+
   // 🔹 닉네임, 이메일 입력 시 중복 확인
   const handleChange = async (e) => {
     const { name, value } = e.target;
@@ -173,11 +209,11 @@ const MyPage = () => {
               <p className="text-gray-700 mb-2">생년월일: {user.birthDate || "정보 없음"}</p>
               <p className="text-gray-700 mb-2">성별: {user.gender === "MALE" ? "남성" : "여성"}</p>
               <p className="text-gray-700 mb-2">계정 상태: {user.status === "ACTIVE" ? "✅ 활성" : "⚠️ 비활성"}</p>
-              <button onClick={() => setEditMode(true)} className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-700 transition">정보 수정</button>
+              <button onClick={() => setEditMode(true)} className="mt-2 px-4 py-2 border border-[#6B4F35] text-[#6B4F35] rounded-md hover:bg-[#6B4F35] hover:text-white transition">정보 수정</button>
             </>
           )}
 
-          <button onClick={handleLogout} className="mt-4 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-700 transition">로그아웃</button>
+          <button onClick={handleDeactivate} className="mt-4 px-4 py-2 bg-[#D4B090] text-white rounded-md hover:bg-[#B99C75] transition">회원탈퇴</button>
         </div>
       ) : (
         <p className="text-lg text-[#5A3E2B]">사용자 정보를 불러오지 못했습니다.</p>

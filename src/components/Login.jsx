@@ -27,13 +27,13 @@ const Login = () => {
         credentials: "include",
       });
   
-      const result = await response.json(); // ✅ JSON 파싱
+      const result = await response.json(); // JSON 파싱
       console.log("서버 응답:", result);
   
       if (response.ok) {
         setMessage(result.message);
-        localStorage.setItem("userId", result.userId); // ✅ JSON 데이터 사용
-        navigate("/myPage"); // ✅ 마이페이지로 이동
+        localStorage.setItem("userId", result.userId); // JSON 데이터 사용
+        navigate("/home"); 
       } else {
         setMessage(result.message || "로그인 실패: 잘못된 로그인 정보입니다.");
       }
