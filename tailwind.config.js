@@ -7,9 +7,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        handwriting: ["'Nanum Pen Script'", "cursive"],
-        pretty: ["'Cafe24Oneprettynight'", "cursive"],
-        cute: ["'Jua'", "sans-serif"], // 귀여운 폰트 추가
+        cafe24square: ["Cafe24OhSquareAir", "sans-serif"],
+        cafe24: ["Cafe24Oneprettynight", "sans-serif"], 
       },
     },
   },

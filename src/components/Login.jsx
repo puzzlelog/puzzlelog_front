@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [formData, setFormData] = useState({
     userId: "",
-    password: "",
+    userPwd: "", 
   });
 
   const [message, setMessage] = useState("");
@@ -16,37 +16,48 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
-      const response = await fetch("http://localhost:8080/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-        credentials: "include",
-      });
-  
-      const result = await response.json(); // JSON 파싱
-      console.log("서버 응답:", result);
-  
-      if (response.ok) {
-        setMessage(result.message);
-        localStorage.setItem("userId", result.userId); // JSON 데이터 사용
-        navigate("/home"); 
-      } else {
-        setMessage(result.message || "로그인 실패: 잘못된 로그인 정보입니다.");
-      }
+        const response = await fetch("http://api.puzzlelog.me/users/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+            credentials: "include",
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+            setMessage("로그인 성공!");
+
+
+            localStorage.setItem("token", result.data.token);
+            localStorage.setItem("userId", result.data.userId);
+
+            let userRole = result.data.role;
+            if (!userRole) {
+                userRole = formData.userId.toLowerCase() === "admin" ? "ADMIN" : "USER";
+            }
+            localStorage.setItem("role", userRole);
+
+            if (userRole === "ADMIN") {
+                navigate("/adminPage");
+            } else {
+                navigate("/home");
+            }
+        } else {
+            setMessage(result.message || "로그인 실패: 잘못된 로그인 정보입니다.");
+        }
     } catch (error) {
-      console.error("API 요청 오류:", error);
-      setMessage("로그인 실패: 서버 오류");
+        setMessage("로그인 실패: 서버 오류");
     }
-  };
-  
+};
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#FAF3E0]">
-      {/* 상단 네비게이션 */}
       <header className="w-full flex justify-between items-center p-6 bg-white shadow-md fixed top-0 left-0 right-0 z-10">
         <h1 className="text-xl font-bold text-[#5A3E2B] cursor-pointer" onClick={() => navigate("/")}>
           조각 모음집
@@ -61,7 +72,6 @@ const Login = () => {
         </div>
       </header>
 
-      {/* 로그인 카드 */}
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mt-10">
         <h2 className="text-2xl font-bold text-[#5A3E2B] mb-6 text-center">로그인</h2>
 
@@ -83,9 +93,9 @@ const Login = () => {
             <label className="block text-sm font-medium text-[#5A3E2B]">비밀번호</label>
             <input
               type="password"
-              name="password"
+              name="userPwd" 
               placeholder="비밀번호 입력"
-              value={formData.password}
+              value={formData.userPwd}
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C69C6D]"
               required
@@ -100,7 +110,6 @@ const Login = () => {
         {message && <p className="mt-4 text-center text-[#5A3E2B] font-medium">{message}</p>}
       </div>
 
-      {/* 하단 Footer */}
       <footer className="mt-10 p-6 text-center text-[#5A3E2B]">
         © 2025 조각 모음집. All rights reserved.
       </footer>

@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header"; 
+import Header from "../components/Header";
+
+const API_BASE_URL = "http://api.puzzlelog.me/pieces";
 
 const WriteImagePiece = () => {
   const [image, setImage] = useState(null);
@@ -9,11 +11,6 @@ const WriteImagePiece = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("userId");
-    navigate("/login");
-  };
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
@@ -26,12 +23,11 @@ const WriteImagePiece = () => {
   const startCamera = async () => {
     setIsCameraOpen(true);
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-    } catch (error) {
-      console.error("카메라 접근 실패:", error);
+    } catch {
       alert("카메라를 사용할 수 없습니다.");
     }
   };
@@ -40,97 +36,81 @@ const WriteImagePiece = () => {
     if (videoRef.current && canvasRef.current) {
       const context = canvasRef.current.getContext("2d");
       context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
-      const imageUrl = canvasRef.current.toDataURL("image/png");
-      setPreview(imageUrl);
-      setImage(imageUrl);
+      canvasRef.current.toBlob((blob) => {
+        const file = new File([blob], "captured_image.png", { type: "image/png" });
+        setImage(file);
+        setPreview(URL.createObjectURL(blob));
+      }, "image/png");
       stopCamera();
     }
   };
 
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
-      const tracks = videoRef.current.srcObject.getTracks();
-      tracks.forEach((track) => track.stop());
+      videoRef.current.srcObject.getTracks().forEach(track => track.stop());
     }
     setIsCameraOpen(false);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!image) {
       alert("이미지를 첨부해주세요.");
       return;
     }
-
-    console.log("저장된 이미지:", image);
-    alert("이미지가 저장되었습니다.");
-    setImage(null);
-    setPreview(null);
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+    try {
+      const formData = new FormData();
+      const pieceData = {
+        userId: userId,
+        type: "IMAGE",
+        tags: ["사진", "기록"],
+        location: { type: "Point", coordinates: [127.0276, 37.4979] },
+        isPrivate: false,
+      };
+      formData.append("data", new Blob([JSON.stringify(pieceData)], { type: "application/json" }));
+      formData.append("file", image);
+      const response = await fetch(API_BASE_URL, { method: "POST", body: formData });
+      if (!response.ok) {
+        throw new Error(`HTTP 오류! 상태 코드: ${response.status}`);
+      }
+      const result = await response.json();
+      if (result.success) {
+        alert("이미지가 저장되었습니다.");
+        setImage(null);
+        setPreview(null);
+        navigate("/makePiece");
+      } else {
+        alert(result.message || "저장에 실패했습니다.");
+      }
+    } catch {
+      alert("서버 오류로 인해 저장할 수 없습니다.");
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#F7F3E5] flex flex-col items-center">
-
-      <Header handleLogout={handleLogout} />
-
-      {/* 메인 영역 */}
-      <main className="mt-20 w-full max-w-2xl">
-        <h2 className="text-3xl font-semibold text-center mb-6">
-          사진 조각 작성
-        </h2>
-
-        <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full p-2 border rounded-md"
-          />
-
-          <button
-            className="mt-2 px-6 py-2 bg-[#B99C75] text-white rounded-md hover:bg-[#8C6A50] transition"
-            onClick={startCamera}
-          >
-            사진 촬영
-          </button>
-
+      <Header />
+      <main className="mt-20 w-full max-w-3xl">
+        <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">Image Piece</h2>
+        <div className="bg-white p-8 rounded-lg shadow-xl border border-gray-300 flex flex-col items-center w-full">
+          <input type="file" accept="image/*" onChange={handleImageChange} className="w-full p-2 border rounded-md mb-4" />
+          <button className="w-full px-6 py-2 bg-[#B99C75] text-white rounded-md hover:bg-[#8C6A50] transition" onClick={startCamera}>사진 촬영</button>
           {isCameraOpen && (
-            <div className="mt-4 flex flex-col items-center gap-2">
-              <video ref={videoRef} autoPlay className="w-64 h-auto rounded-md shadow-md" />
-              <canvas ref={canvasRef} width={320} height={240} className="hidden" />
-              <div className="flex gap-4 mt-2">
-                <button
-                  className="px-6 py-2 bg-[#6B4F35] text-white rounded-md hover:bg-[#8C6A50] transition"
-                  onClick={capturePhoto}
-                >
-                  촬영
-                </button>
-                <button
-                  className="px-6 py-2 bg-[#8C6A50] text-white rounded-md hover:bg-[#6B4F35] transition"
-                  onClick={stopCamera}
-                >
-                  닫기
-                </button>
-              </div>
+            <div className="mt-4 flex flex-col items-center gap-2 w-full">
+              <video ref={videoRef} autoPlay className="w-64 h-48 rounded-md shadow-md" />
+              <canvas ref={canvasRef} width={640} height={480} className="hidden" />
+              <button className="px-6 py-2 bg-[#B99C75] text-white rounded-md hover:bg-[#8C6A50] transition" onClick={capturePhoto}>촬영</button>
             </div>
           )}
-
-          {preview && (
-            <div className="mt-4 flex justify-center">
-              <img
-                src={preview}
-                alt="미리보기"
-                className="mt-2 w-64 h-auto rounded-md shadow-md"
-              />
-            </div>
-          )}
-
-          <div className="w-full flex justify-end">
-            <button
-              className="mt-4 px-6 py-2 bg-[#B99C75] text-white rounded-md hover:bg-[#8C6A50] transition"
-              onClick={handleSave}
-            >
-              저장하기
-            </button>
+          {preview && <img src={preview} alt="미리보기" className="mt-4 w-full h-auto rounded-md shadow-md border border-gray-300" />}
+          <div className="w-full flex justify-between mt-6">
+            <button className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => navigate("/makePiece")}>뒤로가기</button>
+            <button className="px-6 py-2 bg-[#B99C75] text-white rounded-lg hover:bg-[#8C6A50] transition" onClick={handleSave}>저장하기</button>
           </div>
         </div>
       </main>

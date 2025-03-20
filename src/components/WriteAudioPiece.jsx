@@ -1,6 +1,8 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Header"; 
+import Header from "../components/Header";
+
+const API_BASE_URL = "http://api.puzzlelog.me/pieces";
 
 const WriteAudioPiece = () => {
   const [audio, setAudio] = useState(null);
@@ -9,11 +11,6 @@ const WriteAudioPiece = () => {
   const mediaRecorderRef = useRef(null);
   const recordedChunks = useRef([]);
   const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem("userId");
-    navigate("/login");
-  };
 
   const handleAudioChange = (event) => {
     const file = event.target.files[0];
@@ -34,8 +31,7 @@ const WriteAudioPiece = () => {
         }
       };
       mediaRecorderRef.current.start();
-    } catch (error) {
-      console.error("오디오 녹음 실패:", error);
+    } catch {
       alert("오디오 녹음을 사용할 수 없습니다.");
     }
   };
@@ -52,58 +48,58 @@ const WriteAudioPiece = () => {
     setIsRecording(false);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!audio) {
       alert("오디오를 첨부해주세요.");
       return;
     }
-
-    console.log("저장된 오디오:", audio);
-    alert("오디오가 저장되었습니다.");
-    setAudio(null);
-    setPreview(null);
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+      return;
+    }
+    try {
+      const formData = new FormData();
+      const pieceData = {
+        userId: userId,
+        type: "AUDIO",
+        tags: ["음성", "녹음"],
+        location: { type: "Point", coordinates: [127.0276, 37.4979] },
+        isPrivate: false,
+      };
+      formData.append("data", new Blob([JSON.stringify(pieceData)], { type: "application/json" }));
+      formData.append("file", audio, "audio.mp3");
+      const response = await fetch(API_BASE_URL, { method: "POST", body: formData });
+      if (!response.ok) {
+        throw new Error(`HTTP 오류! 상태 코드: ${response.status}`);
+      }
+      const result = await response.json();
+      if (result.success) {
+        alert("오디오가 저장되었습니다.");
+        setAudio(null);
+        setPreview(null);
+        navigate("/makePiece");
+      } else {
+        alert(result.message || "저장에 실패했습니다.");
+      }
+    } catch {
+      alert("서버 오류로 인해 저장할 수 없습니다.");
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#F7F3E5] flex flex-col items-center">
-
-      <Header handleLogout={handleLogout} />
-
-      {/* 메인 영역 */}
-      <main className="mt-20 w-full max-w-2xl">
-        <h2 className="text-3xl font-semibold text-center mb-6">
-          오디오 조각 작성
-        </h2>
-
-        <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-          <input
-            type="file"
-            accept="audio/*"
-            onChange={handleAudioChange}
-            className="w-full p-2 border rounded-md"
-          />
-
-          <button
-            className="mt-2 px-6 py-2 bg-[#B99C75] text-white rounded-md hover:bg-[#8C6A50] transition"
-            onClick={isRecording ? stopRecording : startRecording}
-          >
-            {isRecording ? "녹음 중지" : "오디오 녹음"}
-          </button>
-
-          {preview && (
-            <div className="mt-4 flex justify-center">
-              <p className="text-sm text-gray-500"></p>
-              <audio src={preview} controls className="mt-2 w-64 rounded-md shadow-md" />
-            </div>
-          )}
-
-          <div className="w-full flex justify-end">
-            <button
-              className="mt-4 px-6 py-2 bg-[#B99C75] text-white rounded-md hover:bg-[#8C6A50] transition"
-              onClick={handleSave}
-            >
-              저장하기
-            </button>
+      <Header />
+      <main className="mt-20 w-full max-w-3xl">
+        <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">Voice Piece</h2>
+        <div className="bg-white p-8 rounded-lg shadow-xl border border-gray-300 flex flex-col items-center">
+          <input type="file" accept="audio/*" onChange={handleAudioChange} className="w-full p-2 border rounded-md mb-4" />
+          <button className="w-full px-6 py-2 bg-[#B99C75] text-white rounded-md hover:bg-[#8C6A50] transition" onClick={isRecording ? stopRecording : startRecording}>{isRecording ? "녹음 중지" : "오디오 녹음"}</button>
+          {preview && <audio src={preview} controls className="mt-4 w-full rounded-md shadow-md border border-gray-300" />}
+          <div className="w-full flex justify-between mt-6">
+            <button className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => navigate("/makePiece")}>뒤로가기</button>
+            <button className="px-6 py-2 bg-[#B99C75] text-white rounded-lg hover:bg-[#8C6A50] transition" onClick={handleSave}>저장하기</button>
           </div>
         </div>
       </main>

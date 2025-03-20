@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const MyPage = () => {
   const [user, setUser] = useState(null);
@@ -7,20 +8,22 @@ const MyPage = () => {
   const [editMode, setEditMode] = useState(false);
   const [updatedUser, setUpdatedUser] = useState({
     nickname: "",
-    email: "",
     birthDate: "",
     gender: "",
-    profileImg: "",
+    isAlarm: false,
   });
-
-  const [errors, setErrors] = useState({ nickname: "", email: "" });
+  const [profileImg, setProfileImg] = useState(null);
+  const [previewImg, setPreviewImg] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null); // 파일 선택 상태
+  const [errors, setErrors] = useState({ nickname: "" });
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
 
-    if (!userId) {
+    if (!userId || !token) {
       alert("로그인이 필요합니다.");
       navigate("/login");
       return;
@@ -28,30 +31,29 @@ const MyPage = () => {
 
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/getMyInfo?userId=${userId}`);
-        const text = await response.text();
-        let result;
-        try {
-          result = JSON.parse(text);
-        } catch {
-          throw new Error("서버에서 올바른 JSON 응답을 받지 못했습니다.");
-        }
+        const response = await axios.get(`http://api.puzzlelog.me/users?userId=${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-        if (response.ok) {
-          setUser(result);
+        if (response.data.success) {
+          const userData = response.data.data.users[0];
+          setUser(userData);
           setUpdatedUser({
-            nickname: result.nickname,
-            email: result.email,
-            birthDate: result.birthDate || "",
-            gender: result.gender || "",
-            profileImg: result.profileImg || "",
+            nickname: userData.nickname || "",
+            birthDate: userData.birthDate || "",
+            gender: userData.gender || "",
+            isAlarm: userData.isAlarm || false,
           });
+
+          // 기존 프로필 이미지 유지
+          setProfileImg(userData.profileImg);
+          setPreviewImg(userData.profileImg || "https://via.placeholder.com/150?text=👤");
         } else {
-          alert(result.message || "사용자 정보를 불러오지 못했습니다.");
+          alert(response.data.message || "사용자 정보를 불러오지 못했습니다.");
           navigate("/login");
         }
       } catch (error) {
-        console.error("API 요청 오류:", error);
+        console.error("사용자 정보 불러오기 오류:", error);
         alert("서버 오류 발생");
         navigate("/login");
       } finally {
@@ -64,103 +66,109 @@ const MyPage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("userId");
+    localStorage.removeItem("token");
     navigate("/login");
   };
 
-  const handleDeactivate = async () => {
-    const userId = localStorage.getItem("userId"); // ✅ userId 가져오기
-  
-    if (!userId) {
-      alert("로그인이 필요합니다.");
-      navigate("/login");
-      return;
-    }
-  
-    const confirmDelete = window.confirm("정말 회원탈퇴를 진행하시겠습니까?");
-    if (!confirmDelete) return;
-  
-    try {
-      const response = await fetch("http://localhost:8080/api/deactivateUser", {
-        method: "POST",  // ✅ POST 요청 유지
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId: userId }), // ✅ 쿼리 파라미터 대신 JSON body로 보냄
-      });
-  
-      const text = await response.text();
-      if (response.ok) {
-        alert("⚠️ 회원탈퇴가 완료되었습니다.");
-        localStorage.removeItem("userId");
-        navigate("/login");
-      } else {
-        alert(text || "⚠️ 회원탈퇴 실패");
-      }
-    } catch (error) {
-      console.error("API 요청 오류:", error);
-      alert("⚠️ 서버 오류 발생");
-    }
-  };
-  
-
-  // 🔹 닉네임, 이메일 입력 시 중복 확인
   const handleChange = async (e) => {
     const { name, value } = e.target;
     setUpdatedUser({ ...updatedUser, [name]: value });
 
-    try {
-      if (name === "nickname") {
-        const res = await fetch(`http://localhost:8080/api/checkByNickname?nickname=${value}`);
-        const text = await res.text();
-        setErrors((prev) => ({ ...prev, nickname: res.ok ? "" : text }));
-      }
+    if (name === "nickname") {
+      try {
+        const response = await axios.get(
+          `http://api.puzzlelog.me/users/check?type=nickname&value=${value}`
+        );
 
-      if (name === "email") {
-        const res = await fetch(`http://localhost:8080/api/checkByEmail?email=${value}`);
-        const text = await res.text();
-        setErrors((prev) => ({ ...prev, email: res.ok ? "" : text }));
+        if (response.data.success) {
+          setErrors({ ...errors, nickname: "" });
+        }
+      } catch (error) {
+        setErrors({ ...errors, nickname: "이미 존재하는 닉네임입니다." });
       }
-    } catch (error) {
-      console.error(`${name === "nickname" ? "닉네임" : "이메일"} 중복 검사 오류:`, error);
     }
   };
 
-  // 🔹 프로필 업데이트 API 호출
-  const handleUpdate = async () => {
-    if (!user || !user.num) return;
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfileImg(file);
+      setPreviewImg(URL.createObjectURL(file)); // 미리보기 업데이트
+      setSelectedFile(file); // 선택된 파일 상태 업데이트
+    }
+  };
 
-    // 중복 오류가 있을 경우 수정 불가
-    if (errors.nickname || errors.email) {
-      alert("⚠️ 중복된 닉네임 또는 이메일이 있습니다.");
+  const handleUpdate = async () => {
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+
+    if (!userId) return;
+
+    if (errors.nickname) {
+      alert("중복된 닉네임이 있습니다.");
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/updateMyInfo?num=${user.num}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedUser),
+      const formData = new FormData();
+      const data = JSON.stringify({
+        nickname: updatedUser.nickname,
+        birthDate: updatedUser.birthDate,
+        gender: updatedUser.gender,
+        isAlarm: updatedUser.isAlarm,
       });
 
-      const text = await response.text();
-      if (response.ok) {
-        alert("✅ 내 정보가 성공적으로 수정되었습니다.");
-        setUser({ ...user, ...updatedUser });
+      formData.append("data", new Blob([data], { type: "application/json" }));
+
+      // 파일이 선택되었을 때만 새 파일을 추가, 그렇지 않으면 기존 이미지 유지
+      if (selectedFile) {
+        formData.append("file", selectedFile);
+      } else if (profileImg && profileImg !== "https://via.placeholder.com/150?text=👤") {
+        // 기존 이미지를 유지하도록 서버에 전달 (서버가 이를 처리하도록 설계 필요)
+        formData.append("keepProfileImg", "true"); // 서버에 유지 플래그 전달
+      } else {
+        // 기본 이미지로 설정하려는 경우
+        formData.append("file", ""); // 서버가 기본 이미지로 처리하도록 명시
+      }
+
+      console.log("🔍 보낼 데이터:", formData);
+
+      const response = await axios.patch(
+        `http://api.puzzlelog.me/users/${userId}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        alert("내 정보가 성공적으로 수정되었습니다.");
+
+        // 서버에서 반환된 프로필 이미지가 있으면 업데이트, 없으면 기존 이미지 유지
+        const newProfileImg = response.data.data.updatedFields?.profileImg?.after || profileImg;
+        setUser({
+          ...user,
+          ...updatedUser,
+          profileImg: newProfileImg,
+        });
+
+        // 미리보기 이미지도 유지
+        setPreviewImg(newProfileImg);
+
         setEditMode(false);
       } else {
-        alert(text || "⚠️ 수정 실패");
+        alert(response.data.message || "수정 실패");
       }
     } catch (error) {
-      console.error("API 요청 오류:", error);
-      alert("⚠️ 서버 오류 발생");
+      console.error("정보 수정 오류:", error);
+      alert("서버 오류 발생");
     }
   };
 
-  if (loading) {
-    return <p className="text-center mt-10">불러오는 중...</p>;
-  }
+  if (loading) return <p className="text-center mt-10">불러오는 중...</p>;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-[#FAF3E0]">
@@ -168,52 +176,100 @@ const MyPage = () => {
 
       {user ? (
         <div className="text-center bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-          {/* 🔹 프로필 사진 */}
-          {user.profileImg ? (
-            <img 
-              src={user.profileImg} 
-              alt="프로필 사진" 
-              className="w-24 h-24 rounded-full mx-auto border-4 border-[#C69C6D]" 
-            />
-          ) : (
-            <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center mx-auto">
-              기본이미지
-            </div>
-          )}
+          {/* 프로필 이미지 */}
+          <img
+            src={previewImg}
+            alt="프로필"
+            className="w-32 h-32 rounded-full mx-auto mb-4 border"
+          />
 
           {editMode ? (
             <>
-              <input type="text" name="nickname" value={updatedUser.nickname} onChange={handleChange} className="w-full p-2 border rounded-md my-2" placeholder="닉네임 수정" />
+              {/* 파일 선택 및 기본 이미지 유지 버튼 */}
+              <div className="flex flex-col gap-4 mb-4">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="w-full p-2 border rounded-md"
+                />
+                <button
+                  onClick={() => {
+                    setProfileImg(null);
+                    setPreviewImg("https://via.placeholder.com/150?text=👤");
+                    setSelectedFile(null); // 기본 이미지로 설정
+                  }}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+                >
+                  기본 이미지 사용
+                </button>
+              </div>
+
+              <input
+                type="text"
+                name="nickname"
+                value={updatedUser.nickname}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md my-2"
+                placeholder="닉네임 수정"
+              />
               {errors.nickname && <p className="text-red-500 text-sm">{errors.nickname}</p>}
 
-              <input type="email" name="email" value={updatedUser.email} onChange={handleChange} className="w-full p-2 border rounded-md my-2" placeholder="이메일 수정" />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-
-              <input type="date" name="birthDate" value={updatedUser.birthDate} onChange={handleChange} className="w-full p-2 border rounded-md my-2" placeholder="생년월일 수정" />
-
-              <select name="gender" value={updatedUser.gender} onChange={handleChange} className="w-full p-2 border rounded-md my-2">
+              <input
+                type="date"
+                name="birthDate"
+                value={updatedUser.birthDate}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md my-2"
+              />
+              <select
+                name="gender"
+                value={updatedUser.gender}
+                onChange={handleChange}
+                className="w-full p-2 border rounded-md my-2"
+              >
                 <option value="">성별 선택</option>
                 <option value="MALE">남성</option>
                 <option value="FEMALE">여성</option>
               </select>
+              <label className="flex items-center gap-2 my-2">
+                <input
+                  type="checkbox"
+                  name="isAlarm"
+                  checked={updatedUser.isAlarm}
+                  onChange={(e) =>
+                    setUpdatedUser({ ...updatedUser, isAlarm: e.target.checked })
+                  }
+                />
+                알람 설정
+              </label>
 
-              <button onClick={handleUpdate} className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-700 transition">수정 완료</button>
-              <button onClick={() => setEditMode(false)} className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-700 transition">취소</button>
+              <button
+                onClick={handleUpdate}
+                className="mt-4 px-6 py-2 bg-[#E3C7A1] text-[#5A3E2B] rounded-md transition hover:bg-[#C4A383]"
+              >
+                수정 완료
+              </button>
             </>
           ) : (
             <>
-              <h2 className="text-xl font-bold text-[#5A3E2B] mt-4">{user.nickname} 님</h2>
-              <br/>
-              <p className="text-gray-700 mb-2">아이디: {user.userId}</p>
-              <p className="text-gray-700 mb-2">이메일: {user.email}</p>
-              <p className="text-gray-700 mb-2">생년월일: {user.birthDate || "정보 없음"}</p>
-              <p className="text-gray-700 mb-2">성별: {user.gender === "MALE" ? "남성" : "여성"}</p>
-              <p className="text-gray-700 mb-2">계정 상태: {user.status === "ACTIVE" ? "✅ 활성" : "⚠️ 비활성"}</p>
-              <button onClick={() => setEditMode(true)} className="mt-2 px-4 py-2 border border-[#6B4F35] text-[#6B4F35] rounded-md hover:bg-[#6B4F35] hover:text-white transition">정보 수정</button>
+              <h2 className="text-xl font-bold text-[#5A3E2B] mt-2">{user.nickname} 님</h2>
+              <p className="text-gray-700">아이디: {user.userId}</p>
+              <p className="text-gray-700">이메일: {user.email}</p>
+              <p className="text-gray-700">생년월일: {user.birthDate || "정보 없음"}</p>
+              <p className="text-gray-700">
+                성별: {user.gender === "MALE" ? "남성" : user.gender === "FEMALE" ? "여성" : "정보 없음"}
+              </p>
+              <p className="text-gray-700">알람 설정: {user.isAlarm ? "ON" : "OFF"}</p>
+
+              <button
+                onClick={() => setEditMode(true)}
+                className="mt-4 px-6 py-2 border border-[#6B4F35] text-[#6B4F35] rounded-md hover:bg-[#6B4F35] hover:text-white transition"
+              >
+                정보 수정
+              </button>
             </>
           )}
-
-          <button onClick={handleDeactivate} className="mt-4 px-4 py-2 bg-[#D4B090] text-white rounded-md hover:bg-[#B99C75] transition">회원탈퇴</button>
         </div>
       ) : (
         <p className="text-lg text-[#5A3E2B]">사용자 정보를 불러오지 못했습니다.</p>
