@@ -113,4 +113,40 @@
   .media-wrapper:hover .media-control-buttons {
     display: flex; /* hover 시 보이기 */
   }
+
+  .emotion-selector {
+    position: absolute; /* 고정 위치로 */
+    top: 40%;  /* 원하는 위치로 조정 (ex: 화면 세로 중간) */
+    left: 50%;
+    transform: translate(-50%, -50%); /* 가운데 정렬 */
+    background-color: #c5e192;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 100;
+    width: 500px; /* 너비 조정 */
+    text-align: center;
+  }
+  
+  .stickers img {
+    width: 50px;
+    margin: 10px;
+    cursor: pointer;
+  }
+
+  .stickers {
+    display: flex;
+    flex-wrap: wrap;  /* 여러 줄로 자동 정렬 */
+    max-height: 300px; /* 높이 제한! */
+    overflow-y: auto;  /* 세로 스크롤 자동 */
+    gap: 10px; /* 스티커 간 간격 */
+    justify-content: center;
+    padding: 10px;
+  }
+  .emotion-title {
+    font-size: 24px;    /* 글자 크기 조정 */
+    margin-bottom: 20px; /* 아래 간격 */
+    color: #333;        /* 색상 변경 가능 */
+    text-align: center; /* 가운데 정렬 */
+  }
   
