@@ -31,6 +31,9 @@ import DigitalAlbumList from "./components/DigitalAlbumList";
 import NewAlbumPage from "./components/NewAlbumPage";
 import AlbumDetail from "./components/AlbumDetail";
 
+import MakeDiary from "./components/MakeDiary";
+import PieceBoxMakeDiary from "./components/PieceBoxMakeDiary";
+
 
 const AppContent = () => {
   const location = useLocation();
@@ -69,6 +72,9 @@ const AppContent = () => {
         <Route path="/digitalAlbum" element={<DigitalAlbumList />} />
         <Route path="/album/new" element={<NewAlbumPage />} />
         <Route path="/album/:albumId" element={<AlbumDetail />} />
+
+        <Route path="/makeDiary" element={<MakeDiary />} />
+        <Route path="/pieceBoxMakeDiary" element={<PieceBoxMakeDiary />} />
       </Routes>
 
       {/* ✅ 현재 페이지가 제외 목록에 없을 때만 광고 표시 */}
