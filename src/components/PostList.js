@@ -43,8 +43,10 @@ const PostList = () => {
     const [posts, setPosts] = useState([]);
     const [filteredPosts, setFilteredPosts] = useState([]);  // 필터링된 게시글
     const [filter, setFilter] = useState('all');  // 'all' 또는 'mine' 필터 상태
+    const [currentPage, setCurrentPage] = useState(1);  // 현재 페이지 상태
+    const postsPerPage = 6;  // 한 페이지당 보여줄 게시글 수
     const navigate = useNavigate();
-    const userId = "1";
+    const userId = localStorage.getItem("userId");
 
     useEffect(() => {
         axios.get("http://api.puzzlelog.me/posts")
@@ -84,6 +86,14 @@ const PostList = () => {
         }
     }, [filter, posts]);  // filter나 posts가 변경될 때마다 실행
 
+    // 페이지 변경시 실행되는 함수
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+    // 현재 페이지에 맞는 게시글을 반환
+    const indexOfLastPost = currentPage * postsPerPage;
+    const indexOfFirstPost = indexOfLastPost - postsPerPage;
+    const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+
     const toggleLike = (postId) => {
         axios.patch(`http://api.puzzlelog.me/posts/${postId}/like?userId=${userId}`)
             .then(response => {
@@ -118,10 +128,26 @@ const PostList = () => {
             <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
                 <Header />
 
-                <main className="mt-44 w-full max-w-7xl font-cafe24 mx-auto justify-center items-center">
+                <main className="mt-40 w-full max-w-7xl font-cafe24 mx-auto justify-center items-center">
                 <div className="text-center">
+                    <h2 className="text-4xl text-left text-[#6B4F35] mb-6 font-bold">커뮤니티</h2>
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className="text-3xl text-left text-[#6B4F35]">커뮤니티</h2>
+
+                        <div className="flex space-x-4">
+                            <button
+                                onClick={() => setFilter('all')}
+                                className={`px-4 py-2 opacity-60 transition hover:border-transparent border hover:scale-105 rounded-md ${filter === 'all' ? 'bg-[#7430B7] text-white' : 'bg-gray-200'}`}
+                            >
+                                전체 게시글
+                            </button>
+                            <button
+                                onClick={() => setFilter('mine')}
+                                className={`px-4 py-2 opacity-60 rounded-md transition hover:border-transparent border hover:scale-105 rounded-md ${filter === 'mine' ? 'bg-[#7430B7] text-white' : 'bg-gray-300'}`}
+                            >
+                                내 게시글
+                            </button>
+                        </div>
+
                         <button
                             onClick={() => navigate("/uploadPost")}
                             className="px-5 py-1 border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
@@ -130,87 +156,93 @@ const PostList = () => {
                         </button>
                     </div>
 
-                    <div className="flex space-x-4 mb-6">
-                        <button
-                            onClick={() => setFilter('all')}
-                            className={`px-4 py-2 opacity-60 transition hover:border-transparent border hover:scale-105 rounded-md ${filter === 'all' ? 'bg-[#7430B7] text-white' : 'bg-gray-200'}`}
-                        >
-                            전체 게시글
-                        </button>
-                        <button
-                            onClick={() => setFilter('mine')}
-                            className={`px-4 py-2 opacity-60 rounded-md transition hover:border-transparent border hover:scale-105 rounded-md ${filter === 'mine' ? 'bg-[#7430B7] text-white' : 'bg-gray-300'}`}
-                        >
-                            내 게시글
-                        </button>
-                    </div>
-
                     {filteredPosts.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
-                            {filteredPosts.map(post => (
-                                <div key={post.id} className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl"
-                                    style={{
-                                    animation: "pulseGlow2 3s infinite",
-                                    display: "flex",
-                                    flexDirection: "column", // Flexbox의 방향을 column으로 변경
-                                    justifyContent: "center", // 중앙 정렬
-                                    alignItems: "center", // 중앙 정렬
-                                    background: "rgba(255, 255, 255, 0.2)", // 배경을 하얀색으로 설정하고 투명도 0.9로 설정
-                                    transition: "all 0.3s ease",
-                                    width: '110%', 
-                                    maxWidth: '1200px', 
-                                    height: 'auto', 
-                                    padding: '40px', 
-                                }}>
-                                    <div className="flex justify-between items-center w-full">
-                                        <h2 
-                                            className="text-xl font-semibold cursor-pointer transition hover:border-transparent hover:scale-105"
-                                            onClick={() => navigate(`/post/${post.id}`)}
-                                        >
-                                            {post.title}
-                                        </h2>
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+                                {filteredPosts.map(post => (
+                                    <div key={post.id} className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl"
+                                        style={{
+                                        animation: "pulseGlow2 3s infinite",
+                                        display: "flex",
+                                        flexDirection: "column", // Flexbox의 방향을 column으로 변경
+                                        justifyContent: "center", // 중앙 정렬
+                                        alignItems: "center", // 중앙 정렬
+                                        background: "rgba(255, 255, 255, 0.2)", // 배경을 하얀색으로 설정하고 투명도 0.9로 설정
+                                        transition: "all 0.3s ease",
+                                        width: '110%', 
+                                        maxWidth: '1200px', 
+                                        height: 'auto', 
+                                        padding: '40px', 
+                                    }}>
+                                        <div className="flex justify-between items-center w-full">
+                                            <h2 
+                                                className="text-xl font-semibold cursor-pointer transition hover:border-transparent hover:scale-105"
+                                                onClick={() => navigate(`/post/${post.id}`)}
+                                            >
+                                                {post.title}
+                                            </h2>
 
-                                        {/* 본인이 작성한 게시글일 때만 삭제 버튼 표시 */}
-                                        {post.userId === userId && (
-                                            <img
-                                                className="w-6 h-6 cursor-pointer close hover:border-transparent hover:scale-110"
-                                                src="close.svg"
-                                                alt="삭제"
-                                                onClick={() => deletePost(post.id)}
-                                            />
-                                        )}
-                                    </div>
+                                            {/* 본인이 작성한 게시글일 때만 삭제 버튼 표시 */}
+                                            {post.userId === userId && (
+                                                <img
+                                                    className="w-6 h-6 cursor-pointer close hover:border-transparent hover:scale-110"
+                                                    src="close.svg"
+                                                    alt="삭제"
+                                                    onClick={() => deletePost(post.id)}
+                                                />
+                                            )}
+                                        </div>
 
-                                    <p className="text-gray-700 mt-4 cursor-pointer"
-                                        onClick={() => navigate(`/post/${post.id}`)}>{post.content}</p>
-                                    
-                                    <div className="flex justify-between items-center w-full mt-6">
-                                        <p className="text-gray-700">
-                                            {new Date(post.createdAt).toLocaleString()}
-                                        </p>
+                                        <p className="text-gray-700 mt-4 cursor-pointer"
+                                            onClick={() => navigate(`/post/${post.id}`)}>{post.content}</p>
+                                        
+                                        <div className="flex justify-between items-center w-full mt-6">
+                                            <p className="text-gray-700">
+                                                {new Date(post.createdAt).toLocaleString()}
+                                            </p>
 
-                                        {/* 좋아요 버튼 */}
-                                        <button className="text-2xl focus:outline-none transition hover:border-transparent hover:scale-105" onClick={() => toggleLike(post.id)}>
-                                            <span>
-                                                {post.liked ? "❤️" : "🤍"}
-                                                <span className="text-lg ml-2">{post.likesCount}</span>
-                                            </span>
-                                        </button>
+                                            {/* 좋아요 버튼 */}
+                                            <button className="text-2xl focus:outline-none transition hover:border-transparent hover:scale-105" onClick={() => toggleLike(post.id)}>
+                                                <span>
+                                                    {post.liked ? "❤️" : "🤍"}
+                                                    <span className="text-lg ml-2">{post.likesCount}</span>
+                                                </span>
+                                            </button>
 
-                                        {/* 댓글 아이콘과 댓글 개수 */}
-                                        <div className="flex items-center transition hover:border-transparent hover:scale-105">
-                                            <img 
-                                                className="w-10 h-6 cursor-pointer"
-                                                onClick={() => navigate(`/post/${post.id}`)} 
-                                                src="message-square.svg" 
-                                                alt="댓글" 
-                                            />
-                                            <span className="ml-2 text-lg">{post.commentCount}</span>
+                                            {/* 댓글 아이콘과 댓글 개수 */}
+                                            <div className="flex items-center transition hover:border-transparent hover:scale-105">
+                                                <img 
+                                                    className="w-10 h-6 cursor-pointer"
+                                                    onClick={() => navigate(`/post/${post.id}`)} 
+                                                    src="message-square.svg" 
+                                                    alt="댓글" 
+                                                />
+                                                <span className="ml-2 text-lg">{post.commentCount}</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
+                                ))}
+                            </div>
+
+                            {/* 페이지네이션 */}
+                            <div className="flex justify-center mt-6">
+                                <button 
+                                    onClick={() => paginate(currentPage - 1)} 
+                                    disabled={currentPage === 1} 
+                                    className="px-4 py-2 bg-[#7430B7] text-white rounded-md mr-2 disabled:bg-gray-400"
+                                >
+                                    이전
+                                </button>
+                                <button 
+                                    onClick={() => paginate(currentPage + 1)} 
+                                    disabled={currentPage * postsPerPage >= filteredPosts.length} 
+                                    className="px-4 py-2 bg-[#7430B7] text-white rounded-md ml-2 disabled:bg-gray-400"
+                                >
+                                    다음
+                                </button>
+                            </div>
+
+                        </>
                     ) : (
                         <p className="text-gray-600 text-lg text-center">작성된 게시글이 없습니다.</p>
                     )}

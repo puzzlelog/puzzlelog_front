@@ -142,7 +142,7 @@ const UploadPost = () => {
                                 height: 'auto', 
                                 padding: '40px' }}
                         >
-                            <h3 className="text-lg font-semibold mb-5">모든 일기 목록</h3>
+                            <h3 className="text-2lg font-semibold mb-5">모든 일기 목록</h3>
                             {diaries.length === 0 ? (
                                 <p className="text-lg text-gray-700 mb-4 text-center">작성된 일기가 없습니다.</p>
                             ) : (
@@ -167,7 +167,7 @@ const UploadPost = () => {
                             <div className="w-full flex justify-between mt-4 gap-16">
 
                                 <button
-                                    className="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 border transition hover:border-transparent hover:scale-105"
+                                    className="px-4 py-2 bg-gray-400 text-white text-base rounded-lg hover:bg-gray-500 border transition hover:border-transparent hover:scale-105"
                                     style={{
                                         backgroundColor: "rgba(169, 169, 169, 0.6)",
                                     }}
@@ -178,7 +178,7 @@ const UploadPost = () => {
 
                                 <button
                                     onClick={handleUpload}
-                                    className="px-4 py-2 rounded-lg text-white transition hover:border-transparent hover:scale-105 bg-[#6A0DAD] hover:bg-[#7A3C98] border"
+                                    className="px-4 py-2 rounded-lg text-white transition text-base hover:border-transparent hover:scale-105 bg-[#6A0DAD] hover:bg-[#7A3C98] border"
                                     style={{
                                         backgroundColor: "rgba(116, 48, 183, 0.6)",
                                     }}

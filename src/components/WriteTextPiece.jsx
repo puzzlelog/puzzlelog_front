@@ -93,12 +93,12 @@ const WriteTextPiece = () => {
   return (
     <>
       <style>{auroraStyle}</style>
-      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+      <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-blue-200 to-purple-300">
 
         {/* 헤더 추가 */}
         <Header />
 
-        <main className="mt-52 w-full max-w-7xl font-cafe24 mx-auto flex justify-center items-center">
+        <main className="mt-44 w-full max-w-7xl font-cafe24 mx-auto flex justify-center items-center">
           <div className="text-center">
 
             <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">Text Piece</h2>

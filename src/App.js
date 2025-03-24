@@ -12,13 +12,13 @@ import WriteImagePiece from "./components/WriteImagePiece"; //imagepiece
 import WriteVideoPiece from "./components/WriteVideoPiece"; //videopiece
 import WriteAudioPiece from "./components/WriteAudioPiece"; //audiopiece
 import PieceBox from "./components/PieceBox"; //piecebox
-import DiaryBox from "./components/DiaryBox"; //diarybox
+import DiaryBox from "./components/DiaryBox.jsx"; //diarybox
 import TimeCapsuleBox from "./components/TimeCapsuleBox"; //timecapsulebox
 import Calendar from "./components/Calendar"; //calendar
 import Challenge from "./components/Challenge"; //challenge
 import AdminPage from "./components/AdminPage"; //adminpage
 import AdminEditChallenge from "./components/AdminEditChallenge"; //admineditChallenge
-import AdminEditSticker from "./components/AdminEditSticker"; //admineditSticker
+import AdminEditAsset from "./components/AdminEditAsset"; //admineditAsset
 import AdminEditAds from "./components/AdminEditAds"; //admineditAds
 import AdBanner from "./components/AdBanner" //Adbanner
 
@@ -30,6 +30,9 @@ import PostDetailPage from "./components/PostDetailPage";
 import DigitalAlbumList from "./components/DigitalAlbumList";
 import NewAlbumPage from "./components/NewAlbumPage";
 import AlbumDetail from "./components/AlbumDetail";
+
+import MakeDiary from "./components/MakeDiary";
+import PieceBoxMakeDiary from "./components/PieceBoxMakeDiary";
 
 
 const AppContent = () => {
@@ -58,7 +61,7 @@ const AppContent = () => {
         <Route path="/challenge" element={<Challenge />} />
         <Route path="/adminPage" element={<AdminPage />} />
         <Route path="/adminEditChallenge" element={<AdminEditChallenge />} />
-        <Route path="/adminEditSticker" element={<AdminEditSticker />} />
+        <Route path="/adminEditAsset" element={<AdminEditAsset />} />
         <Route path="/adminEditAds" element={<AdminEditAds />} />
 
         <Route path="/community" element={<CommunityPage />} />
@@ -69,6 +72,9 @@ const AppContent = () => {
         <Route path="/digitalAlbum" element={<DigitalAlbumList />} />
         <Route path="/album/new" element={<NewAlbumPage />} />
         <Route path="/album/:albumId" element={<AlbumDetail />} />
+
+        <Route path="/makeDiary" element={<MakeDiary />} />
+        <Route path="/pieceBoxMakeDiary" element={<PieceBoxMakeDiary />} />
       </Routes>
 
       {/* ✅ 현재 페이지가 제외 목록에 없을 때만 광고 표시 */}

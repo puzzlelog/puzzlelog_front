@@ -81,7 +81,7 @@ const DigitalAlbumList = () => {
   return (
     <>
       <style>{auroraStyle}</style>
-      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+      <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-blue-200 to-purple-300">
         {/* 헤더 영역 */}
         <Header />
 

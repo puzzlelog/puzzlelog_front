@@ -50,7 +50,7 @@ const TimeCapsuleBox = () => {
     <>
     <style>{auroraStyle}</style>
 
-    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+    <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-blue-200 to-purple-300">
       <Header />
       <main className="mt-44 w-full max-w-7xl font-cafe24 mx-auto flex justify-center items-center">
       <div className="text-center">

@@ -27,9 +27,16 @@ const Header = () => {
         {/* 일기 */}
         <div className="relative group">
           <button className="hover:underline text-black focus:outline-none">일기 쓰기</button>
-          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white bg-opacity-30 border border-gray-300 rounded-md shadow-md opacity-0 scale-y-0 origin-top group-hover:opacity-100 group-hover:scale-y-100 transition-all duration-500 ease-in-out">
-            <a href="/makeDiary" className="block px-4 py-3 text-center text-black hover:bg-gray-100 transition-all duration-500 ease-in-out">나의 일기</a>
-            <a href="/makeTogether" className="block px-4 py-3 text-center text-black hover:bg-gray-100 transition-all duration-500 ease-in-out">협업 일기</a>
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 w-48 bg-white bg-opacity-80 border border-gray-300 rounded-md shadow-md opacity-0 scale-y-0 origin-top group-hover:opacity-100 group-hover:scale-y-100 transition-all duration-500 ease-in-out">
+            <button 
+              onClick={() => navigate("/pieceBoxMakeDiary", { state: { isTimeCapsule: false } })}
+              className="block w-full text-center px-4 py-3 text-black hover:bg-gray-200 transition-all duration-500 ease-in-out"
+            >
+              나의 일기
+            </button>
+            <a href="/makeTogether" className="block px-4 py-3 text-center text-black hover:bg-gray-200 transition-all duration-500 ease-in-out">
+              협업 일기
+            </a>
           </div>
         </div>
 

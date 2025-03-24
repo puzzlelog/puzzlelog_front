@@ -32,3 +32,21 @@ body {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.puzzle-mask {
+  width: 224px;
+  height: 320px;
+  background: linear-gradient(to bottom right, rgb(150, 180, 240), rgb(180, 150, 240));
+
+  -webkit-mask-image: url("./assets/PuzzlePiece.svg");
+  mask-image: url("./assets/PuzzlePiece.svg");
+
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+}

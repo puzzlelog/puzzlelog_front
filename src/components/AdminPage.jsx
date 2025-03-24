@@ -74,7 +74,7 @@ const AdminPage = () => {
           >
             <h3 className="text-2xl font-semibold mb-8">스티커 관리</h3>
             <button
-              onClick={() => navigate("/adminEditSticker")}
+              onClick={() => navigate("/adminEditAsset")}
               className="px-4 py-2 border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
             >
               스티커 추가
