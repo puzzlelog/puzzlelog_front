@@ -2,6 +2,41 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 
+const auroraStyle = `
+@keyframes aurora {
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+`;
+
 const API_BASE_URL = "http://api.puzzlelog.me/pieces";
 
 const WriteAudioPiece = () => {
@@ -89,21 +124,47 @@ const WriteAudioPiece = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F3E5] flex flex-col items-center">
-      <Header />
-      <main className="mt-20 w-full max-w-3xl">
-        <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">Voice Piece</h2>
-        <div className="bg-white p-8 rounded-lg shadow-xl border border-gray-300 flex flex-col items-center">
-          <input type="file" accept="audio/*" onChange={handleAudioChange} className="w-full p-2 border rounded-md mb-4" />
-          <button className="w-full px-6 py-2 bg-[#B99C75] text-white rounded-md hover:bg-[#8C6A50] transition" onClick={isRecording ? stopRecording : startRecording}>{isRecording ? "녹음 중지" : "오디오 녹음"}</button>
-          {preview && <audio src={preview} controls className="mt-4 w-full rounded-md shadow-md border border-gray-300" />}
-          <div className="w-full flex justify-between mt-6">
-            <button className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => navigate("/makePiece")}>뒤로가기</button>
-            <button className="px-6 py-2 bg-[#B99C75] text-white rounded-lg hover:bg-[#8C6A50] transition" onClick={handleSave}>저장하기</button>
+    <>
+      <style>{auroraStyle}</style>
+      <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-blue-200 to-purple-300">
+
+        {/* 헤더 추가 */}
+        <Header />
+
+        <main className="mt-44 w-full max-w-7xl font-cafe24 mx-auto flex justify-center items-center">
+          <div className="text-center">
+
+            <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">Voice Piece</h2>
+
+            <div className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl"
+              style={{
+                animation: "pulseGlow2 3s infinite",
+                display: "flex",
+                flexDirection: "column", // Flexbox의 방향을 column으로 변경
+                justifyContent: "center", // 중앙 정렬
+                alignItems: "center", // 중앙 정렬
+                background: "rgba(255, 255, 255, 0.2)", // 배경을 하얀색으로 설정하고 투명도 0.9로 설정
+                transition: "all 0.3s ease",
+                width: '100%', 
+                maxWidth: '900px', 
+                height: 'auto', 
+                padding: '40px', 
+            }}>
+
+              <input type="file" accept="audio/*" onChange={handleAudioChange} className="w-full p-2 rounded-md mb-4" />
+              <button className="font-semobold hover:bg-white text-lg px-4 py-2 cusor-pointer mt-2 w-full text-black rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105" onClick={isRecording ? stopRecording : startRecording}>{isRecording ? "녹음 중지" : "오디오 녹음"}</button>
+              {preview && <audio src={preview} controls className="mt-4 w-full rounded-md shadow-md border border-gray-300" />}
+              <div className="w-full flex justify-between mt-6">
+                <button className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 border transition hover:border-transparent hover:scale-105" style={{ backgroundColor: "rgba(169, 169, 169, 0.6)" }} onClick={() => navigate("/makePiece")}>뒤로가기</button>
+                <button className="px-6 py-2 rounded-lg text-white transition hover:border-transparent border hover:scale-105 bg-[#6A0DAD] hover:bg-[#7A3C98]" style={{ backgroundColor: "rgba(116, 48, 183, 0.6)" }} onClick={handleSave}>저장하기</button>
+              </div>
+            </div>
+
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+
+      </div>
+    </>
   );
 };
 

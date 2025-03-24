@@ -117,7 +117,7 @@ const AdminEditAsset = () => {
   const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
 
   return (
-    <div className="min-h-screen bg-[#F7F3E5] flex flex-col items-center">
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
       <Header />
       <main className="mt-10 w-full max-w-6xl flex-1 flex flex-col items-center">
         <h2 className="text-4xl font-semibold text-[#6B4F35] mb-6">Edit Asset</h2>
@@ -144,7 +144,7 @@ const AdminEditAsset = () => {
           </select>
           <button
             onClick={() => setIsPopupOpen(true)}
-            className="px-4 py-2 bg-[#F4A261] text-white rounded-md hover:bg-[#E76F51] transition"
+            className="px-4 py-2 border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
           >
             에셋 추가
           </button>
@@ -223,7 +223,7 @@ const AdminEditAsset = () => {
               <div className="flex justify-end gap-4">
                 <button
                   onClick={() => setIsPopupOpen(false)}
-                  className="px-4 py-2 bg-[#EDE4D5] text-gray-700 rounded-md hover:bg-[#D4A373] transition"
+                  className="px-6 py-2 bg-gray-400 text-white rounded-lg border hover:bg-gray-500 transition hover:border-transparent hover:scale-105" style={{ backgroundColor: "rgba(169, 169, 169, 0.6)" }}
                 >
                   취소
                 </button>

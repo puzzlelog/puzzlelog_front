@@ -50,7 +50,7 @@ const AlbumDetail = () => {
 
     const handleDelete = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/albums/${albumId}`, {
+            const response = await fetch(`http://api.puzzlelog.me/api/albums/${albumId}`, {
                 method: "DELETE",
             });
 

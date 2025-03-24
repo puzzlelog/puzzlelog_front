@@ -1,5 +1,42 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Header2 from "./Header2";
+
+const auroraStyle = `
+@keyframes aurora {
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+
+`;
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -56,65 +93,65 @@ const Login = () => {
 };
 
 
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#FAF3E0]">
-      <header className="w-full flex justify-between items-center p-6 bg-white shadow-md fixed top-0 left-0 right-0 z-10">
-        <h1 className="text-xl font-bold text-[#5A3E2B] cursor-pointer" onClick={() => navigate("/")}>
-          조각 모음집
-        </h1>
-        <div>
-          <button onClick={() => navigate("/login")} className="px-4 py-2 border border-[#5A3E2B] text-[#5A3E2B] rounded-md hover:bg-[#5A3E2B] hover:text-white transition">
-            로그인
-          </button>
-          <button onClick={() => navigate("/signup")} className="ml-3 px-4 py-2 bg-[#C69C6D] text-white rounded-md hover:bg-[#A87952] transition">
-            회원가입
-          </button>
+return (
+  <>
+    <style>{auroraStyle}</style>
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+      <Header2 />
+
+      <div className="w-full h-screen flex justify-center items-center">
+        <div 
+          className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-col items-center justify-center text-xl w-full max-w-md p-10"
+          style={{
+            animation: "pulseGlow2 3s infinite",
+            background: "rgba(255, 255, 255, 0.2)",
+            transition: "all 0.3s ease",
+          }}>
+          
+          <h2 className="text-4xl font-bold text-[#5A3E2B] mb-6 text-center">PuzzleLog</h2>
+
+          <form onSubmit={handleSubmit} className="space-y-4 w-full">
+            <div>
+              <label className="block text-sm font-medium text-black">아이디</label>
+              <input
+                type="text"
+                name="userId"
+                placeholder="아이디 입력"
+                value={formData.userId}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-black">비밀번호</label>
+              <input
+                type="password"
+                name="userPwd" 
+                placeholder="비밀번호 입력"
+                value={formData.userPwd}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                required
+              />
+            </div>
+
+            <button type="submit" className="px-6 py-2 hover:bg-white border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:text-black transition-all w-full duration-300 transition hover:border-transparent hover:scale-105">
+              로그인
+            </button>
+          </form>
+
+          {message && <p className="mt-4 text-center text-[#5A3E2B] font-medium">{message}</p>}
+            
         </div>
-      </header>
 
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md mt-10">
-        <h2 className="text-2xl font-bold text-[#5A3E2B] mb-6 text-center">로그인</h2>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-[#5A3E2B]">아이디</label>
-            <input
-              type="text"
-              name="userId"
-              placeholder="아이디 입력"
-              value={formData.userId}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C69C6D]"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-[#5A3E2B]">비밀번호</label>
-            <input
-              type="password"
-              name="userPwd" 
-              placeholder="비밀번호 입력"
-              value={formData.userPwd}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C69C6D]"
-              required
-            />
-          </div>
-
-          <button type="submit" className="w-full bg-[#C69C6D] text-white py-3 rounded-md hover:bg-[#A87952] transition">
-            로그인
-          </button>
-        </form>
-
-        {message && <p className="mt-4 text-center text-[#5A3E2B] font-medium">{message}</p>}
+          
       </div>
 
-      <footer className="mt-10 p-6 text-center text-[#5A3E2B]">
-        © 2025 조각 모음집. All rights reserved.
-      </footer>
     </div>
-  );
+  </>
+);
 };
 
 export default Login;

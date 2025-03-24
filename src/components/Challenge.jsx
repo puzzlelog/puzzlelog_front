@@ -1,13 +1,52 @@
 import React from "react";
 import Header from "../components/Header";
 
+const auroraStyle = `
+@keyframes aurora {
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+
+`;
+
 const Challenge = () => {
   return (
-    <div className="min-h-screen bg-[#F7F3E5] flex flex-col items-center">
+    <>
+    <style>{auroraStyle}</style>
+
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
       {/* 헤더 */}
       <Header />
 
-      <main className="w-full max-w-6xl mt-10 px-6">
+      <main className="mt-28 w-full max-w-7xl font-cafe24 mx-auto justify-center items-center">
         {/* 제목 및 설명 */}
         <section className="text-left mb-10">
           <h1 className="text-4xl font-bold text-[#6B4F35]">도전! 챌린지</h1>
@@ -22,6 +61,10 @@ const Challenge = () => {
             <div
               key={item}
               className="bg-white rounded-lg shadow-md p-5 flex flex-col space-y-4"
+              style={{
+                animation: "pulseGlow2 3s infinite",
+                background: "rgba(255, 255, 255, 0.2)",
+              }}
             >
               {/* 이미지 (Placeholder) */}
               <div className="w-full h-40 bg-gray-200 rounded-md flex items-center justify-center">
@@ -60,7 +103,7 @@ const Challenge = () => {
                   75% <span className="text-gray-600 text-base">미션을 완료하고 보상을 받으세요!</span>
                 </p>
                 <div className="w-full bg-gray-300 rounded-full h-4">
-                  <div className="bg-[#6B4F35] h-4 rounded-full" style={{ width: "75%" }}></div>
+                  <div className="bg-[#7430b7] h-4 rounded-full" style={{ width: "75%" }}></div>
                 </div>
               </div>
 
@@ -70,7 +113,7 @@ const Challenge = () => {
                   30% <span className="text-gray-600 text-base">지금 바로 도전해 보세요!</span>
                 </p>
                 <div className="w-full bg-gray-300 rounded-full h-4">
-                  <div className="bg-[#6B4F35] h-4 rounded-full" style={{ width: "30%" }}></div>
+                  <div className="bg-[#7430b7] h-4 rounded-full" style={{ width: "30%" }}></div>
                 </div>
               </div>
             </div>
@@ -83,6 +126,8 @@ const Challenge = () => {
         </section>
       </main>
     </div>
+
+    </>
   );
 };
 

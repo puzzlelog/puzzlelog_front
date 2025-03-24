@@ -12,7 +12,7 @@ import WriteImagePiece from "./components/WriteImagePiece"; //imagepiece
 import WriteVideoPiece from "./components/WriteVideoPiece"; //videopiece
 import WriteAudioPiece from "./components/WriteAudioPiece"; //audiopiece
 import PieceBox from "./components/PieceBox"; //piecebox
-import DiaryBox from "./components/DiaryBox"; //diarybox
+import DiaryBox from "./components/DiaryBox.jsx"; //diarybox
 import TimeCapsuleBox from "./components/TimeCapsuleBox"; //timecapsulebox
 import Calendar from "./components/Calendar"; //calendar
 import Challenge from "./components/Challenge"; //challenge
@@ -42,7 +42,7 @@ const AppContent = () => {
   const excludedPaths = ["/home", "/signup", "/login", "/adminPage", "/adminEditChallenge", "/adminEditSticker", "/adminEditAds"];
 
   return (
-    <div className="relative min-h-screen pb-24">
+    <div>
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />
