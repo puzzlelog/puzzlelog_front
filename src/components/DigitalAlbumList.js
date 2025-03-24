@@ -2,14 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header";
 
-// 애니메이션 및 배경 효과 스타일 추가
 const auroraStyle = `
 @keyframes aurora {
-  0% { background-position: 0% 50%; }
-  25% { background-position: 50% 100%; }
-  50% { background-position: 100% 50%; }
-  75% { background-position: 50% 0%; }
-  100% { background-position: 0% 50%; }
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
 }
 
 @keyframes pulseGlow {
@@ -26,6 +23,19 @@ const auroraStyle = `
     transform: scale(1);
   }
 }
+
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+
 `;
 
 const DigitalAlbumList = () => {
@@ -35,7 +45,7 @@ const DigitalAlbumList = () => {
 
   // 앨범 목록 가져오기
   useEffect(() => {
-    fetch(`http://localhost:8080/api/albums?userId=${userId}`)
+    fetch(`http://api.puzzlelog.me/api/albums?userId=${userId}`)
       .then((res) => res.json())
       .then((data) => {
         console.log('Fetched albums:', data);
@@ -47,7 +57,7 @@ const DigitalAlbumList = () => {
   // 앨범 삭제
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/albums/${id}`, {
+      const response = await fetch(`http://api.puzzlelog.me/api/albums/${id}`, {
         method: "DELETE",
       });
 
@@ -71,45 +81,41 @@ const DigitalAlbumList = () => {
   return (
     <>
       <style>{auroraStyle}</style>
-      <div className="relative w-full h-screen overflow-hidden">
+      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
         {/* 헤더 영역 */}
         <Header />
 
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(45deg, #6a11cb, #2575fc, #8a2be2, #1e3c72, #0072ff, #4c1d95)",
-            backgroundSize: "400% 400%",
-            animation: "aurora 10s infinite alternate ease-in-out",
-          }}
-        ></div>
 
-        <main className="relative z-10 min-h-screen flex flex-col items-center text-white">
+        <main className="mt-8 w-full max-w-full font-cafe24 mx-auto flex justify-center items-center">
+        <div className="text-center">
+          
           <div className="flex flex-col gap-6 items-center justify-start w-full mt-32">
-            <div className="text-center text-white font-['Rowdies-Regular'] text-4xl font-normal leading-[120%] tracking-tight">
+            <div className="text-4xl font-bold text-[#5A3E2B]">
               나만의 디지털 앨범
             </div>
-            <div className="text-center text-white font-['Asap-Regular'] text-lg font-normal leading-[150%]">
+            <div className="text-xl font-bold text-gray-500">
               당신의 추억을 소중하게 간직하세요.
             </div>
           </div>
 
-          <div className="flex justify-end mt-4">
+          <div className="flex justify-center">
             <button
               onClick={() => navigate("/album/new")}
-              className="px-4 py-2 bg-gray-400 bg-opacity-70 border text-white rounded-md hover:bg-gray-500"
+              className="mt-4 px-6 py-2 border border-white bg-white/20 text-black rounded-md font-cafe24pretty hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
             >
               새 앨범 만들기
             </button>
           </div>
 
-          <div className="grid grid-cols-3 gap-8 mt-8">
+          <div className="grid grid-cols-3 gap-8 mt-6">
             {albums.map((album) => (
                 <div
                     key={album.id}
                     className="rounded-2xl p-8 w-[400px] transform transition-transform duration-500 hover:scale-105 shadow-2xl hover:shadow-indigo-500/50"
                     style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.5)",
+                      animation: "pulseGlow2 3s infinite",
+                      background: "rgba(255, 255, 255, 0.3)",
+                      transition: "all 0.3s ease",
                     }}
                 >
                 <div className="flex flex-col gap-6">
@@ -140,7 +146,11 @@ const DigitalAlbumList = () => {
                 </div>
             ))}
             </div>
+
+        </div>  
         </main>
+
+
       </div>
     </>
   );

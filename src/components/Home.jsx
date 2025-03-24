@@ -3,112 +3,44 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "./Header";
 
-const natureStyle = `  
-@keyframes waveBg {
-  0% { background-position: 0% 50%; }
-  33% { background-position: 25% 55%; }
-  66% { background-position: 75% 45%; }
-  100% { background-position: 0% 50%; }
+const auroraStyle = `
+@keyframes aurora {
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
 }
 
-@keyframes shimmerWave {
-  0% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.05); }
-  100% { opacity: 0.3; transform: scale(1); }
-}
-
-@keyframes moveClouds {
+@keyframes pulseGlow {
   0% {
-    transform: translateX(-150%); /* 화면 왼쪽 바깥 */
-    opacity: 0.8;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
   }
   50% {
-    opacity: 1;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
   }
   100% {
-    transform: translateX(calc(100vw + 200px)); /* 화면 오른쪽 끝 넘어가기 */
-    opacity: 0.2; /* 흐릿하게 보이도록 설정 */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
   }
 }
 
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
 }
 
-@keyframes softShake {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(2px); }
-}
-
-body {
-  background: linear-gradient(to bottom,rgb(197, 228, 233), rgb(135, 220, 215));
-  background-size: 200% 200%;
-  animation: waveBg 8s infinite alternate ease-in-out;
-  overflow: hidden;
-}
-
-.shimmer-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.2);
-  animation: shimmerWave 6s infinite alternate ease-in-out;
-}
-
-.container {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(8px);
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
-  animation: fadeInUp 1.5s ease-out;
-  z-index: 2;
-}
-
-button:hover {
-  animation: softShake 0.3s ease-in-out;
-}
-
-.cloud {
-  position: absolute;
-  width: 200px;
-  height: 100px;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 100px;
-  box-shadow: 10px 10px 30px rgba(255, 255, 255, 0.8);
-  animation: moveClouds 50s linear infinite; /* 지속시간을 50초로 변경 */
-}
 `;
 
 const Home = () => {
-    const [clouds, setClouds] = useState([]);
-      
-      // 구름 랜덤 생성 함수
-      const generateClouds = () => {
-        const numberOfClouds = 5; // 구름 개수 설정
-        const newClouds = [];
-        
-        for (let i = 0; i < numberOfClouds; i++) {
-          const topPosition = `${Math.random() * 100}%`; // 화면 상단에서 랜덤 위치
-          const leftPosition = `${Math.random() * -300}px`; // 화면 왼쪽 밖에서 랜덤 시작
-          const animationDuration = `${Math.random() * 30 + 30}s`; // 30~60초 랜덤 애니메이션 지속시간
-          const cloudWidth = `${Math.random() * 200 + 150}px`; // 150~350px 사이 랜덤 크기
-          const cloudOpacity = Math.random() * 0.3 + 0.4; // 0.4~0.7 사이 랜덤 불투명도
-    
-          newClouds.push({
-            topPosition,
-            leftPosition,
-            animationDuration,
-            cloudWidth,
-            cloudOpacity
-          });
-        }
-    
-        setClouds(newClouds);
-      };
+
     const navigate = useNavigate();
     const [showNicknamePopup, setShowNicknamePopup] = useState(false);
     const [nickname, setNickname] = useState("");
@@ -119,7 +51,6 @@ const Home = () => {
     const [isNicknameAvailable, setIsNicknameAvailable] = useState(null);
     const [isNicknameChecked, setIsNicknameChecked] = useState(false);
     useEffect(() => {
-        generateClouds();
         const checkNickname = async () => {
             const userId = localStorage.getItem("userId");
             const token = localStorage.getItem("token");
@@ -240,79 +171,95 @@ const Home = () => {
     };
     
     return (
-        <div className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
-         {/* <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh" }}> */}
-            <style>{natureStyle}</style>
-            <style>
-                {`
-                .override-header * {
-                    color: black !important;
-                }
-                `}
-            </style>
+        <>
+            <style>{auroraStyle}</style>
 
-            {/* 배경 효과 */}
-            <div className="shimmer-layer"></div>
+            <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
 
-            {/* 구름 애니메이션 - 동적으로 구름 생성 */}
-            {clouds.map((cloud, index) => (
-                <div
-                key={index}
-                className="cloud"
-                style={{
-                    top: cloud.topPosition,
-                    left: cloud.leftPosition,
-                    animationDuration: cloud.animationDuration,
-                    width: cloud.cloudWidth,
-                    opacity: cloud.cloudOpacity,
-                }}
-                ></div>
-            ))}
-
-            <div className="override-header">
+                {/* 헤더 추가 */}
                 <Header />
-            </div>
 
-            <div className="container max-w-md text-center">
-                <h1 className="text-3xl font-bold text-green-800 animate-fadeInUp">🌱 PuzzleLog</h1>
-                <p className="text-gray-700 mt-4">소중한 순간을 자연스럽게 기록하세요</p>
-                <button className="mt-6 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300">
-                시작하기
-                </button>
-            </div>
-
-            {showNicknamePopup && (
-                <div style={{
-                    position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-                    backgroundColor: "white", padding: "20px", boxShadow: "0px 4px 6px rgba(0,0,0,0.1)",
-                    borderRadius: "10px", textAlign: "center"
-                }}>
-                    <h2>닉네임 설정</h2>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-                        <input
-                            type="text"
-                            placeholder="닉네임 입력"
-                            value={nickname}
-                            onChange={(e) => setNickname(e.target.value)}
-                            style={{ padding: "5px", fontSize: "18px" }}
-                        />
-                        <button onClick={checkNicknameAvailability} disabled={isCheckingNickname} style={{ fontSize: "16px", padding: "5px 10px", cursor: "pointer" }}>
-                            중복 확인
-                        </button>
+                {/* 중앙 콘텐츠 */}
+                {!showNicknamePopup && (
+                    <div className="relative z-10 flex items-center justify-center w-full h-full text-white">
+                        <div
+                            className="w-84 h-84 bg-gradient-to-r rounded-full shadow-2xl shadow-indigo-500/50 flex items-center justify-center text-xl font-semibold"
+                            style={{
+                                width: "22rem",
+                                height: "22rem",
+                                animation: "pulseGlow 3s infinite"
+                            }}
+                        >
+                            <span className="text-6xl font-bold animate-pulse mb-4">PuzzleLog</span>
+                        </div>
                     </div>
-                    {nicknameMessage && <p style={{ color: isNicknameAvailable ? "green" : "red" }}>{nicknameMessage}</p>}
-                    <input type="file" accept="image/*" onChange={handleFileChange} style={{ marginTop: "10px", padding: "5px", fontSize: "16px" }} />
-                    <br />
-                    <button
-                        onClick={handleNicknameSubmit}
-                        style={{ fontSize: "18px", padding: "8px 16px", cursor: "pointer", marginTop: "10px" }}
-                        disabled={!isNicknameChecked || !isNicknameAvailable}
-                    >
-                        설정 완료
-                    </button>
-                </div>
-            )}
-        </div>
+                )}
+
+                {showNicknamePopup && (
+                    <div className="relative z-10 flex flex-row items-center justify-center w-full h-full text-black">
+                        <div
+                            className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl font-semibold"
+                            style={{
+                                width: "24rem",
+                                height: "24rem",
+                                animation: "pulseGlow2 3s infinite",
+                                display: "flex",
+                                flexDirection: "column", // Flexbox의 방향을 column으로 변경
+                                justifyContent: "center", // 중앙 정렬
+                                alignItems: "center", // 중앙 정렬
+                                background: "rgba(255, 255, 255, 0.3)", // 배경을 하얀색으로 설정하고 투명도 0.9로 설정
+                            }}
+                        >
+                            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+                                <h2 style={{ marginBottom: "20px" }}>닉네임 설정</h2>
+                                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                    <input
+                                        type="text"
+                                        placeholder="닉네임 입력"
+                                        value={nickname}
+                                        onChange={(e) => setNickname(e.target.value)}
+                                        style={{
+                                            padding: "5px",
+                                            fontSize: "18px",
+                                            border: "1px solid #ccc",
+                                            borderRadius: "4px",
+                                            flex: 1,
+                                        }}
+                                    />
+                                    <button
+                                        onClick={checkNicknameAvailability}
+                                        disabled={isCheckingNickname}
+                                        style={{
+                                            fontSize: "16px",
+                                            padding: "5px 10px",
+                                            cursor: "pointer",
+                                            border: "1px solid white",
+                                            backgroundColor: "transparent",
+                                            color: "black",
+                                            borderRadius: "4px",
+                                            transition: "all 0.3s ease",
+                                        }}
+                                        className="hover:bg-blue-500 hover:text-white hover:border-transparent hover:scale-105"
+                                    >
+                                        중복 확인
+                                    </button>
+                                </div>
+                                {nicknameMessage && <p style={{ color: isNicknameAvailable ? "green" : "red" }}>{nicknameMessage}</p>}
+                                <input type="file" accept="image/*" onChange={handleFileChange} style={{ marginTop: "10px", cursor: "pointer", padding: "5px", fontSize: "16px", marginLeft: "30px" }} />
+                                <button
+                                    onClick={handleNicknameSubmit}
+                                    className="font-semobold text-lg px-4 py-2 cusor-pointer mt-8 text-black rounded-lg transition-all duration-300 ease-in-out transform hover:bg-white-100 hover:scale-105"
+                                    disabled={!isNicknameChecked || !isNicknameAvailable}
+                                >
+                                    설정 완료
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+            </div>
+        </>
     );
 };
 

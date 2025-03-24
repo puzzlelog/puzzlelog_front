@@ -35,7 +35,7 @@ const AlbumDetail = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/albums/${albumId}`)
+        fetch(`http://api.puzzlelog.me/api/albums/${albumId}`)
             .then((res) => res.json())
             .then((data) => {
                 console.log("Fetched Album Data:", data); // 응답 데이터 확인
@@ -50,7 +50,7 @@ const AlbumDetail = () => {
 
     const handleDelete = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/albums/${albumId}`, {
+            const response = await fetch(`http://api.puzzlelog.me/api/albums/${albumId}`, {
                 method: "DELETE",
             });
 

@@ -2,6 +2,42 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/AdminHeader"; 
 
+const auroraStyle = `
+@keyframes aurora {
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+
+`;
+
 const AdminPage = () => {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState(localStorage.getItem("role")); //role을 useState로 관리
@@ -17,9 +53,10 @@ const AdminPage = () => {
   }, []); //처음 렌더링될 때 한 번만 실행
 
   return (
-    <div className="min-h-screen bg-[#F7F3E5] flex flex-col items-center">
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
       <Header />
-      <main className="mt-10 w-full max-w-5xl">
+      <style>{auroraStyle}</style>
+      <main className="mt-48 w-full max-w-7xl font-cafe24 mx-auto justify-center items-center">
         <h2 className="text-4xl font-semibold text-left text-[#6B4F35] mb-6">
           환영합니다, 관리자님
         </h2>
@@ -29,33 +66,48 @@ const AdminPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/*스티커 관리 */}
-          <div className="p-6 bg-white rounded-lg shadow-lg flex flex-col items-center">
-            <h3 className="text-2xl font-semibold mb-3">스티커 관리</h3>
+          <div className="p-8 bg-white rounded-lg shadow-lg flex flex-col items-center"
+            style={{
+              animation: "pulseGlow2 3s infinite",
+              background: "rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <h3 className="text-2xl font-semibold mb-8">스티커 관리</h3>
             <button
               onClick={() => navigate("/adminEditSticker")}
-              className="mt-3 px-4 py-2 bg-[#B99C75] text-white rounded-md hover:bg-[#8C6A50] transition"
+              className="px-4 py-2 border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
             >
               스티커 추가
             </button>
           </div>
 
           {/* 광고 관리 */}
-          <div className="p-6 bg-white rounded-lg shadow-lg flex flex-col items-center">
-            <h3 className="text-2xl font-semibold mb-3">광고 관리</h3>
+          <div className="p-8 bg-white rounded-lg shadow-lg flex flex-col items-center"
+            style={{
+              animation: "pulseGlow2 3s infinite",
+              background: "rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <h3 className="text-2xl font-semibold mb-8">광고 관리</h3>
             <button
               onClick={() => navigate("/adminEditAds")}
-              className="mt-3 px-4 py-2 bg-[#B99C75] text-white rounded-md hover:bg-[#8C6A50] transition"
+              className="px-4 py-2 border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
             >
               광고 수정
             </button>
           </div>
 
           {/* 챌린지 관리 */}
-          <div className="p-6 bg-white rounded-lg shadow-lg col-span-2 flex flex-col items-center">
-            <h3 className="text-2xl font-semibold mb-3">챌린지 관리</h3>
+          <div className="p-8 bg-white rounded-lg shadow-lg col-span-2 flex flex-col items-center"
+            style={{
+              animation: "pulseGlow2 3s infinite",
+              background: "rgba(255, 255, 255, 0.2)",
+            }}
+          >
+            <h3 className="text-2xl font-semibold mb-8">챌린지 관리</h3>
             <button
               onClick={() => navigate("/adminEditChallenge")}
-              className="mt-3 px-4 py-2 bg-[#B99C75] text-white rounded-md hover:bg-[#8C6A50] transition"
+              className="px-4 py-2 border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
             >
               챌린지 활성화
             </button>

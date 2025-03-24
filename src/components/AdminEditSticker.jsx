@@ -3,6 +3,42 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/AdminHeader";
 
+const auroraStyle = `
+@keyframes aurora {
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+
+`;
+
 const AdminEditSticker = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState(localStorage.getItem("userId"));
@@ -17,7 +53,7 @@ const AdminEditSticker = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const itemsPerPage = 21;
 
-  const API_URL = "http://api.puzzlelog.me/api/admin/stickers";
+  const API_URL = "http://api.puzzlelog.me/admin/stickers";
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -118,9 +154,10 @@ const AdminEditSticker = () => {
   const totalPages = Math.ceil(filteredStickers.length / itemsPerPage);
 
   return (
-    <div className="min-h-screen bg-[#F7F3E5] flex flex-col items-center">
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
       <Header />
-      <main className="mt-10 w-full max-w-6xl flex-1 flex flex-col items-center">
+      <style>{auroraStyle}</style>
+      <main className="mt-48 w-full max-w-6xl font-cafe24 mx-auto justify-center items-center">
         <h2 className="text-4xl font-semibold text-[#6B4F35] mb-6">Edit Sticker</h2>
         
         <div className="mb-4 flex justify-between w-full max-w-5xl">
@@ -145,7 +182,7 @@ const AdminEditSticker = () => {
           </select>
           <button
             onClick={() => setIsPopupOpen(true)}
-            className="px-4 py-2 bg-[#F4A261] text-white rounded-md hover:bg-[#E76F51] transition"
+            className="px-4 py-2 border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
           >
             스티커 추가
           </button>
@@ -192,7 +229,12 @@ const AdminEditSticker = () => {
         {/* 팝업 (스티커 추가) */}
         {isPopupOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <div className="bg-white p-6 rounded-lg shadow-lg w-96"
+              style={{
+                animation: "pulseGlow2 3s infinite",
+                background: "rgba(255, 255, 255, 0.6)",
+              }}
+            >
               <h3 className="text-2xl font-semibold mb-4">새로운 스티커 추가</h3>
               <input
                 type="text"
@@ -224,13 +266,13 @@ const AdminEditSticker = () => {
               <div className="flex justify-end gap-4">
                 <button
                   onClick={() => setIsPopupOpen(false)}
-                  className="px-4 py-2 bg-[#EDE4D5] text-gray-700 rounded-md hover:bg-[#D4A373] transition"
+                  className="px-6 py-2 bg-gray-400 text-white rounded-lg border hover:bg-gray-500 transition hover:border-transparent hover:scale-105" style={{ backgroundColor: "rgba(169, 169, 169, 0.6)" }}
                 >
                   취소
                 </button>
                 <button
                   onClick={handleAddSticker}
-                  className="px-4 py-2 bg-[#F4A261] text-white rounded-md hover:bg-[#E76F51] transition"
+                  className="px-6 py-2 rounded-lg text-white transition hover:border-transparent border hover:scale-105 bg-[#6A0DAD] hover:bg-[#7A3C98]" style={{ backgroundColor: "rgba(116, 48, 183, 0.6)" }}
                 >
                   추가
                 </button>

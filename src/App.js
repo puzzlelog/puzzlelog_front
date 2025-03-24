@@ -39,7 +39,7 @@ const AppContent = () => {
   const excludedPaths = ["/home", "/signup", "/login", "/adminPage", "/adminEditChallenge", "/adminEditSticker", "/adminEditAds"];
 
   return (
-    <div className="relative min-h-screen pb-24">
+    <div>
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/signup" element={<SignUp />} />

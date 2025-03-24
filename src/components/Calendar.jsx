@@ -3,6 +3,41 @@ import { Box, Typography, Paper, ThemeProvider, createTheme, IconButton } from "
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import Header from "../components/Header";
 
+const auroraStyle = `
+@keyframes aurora {
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+`;
+
 // MUI 테마 수정
 const customTheme = createTheme({
   components: {
@@ -85,118 +120,131 @@ const EmotionCalendar = () => {
   };
 
   return (
-    <ThemeProvider theme={customTheme}>
-      <Box sx={{ minHeight: "100vh", backgroundColor: "#F7F3E5", display: "flex", flexDirection: "column", alignItems: "center" }}>
-        <Header />
-        <br/>
-        <Box sx={{ mt: 5, width: "90%", maxWidth: 1400, textAlign: "left" }}></Box>
+    <>
+      <style>{auroraStyle}</style>
+      <ThemeProvider theme={customTheme}>
+        <Box sx={{ minHeight: "100vh", backgroundColor: "#F7F3E5", display: "flex", flexDirection: "column", alignItems: "center", position: "relative",
+          width: "100%",
+          height: "100vh",
+          overflow: "hidden",
+          background: "linear-gradient(to bottom right, #BBDEFB,rgb(220, 188, 255))" }}
+        >
+          <Header />
+          <Box sx={{ mt: 25, width: "100%", maxWidth: 1400, textAlign: "left" }}></Box>
 
-        <Paper elevation={0} sx={{ mt: 2, p: 2, width: "90%", maxWidth: "1400px", backgroundColor: "transparent", border: "1px solid #000", borderRadius: "12px", boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)" }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-            {/* 년 이동 */}
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <IconButton onClick={handlePrevYear}>
-                <ArrowBackIos />
-              </IconButton>
-              <Typography sx={{ fontSize: "1.4rem", color: "#6B4F35", mx: 1, fontFamily: "Cafe24Oneprettynight, sans-serif" }}>
-                {year}
-              </Typography>
-              <IconButton onClick={handleNextYear}>
-                <ArrowForwardIos />
-              </IconButton>
-            </Box>
-
-            {/* 월 이동 */}
-            <Box sx={{ display: "flex", alignItems: "center" }}>
-              <IconButton onClick={handlePrevMonth}>
-                <ArrowBackIos />
-              </IconButton>
-              <Typography sx={{ fontSize: "1.4rem", color: "#6B4F35", mx: 1, fontFamily: "Cafe24Oneprettynight, sans-serif"}}>
-                {selectedDate.toLocaleDateString("en-US", { month: "long" })}
-              </Typography>
-              <IconButton onClick={handleNextMonth}>
-                <ArrowForwardIos />
-              </IconButton>
-            </Box>
-          </Box>
-
-          <Box sx={{ display: "flex", justifyContent: "space-around", mb: 2 }}>
-            {daysOfWeek.map((day, index) => (
-              <Typography key={index} sx={{ width: "40px", textAlign: "center", fontSize: "1.3rem", fontWeight: "bold", color: "#6B4F35" }}>
-                {day}
-              </Typography>
-            ))}
-          </Box>
-
-          <Box>
-            {weeks.map((week, weekIndex) => (
-              <Box key={weekIndex} sx={{ display: "flex", justifyContent: "space-around", mb: 1 }}>
-                {week.map((day, dayIndex) => (
-                  <Box
-                    key={dayIndex}
-                    sx={{
-                      width: "60px", // 셀 크기 조정
-                      height: "60px",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: "50%",
-                      cursor: day ? "pointer" : "default",
-                      backgroundColor:
-                        day === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()
-                          ? "#F5E6D3"
-                          : "transparent",
-                      color:
-                        day === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()
-                          ? "#6B4F35"
-                          : "#000",
-                    }}
-                  >
-                    {/* 날짜 표시 */}
-                    <Typography
-                     onClick={() => day && setSelectedDate(new Date(year, month, day))}
-                     sx={{ fontSize: "1.2rem", fontFamily: "Cafe24Oneprettynight, sans-serif" }} 
-                    >
-                    {day || ""}
-                    </Typography>
-
-
-                    {/* 이모티콘 이미지 표시 */}
-                    {day && emotions[`${year}-${month}-${day}`] ? (
-                      <img
-                        src={emotions[`${year}-${month}-${day}`]}
-                        alt="emotion"
-                        style={{ width: "24px", height: "24px", marginTop: "4px" }}
-                      />
-                    ) : (
-                      day && (
-                        <input
-                          type="file"
-                          accept="image/png"
-                          style={{ display: "none" }}
-                          id={`file-input-${year}-${month}-${day}`}
-                          onChange={(e) => handleImageUpload(day, e)}
-                        />
-                      )
-                    )}
-
-                    {/* 이미지 업로드 버튼 */}
-                    {day && !emotions[`${year}-${month}-${day}`] && (
-                      <label htmlFor={`file-input-${year}-${month}-${day}`}>
-                        <Typography sx={{ fontSize: "0.8rem", color: "#6B4F35", cursor: "pointer" }}>
-                          +
-                        </Typography>
-                      </label>
-                    )}
-                  </Box>
-                ))}
+          <Paper elevation={0} sx={{ mt: 2, p: 3, width: "90%", maxWidth: "1400px", backgroundColor: "transparent", animation: "pulseGlow2 3s infinite", borderRadius: "12px", boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)" }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+              {/* 년 이동 */}
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <IconButton onClick={handlePrevYear}>
+                  <ArrowBackIos />
+                </IconButton>
+                <Typography sx={{ fontSize: "1.4rem", color: "#6B4F35", mx: 1, fontFamily: "Cafe24Oneprettynight, sans-serif" }}>
+                  {year}
+                </Typography>
+                <IconButton onClick={handleNextYear}>
+                  <ArrowForwardIos />
+                </IconButton>
               </Box>
-            ))}
-          </Box>
-        </Paper>
-      </Box>
-    </ThemeProvider>
+
+              {/* 월 이동 */}
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <IconButton onClick={handlePrevMonth}>
+                  <ArrowBackIos />
+                </IconButton>
+                <Typography sx={{ fontSize: "1.4rem", color: "#6B4F35", mx: 1, fontFamily: "Cafe24Oneprettynight, sans-serif"}}>
+                  {selectedDate.toLocaleDateString("en-US", { month: "long" })}
+                </Typography>
+                <IconButton onClick={handleNextMonth}>
+                  <ArrowForwardIos />
+                </IconButton>
+              </Box>
+            </Box>
+
+            <Box sx={{ display: "flex", justifyContent: "space-around", mb: 2 }}>
+              {daysOfWeek.map((day, index) => (
+                <Typography key={index} sx={{ width: "40px", textAlign: "center", fontSize: "1.3rem", fontWeight: "bold", color: "#6B4F35" }}>
+                  {day}
+                </Typography>
+              ))}
+            </Box>
+
+            <Box>
+              {weeks.map((week, weekIndex) => (
+                <Box key={weekIndex} sx={{ display: "flex", justifyContent: "space-around", mb: 1 }}>
+                  {week.map((day, dayIndex) => (
+                    <Box
+                      key={dayIndex}
+                      sx={{
+                        width: "60px", // 셀 크기 조정
+                        height: "60px",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: "50%",
+                        cursor: day ? "pointer" : "default",
+                        backgroundColor:
+                          day === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()
+                            ? "#f7e4d6"
+                            : "transparent",
+                        color:
+                          day === selectedDate.getDate() && month === selectedDate.getMonth() && year === selectedDate.getFullYear()
+                            ? "#6B4F35"
+                            : "#000",
+                        opacity:
+                          day === selectedDate.getDate() &&
+                          month === selectedDate.getMonth() &&
+                          year === selectedDate.getFullYear()
+                            ? 0.7 // 선택된 날짜의 투명도 (80%)
+                            : 0.7, // 기본 투명도 (50%)
+                      }}
+                    >
+                      {/* 날짜 표시 */}
+                      <Typography
+                      onClick={() => day && setSelectedDate(new Date(year, month, day))}
+                      sx={{ fontSize: "1.2rem", fontFamily: "Cafe24Oneprettynight, sans-serif" }} 
+                      >
+                      {day || ""}
+                      </Typography>
+
+
+                      {/* 이모티콘 이미지 표시 */}
+                      {day && emotions[`${year}-${month}-${day}`] ? (
+                        <img
+                          src={emotions[`${year}-${month}-${day}`]}
+                          alt="emotion"
+                          style={{ width: "24px", height: "24px", marginTop: "4px" }}
+                        />
+                      ) : (
+                        day && (
+                          <input
+                            type="file"
+                            accept="image/png"
+                            style={{ display: "none" }}
+                            id={`file-input-${year}-${month}-${day}`}
+                            onChange={(e) => handleImageUpload(day, e)}
+                          />
+                        )
+                      )}
+
+                      {/* 이미지 업로드 버튼 */}
+                      {day && !emotions[`${year}-${month}-${day}`] && (
+                        <label htmlFor={`file-input-${year}-${month}-${day}`}>
+                          <Typography sx={{ fontSize: "0.8rem", color: "#6B4F35", cursor: "pointer" }}>
+                            +
+                          </Typography>
+                        </label>
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              ))}
+            </Box>
+          </Paper>
+        </Box>
+      </ThemeProvider>
+    </>
   );
 };
 

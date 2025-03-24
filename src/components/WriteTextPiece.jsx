@@ -2,6 +2,42 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 
+const auroraStyle = `
+@keyframes aurora {
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+
+`;
+
 const API_BASE_URL = "http://api.puzzlelog.me/pieces";
 
 const WriteTextPiece = () => {
@@ -55,21 +91,48 @@ const WriteTextPiece = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F3E5] flex flex-col items-center">
-      <Header />
-      <main className="mt-20 w-full max-w-3xl">
-        <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">Text Piece</h2>
-        <div className="bg-white p-8 rounded-lg shadow-xl border border-gray-300">
-          <p className="text-lg text-gray-700 mb-4 text-center">당신의 감정과 생각을 자유롭게 남겨보세요. 이곳은 당신만의 공간입니다.</p>
-          <textarea className="w-full p-4 border rounded-lg h-32 text-lg focus:outline-none focus:ring-2 focus:ring-[#B99C75]" placeholder="당신의 조각을 남겨보세요..." value={text} onChange={(e) => setText(e.target.value)} />
-          <input className="w-full p-4 border rounded-lg text-lg mt-4 focus:outline-none focus:ring-2 focus:ring-[#B99C75]" placeholder="태그 입력 (쉼표로 구분)" value={tags} onChange={(e) => setTags(e.target.value)} />
-          <div className="w-full flex justify-between mt-6">
-            <button className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition" onClick={() => navigate("/makePiece")}>뒤로가기</button>
-            <button className={`px-6 py-2 rounded-lg text-white transition ${loading ? "bg-gray-400" : "bg-[#B99C75] hover:bg-[#8C6A50]"}`} onClick={handleSave} disabled={loading}>{loading ? "저장 중..." : "저장하기"}</button>
+    <>
+      <style>{auroraStyle}</style>
+      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+
+        {/* 헤더 추가 */}
+        <Header />
+
+        <main className="mt-52 w-full max-w-7xl font-cafe24 mx-auto flex justify-center items-center">
+          <div className="text-center">
+
+            <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">Text Piece</h2>
+
+            <div 
+              className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl"
+              style={{
+                animation: "pulseGlow2 3s infinite",
+                display: "flex",
+                flexDirection: "column", // Flexbox의 방향을 column으로 변경
+                justifyContent: "center", // 중앙 정렬
+                alignItems: "center", // 중앙 정렬
+                background: "rgba(255, 255, 255, 0.2)", // 배경을 하얀색으로 설정하고 투명도 0.9로 설정
+                transition: "all 0.3s ease",
+                width: '100%', 
+                maxWidth: '900px', 
+                height: 'auto', 
+                padding: '40px', 
+            }}>
+              <p className="text-lg text-gray-700 mb-4 text-center">당신의 감정과 생각을 자유롭게 남겨보세요. 이곳은 당신만의 공간입니다.</p>
+              <textarea className="w-full p-4 border rounded-lg h-32 text-lg focus:outline-none focus:ring-2 focus:ring-white" placeholder="당신의 조각을 남겨보세요..." value={text} onChange={(e) => setText(e.target.value)} />
+              <input className="w-full p-4 border rounded-lg text-lg mt-4 focus:outline-none focus:ring-2 focus:ring-white" placeholder="태그 입력 (쉼표로 구분)" value={tags} onChange={(e) => setTags(e.target.value)} />
+              <div className="w-full flex justify-between mt-6">
+                <button className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition hover:border-transparent hover:scale-105" style={{ backgroundColor: "rgba(169, 169, 169, 0.6)" }} onClick={() => navigate("/makePiece")}>뒤로가기</button>
+                <button className={`px-6 py-2 rounded-lg text-white transition hover:border-transparent hover:scale-105 ${loading ? "bg-gray-400" : "bg-[#6A0DAD] hover:bg-[#7A3C98]"}`} 
+                  style={{ backgroundColor: loading ? "rgba(169, 169, 169, 0.6)" : "rgba(116, 48, 183, 0.6)" }} onClick={handleSave} disabled={loading}>{loading ? "저장 중..." : "저장하기"}</button>
+              </div>
+            </div>
+
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+
+      </div>
+    </>
   );
 };
 

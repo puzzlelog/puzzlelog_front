@@ -1,6 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Header from "../components/Header";
+
+const auroraStyle = `
+@keyframes aurora {
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+
+`;
 
 const MyPage = () => {
   const [user, setUser] = useState(null);
@@ -171,110 +208,132 @@ const MyPage = () => {
   if (loading) return <p className="text-center mt-10">불러오는 중...</p>;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#FAF3E0]">
-      <h1 className="text-2xl font-bold text-[#5A3E2B] mb-6">마이페이지</h1>
+    <>
+      <style>{auroraStyle}</style>
 
-      {user ? (
-        <div className="text-center bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-          {/* 프로필 이미지 */}
-          <img
-            src={previewImg}
-            alt="프로필"
-            className="w-32 h-32 rounded-full mx-auto mb-4 border"
-          />
+      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+        <Header />
 
-          {editMode ? (
-            <>
-              {/* 파일 선택 및 기본 이미지 유지 버튼 */}
-              <div className="flex flex-col gap-4 mb-4">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="w-full p-2 border rounded-md"
-                />
-                <button
-                  onClick={() => {
-                    setProfileImg(null);
-                    setPreviewImg("https://via.placeholder.com/150?text=👤");
-                    setSelectedFile(null); // 기본 이미지로 설정
-                  }}
-                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
-                >
-                  기본 이미지 사용
-                </button>
-              </div>
+        <main className="mt-44 w-full max-w-full font-cafe24 mx-auto flex justify-center items-center">
+        <div className="text-center">
 
-              <input
-                type="text"
-                name="nickname"
-                value={updatedUser.nickname}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md my-2"
-                placeholder="닉네임 수정"
+          <h1 className="text-3xl font-bold text-[#5A3E2B] mb-6">마이페이지</h1>
+
+          {user ? (
+            <div className="text-center bg-white p-6 rounded-lg shadow-lg w-full"
+              style={{
+                animation: "pulseGlow2 3s infinite",
+                background: "rgba(255, 255, 255, 0.3)",
+                transition: "all 0.3s ease",
+                padding: '40px', 
+                transformOrigin: "center",
+                width: "350px",
+              }}
+            >
+              {/* 프로필 이미지 */}
+              <img
+                src={previewImg}
+                alt="프로필"
+                className="w-32 h-32 rounded-full mx-auto mb-4 border"
               />
-              {errors.nickname && <p className="text-red-500 text-sm">{errors.nickname}</p>}
 
-              <input
-                type="date"
-                name="birthDate"
-                value={updatedUser.birthDate}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md my-2"
-              />
-              <select
-                name="gender"
-                value={updatedUser.gender}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md my-2"
-              >
-                <option value="">성별 선택</option>
-                <option value="MALE">남성</option>
-                <option value="FEMALE">여성</option>
-              </select>
-              <label className="flex items-center gap-2 my-2">
-                <input
-                  type="checkbox"
-                  name="isAlarm"
-                  checked={updatedUser.isAlarm}
-                  onChange={(e) =>
-                    setUpdatedUser({ ...updatedUser, isAlarm: e.target.checked })
-                  }
-                />
-                알람 설정
-              </label>
+              {editMode ? (
+                <>
+                  {/* 파일 선택 및 기본 이미지 유지 버튼 */}
+                  <div className="flex flex-col gap-4 mb-4">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      className="w-full p-2 border rounded-md"
+                    />
+                    <button
+                      onClick={() => {
+                        setProfileImg(null);
+                        setPreviewImg("https://via.placeholder.com/150?text=👤");
+                        setSelectedFile(null); // 기본 이미지로 설정
+                      }}
+                      className="px-6 py-2 border border-white bg-white/20 text-black rounded-md font-cafe24pretty hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
+                    >
+                      기본 이미지 사용
+                    </button>
+                  </div>
 
-              <button
-                onClick={handleUpdate}
-                className="mt-4 px-6 py-2 bg-[#E3C7A1] text-[#5A3E2B] rounded-md transition hover:bg-[#C4A383]"
-              >
-                수정 완료
-              </button>
-            </>
+                  <input
+                    type="text"
+                    name="nickname"
+                    value={updatedUser.nickname}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-lg text-lg focus:outline-none focus:ring-1 focus:ring-white"
+                    placeholder="닉네임 수정"
+                  />
+                  {errors.nickname && <p className="text-red-500 text-sm">{errors.nickname}</p>}
+
+                  <input
+                    type="date"
+                    name="birthDate"
+                    value={updatedUser.birthDate}
+                    onChange={handleChange}
+                    className="w-full p-2 my-2 border rounded-lg text-lg focus:outline-none focus:ring-1 focus:ring-white"
+                  />
+                  <select
+                    name="gender"
+                    value={updatedUser.gender}
+                    onChange={handleChange}
+                    className="w-full p-2 border rounded-lg text-lg focus:outline-none focus:ring-1 focus:ring-white"
+                  >
+                    <option value="">성별 선택</option>
+                    <option value="MALE">남성</option>
+                    <option value="FEMALE">여성</option>
+                  </select>
+                  <label className="flex items-center gap-2 my-2">
+                    <input
+                      type="checkbox"
+                      name="isAlarm"
+                      checked={updatedUser.isAlarm}
+                      onChange={(e) =>
+                        setUpdatedUser({ ...updatedUser, isAlarm: e.target.checked })
+                      }
+                    />
+                    알람 설정
+                  </label>
+
+                  <button
+                    onClick={handleUpdate}
+                    className="px-6 py-2 rounded-lg text-white transition hover:border-transparent hover:scale-105 bg-[#6A0DAD] border hover:bg-[#7A3C98]" style={{ backgroundColor: "rgba(116, 48, 183, 0.4)" }}
+                  >
+                    수정 완료
+                  </button>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-2xl font-bold text-[#5A3E2B] mt-2 mb-4">{user.nickname} 님</h2>
+                  <p className="text-gray-700">아이디: {user.userId}</p>
+                  <p className="text-gray-700">이메일: {user.email}</p>
+                  <p className="text-gray-700">생년월일: {user.birthDate || "정보 없음"}</p>
+                  <p className="text-gray-700">
+                    성별: {user.gender === "MALE" ? "남성" : user.gender === "FEMALE" ? "여성" : "정보 없음"}
+                  </p>
+                  <p className="text-gray-700">알람 설정: {user.isAlarm ? "ON" : "OFF"}</p>
+
+                  <button
+                    onClick={() => setEditMode(true)}
+                    className="mt-4 px-6 py-2 border border-white bg-white/20 text-black rounded-md font-cafe24pretty hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
+                  >
+                    정보 수정
+                  </button>
+                </>
+              )}
+            </div>
           ) : (
-            <>
-              <h2 className="text-xl font-bold text-[#5A3E2B] mt-2">{user.nickname} 님</h2>
-              <p className="text-gray-700">아이디: {user.userId}</p>
-              <p className="text-gray-700">이메일: {user.email}</p>
-              <p className="text-gray-700">생년월일: {user.birthDate || "정보 없음"}</p>
-              <p className="text-gray-700">
-                성별: {user.gender === "MALE" ? "남성" : user.gender === "FEMALE" ? "여성" : "정보 없음"}
-              </p>
-              <p className="text-gray-700">알람 설정: {user.isAlarm ? "ON" : "OFF"}</p>
-
-              <button
-                onClick={() => setEditMode(true)}
-                className="mt-4 px-6 py-2 border border-[#6B4F35] text-[#6B4F35] rounded-md hover:bg-[#6B4F35] hover:text-white transition"
-              >
-                정보 수정
-              </button>
-            </>
+            <p className="text-lg text-[#5A3E2B]">사용자 정보를 불러오지 못했습니다.</p>
           )}
-        </div>
-      ) : (
-        <p className="text-lg text-[#5A3E2B]">사용자 정보를 불러오지 못했습니다.</p>
-      )}
-    </div>
+
+      </div>
+
+      </main>
+      </div>
+    </>
   );
 };
 

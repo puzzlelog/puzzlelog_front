@@ -1,5 +1,42 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Header from "../components/Header";
+
+const auroraStyle = `
+@keyframes aurora {
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+
+`;
 
 const NewAlbumPage = () => {
     const navigate = useNavigate();
@@ -10,9 +47,9 @@ const NewAlbumPage = () => {
 
     // 모든 일기 불러오기
     useEffect(() => {
-        fetch("http://localhost:8080/api/getDiary")
+        fetch("http://api.puzzlelog.me/api/getDiary")
             .then((res) => res.json())
-            .then((data) => setDiaries(data))
+            .then((data) => setDiaries(data.data.diaries))
             .catch((err) => console.error("Error fetching diaries : ", err));
     }, []);
 
@@ -44,7 +81,7 @@ const NewAlbumPage = () => {
         };
 
         try {
-            const response = await fetch("http://localhost:8080/api/albums", {
+            const response = await fetch("http://api.puzzlelog.me/api/albums", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(newAlbum),
@@ -68,80 +105,81 @@ const NewAlbumPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#F7F3E5] flex flex-col items-center">
-            {/* 헤더 영역 */}
-            <header className="w-full flex justify-between items-center px-10 py-4">
-                <img
-                    src="/logo.png"
-                    alt="PuzzleLog Logo"
-                    className="w-36 cursor-pointer"
-                    onClick={() => navigate("/home")}
-                />
-                <nav className="flex gap-6 text-sm">
-                    <a href="/makePiece" className="hover:underline">조각 쓰기</a>
-                    <a href="#" className="hover:underline">일기장 쓰기</a>
-                    <a href="#" className="hover:underline">감정 캘린더</a>
-                    <a href="#" className="hover:underline">커뮤니티</a>
-                    <a href="#" className="hover:underline">모음집</a>
-                    <a href="/myPage" className="hover:underline">마이페이지</a>
-                </nav>
-                <button
-                    onClick={handleLogout}
-                    className="px-6 py-2 border border-[#6B4F35] text-[#6B4F35] rounded-md"
-                >
-                    로그아웃
-                </button>
-            </header>
+        <>
+        <style>{auroraStyle}</style>
 
-            <main className="mt-20 w-full max-w-[1500px]">
 
-                <div className="flex flex-col gap-6 items-center justify-start w-full">
-                    <div className="text-center text-[#0b0805] font-['Rowdies-Regular'] text-4xl font-normal leading-[120%] tracking-tight">새 디지털 앨범 만들기</div>
-                </div>
+        <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+            <Header />           
 
-                <label className="text-lg font-semibold mb-5">
-                    앨범 제목 :
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                    />
-                </label><br /><br />
+            <main className="mt-52 flex w-full max-w-7xl font-cafe24 mx-auto justify-center items-center">
+            <div className="text-center">
 
-                <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-5">앨범에 추가할 일기 선택</h3>
-                    {diaries.map((diary) => (
-                    <div key={diary.id}>
-                        <label>
-                            <input
-                                type="checkbox"
-                                checked={selectedDiaries.includes(diary.id)}
-                                onChange={() => handleCheckboxChange(diary.id)}
-                            />
-                            {diary.title}
-                        </label>
+
+                <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">새 디지털 앨범 만들기</h2>
+
+                <div 
+                className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl"
+                style={{
+                    animation: "pulseGlow2 3s infinite",
+                    display: "flex",
+                    flexDirection: "column", // Flexbox의 방향을 column으로 변경
+                    justifyContent: "center", // 중앙 정렬
+                    alignItems: "center", // 중앙 정렬
+                    background: "rgba(255, 255, 255, 0.2)", // 배경을 하얀색으로 설정하고 투명도 0.9로 설정
+                    transition: "all 0.3s ease",
+                    width: '100%', 
+                    maxWidth: '900px', 
+                    height: 'auto', 
+                    padding: '40px', 
+                }}>
+
+                    <label className="text-lg font-semibold mb-4">
+                        앨범 제목 :
+                        <input
+                            type="text"
+                            value={title}
+                            placeholder="제목 입력"
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+                    </label>
+
+                    <div className="mb-6">
+                        <h3 className="text-lg font-semibold mb-5">앨범에 추가할 일기 선택</h3>
+                        {diaries.map((diary) => (
+                        <div key={diary.id}>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedDiaries.includes(diary.id)}
+                                    onChange={() => handleCheckboxChange(diary.id)}
+                                />
+                                {diary.title}
+                            </label>
+                        </div>
+                    ))}
                     </div>
-                ))}
+
+                    <div className="flex gap-4">
+                        <button
+                            className="px-6 py-2 bg-gray-400 text-white font-medium text-base border rounded-lg hover:bg-gray-500 transition hover:border-transparent hover:scale-105" style={{ backgroundColor: "rgba(169, 169, 169, 0.6)" }}
+                            onClick={() => navigate("/digitalAlbum")}>취소</button>
+                        <button
+                            className="px-6 py-2 rounded-lg text-white font-medium text-base border transition hover:border-transparent hover:scale-105 bg-[#6A0DAD] hover:bg-[#7A3C98]" style={{ backgroundColor: "rgba(116, 48, 183, 0.6)" }}
+                            onClick={handleCreateAlbum}>앨범만들기</button>
+                    </div>
+
+
+
                 </div>
-                
+
+
+            </div> 
             </main>
-
-            <div className="flex gap-4 mb-6">
-                <button
-                    className="text-white font-medium text-base leading-[150%] px-6 py-2 bg-gray-400 rounded-md"
-                    onClick={() => navigate("/digitalAlbum")}>취소</button>
-                <button
-                    className="text-white font-medium text-base leading-[150%] px-6 py-2 bg-[#DEB784] rounded-md hover:bg-[#C89A60]"
-                    onClick={handleCreateAlbum}>앨범 만들기</button>
-
-            </div>
-            
-            
-
-
-
             
         </div>
+
+    </>
     );
 };
 
