@@ -18,7 +18,7 @@ import Calendar from "./components/Calendar"; //calendar
 import Challenge from "./components/Challenge"; //challenge
 import AdminPage from "./components/AdminPage"; //adminpage
 import AdminEditChallenge from "./components/AdminEditChallenge"; //admineditChallenge
-import AdminEditSticker from "./components/AdminEditSticker"; //admineditSticker
+import AdminEditAsset from "./components/AdminEditAsset"; //admineditAsset
 import AdminEditAds from "./components/AdminEditAds"; //admineditAds
 import AdBanner from "./components/AdBanner" //Adbanner
 
@@ -61,7 +61,7 @@ const AppContent = () => {
         <Route path="/challenge" element={<Challenge />} />
         <Route path="/adminPage" element={<AdminPage />} />
         <Route path="/adminEditChallenge" element={<AdminEditChallenge />} />
-        <Route path="/adminEditSticker" element={<AdminEditSticker />} />
+        <Route path="/adminEditAsset" element={<AdminEditAsset />} />
         <Route path="/adminEditAds" element={<AdminEditAds />} />
 
         <Route path="/community" element={<CommunityPage />} />
