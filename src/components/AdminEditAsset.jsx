@@ -3,6 +3,41 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/AdminHeader";
 
+const auroraStyle = `
+@keyframes aurora {
+  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+}
+
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+    transform: scale(1);
+  }
+}
+
+@keyframes pulseGlow2 {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 1), 0 0 40px rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
+  }
+}
+`;
+
 const AdminEditAsset = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState(localStorage.getItem("userId"));
@@ -15,9 +50,9 @@ const AdminEditAsset = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const itemsPerPage = 21;
+  const itemsPerPage = 18;
 
-  const API_URL = "http://api.puzzlelog.me/admin/assets";
+  const API_URL = "http://api.puzzlelog.me/assets";
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -118,11 +153,11 @@ const AdminEditAsset = () => {
 
   return (
     <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
-      <Header />
-      <main className="mt-10 w-full max-w-6xl flex-1 flex flex-col items-center">
+      <Header /><style>{auroraStyle}</style>
+      <main className="mt-28 w-full max-w-7xl flex justify-center flex-col mx-auto items-center">
         <h2 className="text-4xl font-semibold text-[#6B4F35] mb-6">Edit Asset</h2>
 
-        <div className="mb-4 flex justify-between w-full max-w-5xl">
+        <div className="mb-4 flex justify-between w-full max-w-7xl">
           <select
             className="p-2 border rounded-md"
             value={selectedType}
@@ -150,9 +185,9 @@ const AdminEditAsset = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-7 gap-4 w-full max-w-5xl">
+        <div className="grid grid-cols-9 gap-4 w-full max-w-7xl">
           {currentAssets.map((asset) => (
-            <div key={asset.id} className="p-4 bg-white rounded-lg shadow-lg text-center">
+            <div key={asset.id} className="p-4 w-50 bg-white rounded-lg shadow-lg text-center">
               {asset.imageUrl ? (
                 <img src={asset.imageUrl} alt={asset.name} className="w-full h-24 object-contain" />
               ) : (
@@ -172,7 +207,7 @@ const AdminEditAsset = () => {
           ))}
         </div>
 
-        <div className="flex justify-center mt-6 sticky bottom-0 bg-[#F7F3E5] py-4 w-full max-w-5xl">
+        <div className="flex justify-center mt-6 sticky bottom-0 py-4 w-full max-w-7xl">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i}

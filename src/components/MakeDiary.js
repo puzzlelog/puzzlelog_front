@@ -111,7 +111,7 @@ const MakeDiary = () => {
   useEffect(() => {
     const fetchEmotionStickers = async () => {
       try {
-        const response = await axios.get("http://api.puzzlelog.me/api/admin/stickers", {
+        const response = await axios.get("http://api.puzzlelog.me/assets", {
           withCredentials: true
         });
   
