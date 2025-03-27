@@ -5,7 +5,7 @@ const AdBanner = () => {
   const [ads, setAds] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const API_URL = "https://api.puzzlelog.me/admin/assets"; // 스티커 API 활용
+  const API_URL = "https://api.puzzlelog.me/assets"; // 스티커 API 활용
 
   useEffect(() => {
     fetchAds();
