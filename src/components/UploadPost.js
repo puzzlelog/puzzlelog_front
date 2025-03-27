@@ -55,7 +55,7 @@ const UploadPost = () => {
                     return;
                 }
         
-                const response = await axios.get('http://api.puzzlelog.me/diaries', { 
+                const response = await axios.get('https://api.puzzlelog.me/diaries', { 
                     params: { userId }  // userId를 쿼리 파라미터로 전달
                 });
 
@@ -91,7 +91,7 @@ const UploadPost = () => {
     
             // 서버에 업로드할 데이터 준비
             const response = await axios.post(
-                'http://api.puzzlelog.me/api/posts',
+                'https://api.puzzlelog.me/api/posts',
                 {
                     userId: userId, // userId 전달
                     content: content, // 일기 내용 전달

@@ -82,7 +82,7 @@ const Home = () => {
       }
 
       try {
-        const response = await axios.get(`http://api.puzzlelog.me/users?userId=${userId}`, {
+        const response = await axios.get(`https://api.puzzlelog.me/users?userId=${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -111,7 +111,7 @@ const Home = () => {
       try {
         console.log("🔍 fetchPieces 시작");
         const response = await fetch(
-          `http://api.puzzlelog.me/pieces?userId=${storedUserId}&deleted=false&page=0&size=100`,
+          `https://api.puzzlelog.me/pieces?userId=${storedUserId}&deleted=false&page=0&size=100`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -164,7 +164,7 @@ const Home = () => {
 
     setIsCheckingNickname(true);
     try {
-      const response = await axios.get(`http://api.puzzlelog.me/users/check?type=nickname&value=${nickname}`);
+      const response = await axios.get(`https://api.puzzlelog.me/users/check?type=nickname&value=${nickname}`);
       if (response.data.success) {
         setNicknameMessage("사용 가능한 닉네임입니다.");
         setIsNicknameAvailable(true);
@@ -221,7 +221,7 @@ const Home = () => {
     }
 
     try {
-      const response = await fetch(`http://api.puzzlelog.me/users/${userId}`, {
+      const response = await fetch(`https://api.puzzlelog.me/users/${userId}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -338,7 +338,7 @@ const Home = () => {
                         onClick={() => handleAudioPlay(piece.id, piece.mediaId)}
                         className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full"
                       >
-                        <svg className="w-12 h-12 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-12 h-12 text-gray-600" xmlns="https://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>

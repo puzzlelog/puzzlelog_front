@@ -142,7 +142,7 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [] }, ref) => {
 
 
   useEffect(() => {
-    fetch("http://api.puzzlelog.me/api/admin/stickers", {
+    fetch("https://api.puzzlelog.me/api/admin/stickers", {
       method: "GET",
       credentials: "include", // 세션 쿠키 포함 필수!
     })
@@ -186,7 +186,7 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [] }, ref) => {
 
 
   useEffect(() => {
-    fetch("http://api.puzzlelog.me/api/admin/stickers", {
+    fetch("https://api.puzzlelog.me/api/admin/stickers", {
       method: "GET",
       credentials: "include",
     })

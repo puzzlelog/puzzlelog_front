@@ -10,7 +10,7 @@ const DiaryBox = () => {
   useEffect(() => {
     const fetchDiaryList = async () => {
       try {
-        const response = await axios.get(`http://api.puzzlelog.me/diaries?userId=${userId}`, {
+        const response = await axios.get(`https://api.puzzlelog.me/diaries?userId=${userId}`, {
           withCredentials: true,
         });
 

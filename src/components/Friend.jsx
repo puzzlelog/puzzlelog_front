@@ -48,7 +48,7 @@ const Friend = () => {
     if (!userId) return;
     try {
       const response = await axios.get(
-        `http://api.puzzlelog.me/friends/${userId}/friends?type=${type}&size=20`
+        `https://api.puzzlelog.me/friends/${userId}/friends?type=${type}&size=20`
       );
       if (response.data.success) {
         switch (type) {
@@ -76,7 +76,7 @@ const Friend = () => {
     if (!searchNickname) return alert("닉네임을 입력하세요!");
     try {
       const response = await axios.get(
-        `http://api.puzzlelog.me/users?nickname=${searchNickname}`
+        `https://api.puzzlelog.me/users?nickname=${searchNickname}`
       );
       if (response.data.success && response.data.data.users.length > 0) {
         const userData = response.data.data.users[0];
@@ -96,23 +96,23 @@ const Friend = () => {
       let url = "", method = "";
       switch (action) {
         case "request":
-          url = `http://api.puzzlelog.me/friends/${userId}/friends/${friendId}`;
+          url = `https://api.puzzlelog.me/friends/${userId}/friends/${friendId}`;
           method = "POST";
           break;
         case "accept":
-          url = `http://api.puzzlelog.me/friends/${userId}/requests/${friendId}/accept`;
+          url = `https://api.puzzlelog.me/friends/${userId}/requests/${friendId}/accept`;
           method = "PATCH";
           break;
         case "delete":
-          url = `http://api.puzzlelog.me/friends/${userId}/deactivate/${friendId}`;
+          url = `https://api.puzzlelog.me/friends/${userId}/deactivate/${friendId}`;
           method = "DELETE";
           break;
         case "block":
-          url = `http://api.puzzlelog.me/friends/${userId}/friends/${friendId}/block`;
+          url = `https://api.puzzlelog.me/friends/${userId}/friends/${friendId}/block`;
           method = "PATCH";
           break;
         case "unblock":
-          url = `http://api.puzzlelog.me/friends/${userId}/friends/${friendId}/unblock`;
+          url = `https://api.puzzlelog.me/friends/${userId}/friends/${friendId}/unblock`;
           method = "PATCH";
           break;
         default:

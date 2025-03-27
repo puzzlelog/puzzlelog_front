@@ -47,7 +47,7 @@ const NewAlbumPage = () => {
 
     // 모든 일기 불러오기
     useEffect(() => {
-        fetch("http://api.puzzlelog.me/api/getDiary")
+        fetch("https://api.puzzlelog.me/api/getDiary")
             .then((res) => res.json())
             .then((data) => setDiaries(data.data.diaries))
             .catch((err) => console.error("Error fetching diaries : ", err));
@@ -81,7 +81,7 @@ const NewAlbumPage = () => {
         };
 
         try {
-            const response = await fetch("http://api.puzzlelog.me/api/albums", {
+            const response = await fetch("https://api.puzzlelog.me/api/albums", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(newAlbum),

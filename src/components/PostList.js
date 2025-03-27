@@ -49,14 +49,14 @@ const PostList = () => {
     const userId = localStorage.getItem("userId");
 
     useEffect(() => {
-        axios.get("http://api.puzzlelog.me/posts")
+        axios.get("https://api.puzzlelog.me/posts")
             .then(response => {
                 console.log("📌 게시글 데이터:", response.data); // 데이터 확인
     
                 if (Array.isArray(response.data.data)) {
                     const postsWithCommentCount = response.data.data.map(post => {
                         // 각 게시글의 댓글 개수도 가져오기
-                        return axios.get(`http://api.puzzlelog.me/posts/${post.id}/comments/count`)
+                        return axios.get(`https://api.puzzlelog.me/posts/${post.id}/comments/count`)
                             .then(commentCountResponse => ({
                                 ...post,
                                 commentCount: commentCountResponse.data.data
@@ -95,7 +95,7 @@ const PostList = () => {
     const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
 
     const toggleLike = (postId) => {
-        axios.patch(`http://api.puzzlelog.me/posts/${postId}/like?userId=${userId}`)
+        axios.patch(`https://api.puzzlelog.me/posts/${postId}/like?userId=${userId}`)
             .then(response => {
                 const updatedPosts = posts.map(post => 
                     post.id === postId ? { ...post, liked: response.data.data.liked, likesCount: response.data.data.likesCount } : post
@@ -113,7 +113,7 @@ const PostList = () => {
     };
 
     const deletePost = (postId) => {
-        axios.delete(`http://api.puzzlelog.me/posts/${postId}`)
+        axios.delete(`https://api.puzzlelog.me/posts/${postId}`)
             .then(() => {
                 setPosts(posts.filter(post => post.id !== postId));
             })

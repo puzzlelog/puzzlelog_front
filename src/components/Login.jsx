@@ -56,7 +56,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://api.puzzlelog.me/users/login",
+        "https://api.puzzlelog.me/users/login",
         formData,
         {
           headers: {

@@ -12,7 +12,7 @@ const FabricCanvasViewer = ({ diaryId }) => {
     useEffect(() => {
         const fetchDiaryDetails = async () => {
             try {
-                const res = await axios.get(`http://api.puzzlelog.me/diaries/${diaryId}`, {
+                const res = await axios.get(`https://api.puzzlelog.me/diaries/${diaryId}`, {
                     withCredentials: true,
                 });
 
@@ -37,7 +37,7 @@ const FabricCanvasViewer = ({ diaryId }) => {
         if (diaryData?.backgroundContentId && diaryData.backgroundContentId !== "default-background-id") {
             const fetchBackground = async () => {
                 try {
-                    const res = await axios.get(`http://api.puzzlelog.me/api/admin/stickers/${diaryData.backgroundContentId}`, {
+                    const res = await axios.get(`https://api.puzzlelog.me/api/admin/stickers/${diaryData.backgroundContentId}`, {
                         withCredentials: true,
                     });
                     if (res.data.success) {

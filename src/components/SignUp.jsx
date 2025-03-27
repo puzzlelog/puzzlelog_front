@@ -68,7 +68,7 @@ const SignUp = () => {
       const formDataToSend = new FormData();
       formDataToSend.append("data", new Blob([JSON.stringify(formData)], { type: "application/json" }));
 
-      const response = await fetch("http://api.puzzlelog.me/users", {
+      const response = await fetch("https://api.puzzlelog.me/users", {
         method: "POST",
         body: formDataToSend,  // multipart/form-data 요청
       });

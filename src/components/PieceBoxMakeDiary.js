@@ -19,7 +19,7 @@ function PieceBox() {
   // ✅ API 호출 함수 (조각 불러오기)
   const fetchPieces = async () => {
     try {
-      const response = await axios.get("http://api.puzzlelog.me/pieces", {
+      const response = await axios.get("https://api.puzzlelog.me/pieces", {
         withCredentials: true
       });
 

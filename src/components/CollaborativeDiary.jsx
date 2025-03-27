@@ -12,7 +12,7 @@ const CollaborativeDiary = () => {
   useEffect(() => {
     const fetchDiary = async () => {
       try {
-        const res = await axios.get(`http://api.puzzlelog.me/diaries/${diaryId}`, {
+        const res = await axios.get(`https://api.puzzlelog.me/diaries/${diaryId}`, {
           headers: { Authorization: `Bearer ${accessToken}` },
           withCredentials: true,
         });

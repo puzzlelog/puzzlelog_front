@@ -56,7 +56,7 @@ const CollaborativeDiaryInvite = () => {
         console.log("현재 로그인 userId:", userId);
 
         const res = await axios.get(
-          `http://api.puzzlelog.me/friends/${userId}/friends?type=friends&size=20`,
+          `https://api.puzzlelog.me/friends/${userId}/friends?type=friends&size=20`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
             withCredentials: true,
@@ -116,7 +116,7 @@ const CollaborativeDiaryInvite = () => {
     try {
       // 1) 협업일기 생성
       const diaryRes = await axios.post(
-        "http://api.puzzlelog.me/diaries",
+        "https://api.puzzlelog.me/diaries",
         {
           userId,
           title: "협업 일기",
@@ -152,7 +152,7 @@ const CollaborativeDiaryInvite = () => {
       });
 
       await axios.post(
-        "http://api.puzzlelog.me/invitations",
+        "https://api.puzzlelog.me/invitations",
         {
           diaryId: newDiaryId,
           diaryDate: date,

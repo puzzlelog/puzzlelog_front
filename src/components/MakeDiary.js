@@ -111,7 +111,7 @@ const MakeDiary = () => {
   useEffect(() => {
     const fetchEmotionStickers = async () => {
       try {
-        const response = await axios.get("http://api.puzzlelog.me/assets", {
+        const response = await axios.get("https://api.puzzlelog.me/assets", {
           withCredentials: true
         });
   
@@ -223,7 +223,7 @@ const MakeDiary = () => {
         console.log("📄 최종 저장 데이터:", diaryData);
     
         try {
-          await axios.post("http://api.puzzlelog.me/diaries", diaryData, {
+          await axios.post("https://api.puzzlelog.me/diaries", diaryData, {
             headers: { "Content-Type": "application/json" },
             withCredentials: true
           });

@@ -60,7 +60,7 @@ const PieceBox = () => {
     const fetchPieces = async () => {
       try {
         const response = await fetch(
-          `http://api.puzzlelog.me/pieces?userId=${storedUserId}&deleted=false&page=0&size=100`
+          `https://api.puzzlelog.me/pieces?userId=${storedUserId}&deleted=false&page=0&size=100`
         );
         if (!response.ok) {
           throw new Error("서버 연결 실패");
@@ -87,7 +87,7 @@ const PieceBox = () => {
     if (!window.confirm("정말로 삭제하시겠습니까?")) return;
 
     try {
-      const response = await fetch(`http://api.puzzlelog.me/pieces/${pieceId}`, {
+      const response = await fetch(`https://api.puzzlelog.me/pieces/${pieceId}`, {
         method: "DELETE",
       });
 
@@ -238,7 +238,7 @@ const PieceBox = () => {
                               className="w-[220px] h-[190px] flex items-center justify-center bg-gray-200 rounded-full"
                             >
                               <svg
-                                xmlns="http://www.w3.org/2000/svg"
+                                xmlns="https://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"

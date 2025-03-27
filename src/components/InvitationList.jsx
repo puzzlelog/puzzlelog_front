@@ -34,7 +34,7 @@ const InvitationList = () => {
     const fetchInvitations = async () => {
       try {
         const res = await axios.get(
-          "http://api.puzzlelog.me/invitations?type=my_request",
+          "https://api.puzzlelog.me/invitations?type=my_request",
           {
             headers: { Authorization: `Bearer ${accessToken}` },
             withCredentials: true,
@@ -64,7 +64,7 @@ const InvitationList = () => {
   const handleAccept = async (invitationId, diaryId) => {
     try {
       await axios.patch(
-        `http://api.puzzlelog.me/invitations/${invitationId}/accept`,
+        `https://api.puzzlelog.me/invitations/${invitationId}/accept`,
         {},
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -89,7 +89,7 @@ const InvitationList = () => {
   const handleReject = async (invitationId) => {
     try {
       await axios.patch(
-        `http://api.puzzlelog.me/invitations/${invitationId}/reject`,
+        `https://api.puzzlelog.me/invitations/${invitationId}/reject`,
         {},
         {
           headers: { Authorization: `Bearer ${accessToken}` },

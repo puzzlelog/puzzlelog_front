@@ -45,7 +45,7 @@ const AdminEditAds = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
-  const API_URL = "http://api.puzzlelog.me/admin/assets"; // 스티커 API 그대로 사용
+  const API_URL = "https://api.puzzlelog.me/admin/assets"; // 스티커 API 그대로 사용
 
   // 광고 목록 불러오기
   useEffect(() => {

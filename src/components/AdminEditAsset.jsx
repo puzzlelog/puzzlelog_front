@@ -52,7 +52,7 @@ const AdminEditAsset = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const itemsPerPage = 18;
 
-  const API_URL = "http://api.puzzlelog.me/assets";
+  const API_URL = "https://api.puzzlelog.me/assets";
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");

@@ -49,7 +49,7 @@ const PostDetailPage = () => {
     useEffect(() => {
         if (id) {
             // 게시글 불러오기
-            axios.get(`http://api.puzzlelog.me/posts/${id}`)
+            axios.get(`https://api.puzzlelog.me/posts/${id}`)
                 .then(response => {
                     setPost(response.data.data);
                 })
@@ -58,7 +58,7 @@ const PostDetailPage = () => {
                 });
 
             // 댓글 불러오기 (게시글 로드 후)
-            axios.get(`http://api.puzzlelog.me/posts/${id}/comments`)
+            axios.get(`https://api.puzzlelog.me/posts/${id}/comments`)
                 .then(response => {
                     setComments(response.data.data);
                 })
@@ -69,7 +69,7 @@ const PostDetailPage = () => {
     }, [id]);
 
     const toggleLike = (postId) => {
-        axios.patch(`http://api.puzzlelog.me/posts/${postId}/like?userId=${userId}`)
+        axios.patch(`https://api.puzzlelog.me/posts/${postId}/like?userId=${userId}`)
             .then(response => {
                 setPost(prevPost => ({
                     ...prevPost,
@@ -93,7 +93,7 @@ const PostDetailPage = () => {
             content: commentContent,
         };
 
-        axios.post(`http://api.puzzlelog.me/posts/${id}/comments`, commentData)
+        axios.post(`https://api.puzzlelog.me/posts/${id}/comments`, commentData)
             .then(response => {
                 const newComment = response.data.data;
                 setComments(prevComments => [newComment, ...prevComments]); // 새로운 댓글 추가
@@ -106,7 +106,7 @@ const PostDetailPage = () => {
 
     const handleDeleteComment = (commentId) => {
         if (window.confirm("정말 삭제하시겠습니까?")) {
-            axios.delete(`http://api.puzzlelog.me/posts/${id}/comments/${commentId}`)
+            axios.delete(`https://api.puzzlelog.me/posts/${id}/comments/${commentId}`)
                 .then(() => {
                     setComments(prevComments => prevComments.filter(comment => comment.id !== commentId)); // 댓글 삭제 후 업데이트
                 })
@@ -118,7 +118,7 @@ const PostDetailPage = () => {
 
     const handleDelete = () => {
         if (window.confirm("정말 삭제하시겠습니까?")) {
-            axios.delete(`http://api.puzzlelog.me/posts/${id}`)
+            axios.delete(`https://api.puzzlelog.me/posts/${id}`)
                 .then(() => {
                     alert("게시글이 삭제되었습니다.");
                     navigate("/postList");

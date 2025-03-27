@@ -45,7 +45,7 @@ const DigitalAlbumList = () => {
 
   // 앨범 목록 가져오기
   useEffect(() => {
-    fetch(`http://api.puzzlelog.me/api/albums?userId=${userId}`)
+    fetch(`https://api.puzzlelog.me/api/albums?userId=${userId}`)
       .then((res) => res.json())
       .then((data) => {
         console.log('Fetched albums:', data);
@@ -57,7 +57,7 @@ const DigitalAlbumList = () => {
   // 앨범 삭제
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://api.puzzlelog.me/api/albums/${id}`, {
+      const response = await fetch(`https://api.puzzlelog.me/api/albums/${id}`, {
         method: "DELETE",
       });
 

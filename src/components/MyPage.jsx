@@ -68,7 +68,7 @@ const MyPage = () => {
 
     const fetchUserInfo = async () => {
       try {
-        const response = await axios.get(`http://api.puzzlelog.me/users?userId=${userId}`, {
+        const response = await axios.get(`https://api.puzzlelog.me/users?userId=${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -114,7 +114,7 @@ const MyPage = () => {
     if (name === "nickname") {
       try {
         const response = await axios.get(
-          `http://api.puzzlelog.me/users/check?type=nickname&value=${value}`
+          `https://api.puzzlelog.me/users/check?type=nickname&value=${value}`
         );
 
         if (response.data.success) {
@@ -171,7 +171,7 @@ const MyPage = () => {
       console.log("🔍 보낼 데이터:", formData);
 
       const response = await axios.patch(
-        `http://api.puzzlelog.me/users/${userId}`,
+        `https://api.puzzlelog.me/users/${userId}`,
         formData,
         {
           headers: {

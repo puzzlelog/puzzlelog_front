@@ -37,7 +37,7 @@ const auroraStyle = `
 }
 `;
 
-const API_BASE_URL = "http://api.puzzlelog.me/pieces";
+const API_BASE_URL = "https://api.puzzlelog.me/pieces";
 
 const WriteAudioPiece = () => {
   const [audio, setAudio] = useState(null);
