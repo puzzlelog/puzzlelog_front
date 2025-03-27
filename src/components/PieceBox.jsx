@@ -42,6 +42,7 @@ const PieceBox = () => {
   const [error, setError] = useState(null);
   const [userId, setUserId] = useState(null);
   const [filterType, setFilterType] = useState("ALL");
+  const [filterDate, setFilterDate] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const audioRefs = useRef({});
@@ -122,7 +123,14 @@ const PieceBox = () => {
     }
   };
 
-  const filteredPieces = filterType === "ALL" ? pieces : pieces.filter(piece => piece.type === filterType);
+  const filteredPieces = pieces
+    .filter(piece => filterType === "ALL" || piece.type === filterType)
+    .filter(piece => {
+      if (!filterDate) return true;
+      const pieceDate = new Date(piece.createdAt).toISOString().split("T")[0];
+      return pieceDate === filterDate;
+    });
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const paginatedPieces = filteredPieces.slice(indexOfFirstItem, indexOfLastItem);
@@ -141,7 +149,8 @@ const PieceBox = () => {
             <h2 className="text-3xl font-semibold text-center text-[#6B4F35]">조각 모음집</h2>
 
             <div className="sticky top-0 z-10 py-4">
-              <div className="flex gap-4 justify-center">
+              <div className="flex gap-4 justify-center items-center">
+                {/* Type Filter Buttons */}
                 {["ALL", "TEXT", "IMAGE", "VIDEO", "AUDIO"].map(type => (
                   <button
                     key={type}
@@ -155,6 +164,25 @@ const PieceBox = () => {
                     {type === "ALL" ? "전체 보기" : type}
                   </button>
                 ))}
+                {/* Date Filter Input */}
+                <input
+                  type="date"
+                  value={filterDate}
+                  onChange={(e) => {
+                    setFilterDate(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7430B7]"
+                />
+                <button
+                  onClick={() => {
+                    setFilterDate("");
+                    setCurrentPage(1);
+                  }}
+                  className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+                >
+                  날짜 필터 초기화
+                </button>
               </div>
             </div>
 

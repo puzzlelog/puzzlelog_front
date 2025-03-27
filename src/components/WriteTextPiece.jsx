@@ -63,7 +63,7 @@ const WriteTextPiece = () => {
       const pieceData = {
         userId: userId,
         type: "TEXT",
-        content: text,
+        text: text,
         tags: tagArray,
         location: { type: "Point", coordinates: [127.0276, 37.4979] },
         isPrivate: false,

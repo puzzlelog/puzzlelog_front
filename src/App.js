@@ -20,7 +20,7 @@ import AdminPage from "./components/AdminPage"; //adminpage
 import AdminEditChallenge from "./components/AdminEditChallenge"; //admineditChallenge
 import AdminEditAsset from "./components/AdminEditAsset"; //admineditAsset
 import AdminEditAds from "./components/AdminEditAds"; //admineditAds
-import AdBanner from "./components/AdBanner" //Adbanner
+import AdBanner from "./components/AdBanner"; //Adbanner
 
 import CommunityPage from "./components/CommunityPage";
 import UploadPost from "./components/UploadPost";
@@ -34,11 +34,14 @@ import AlbumDetail from "./components/AlbumDetail";
 import MakeDiary from "./components/MakeDiary";
 import PieceBoxMakeDiary from "./components/PieceBoxMakeDiary";
 
+import CollaborativeDiaryInvite from "./components/CollaborativeDiaryInvite";
+import CollaborativeDiary from "./components/CollaborativeDiary";
+import InvitationList from "./components/InvitationList";
+
 
 const AppContent = () => {
   const location = useLocation();
 
-  //  광고를 제외할 페이지 목록
   const excludedPaths = ["/home", "/signup", "/login", "/adminPage", "/adminEditChallenge", "/adminEditSticker", "/adminEditAds"];
 
   return (
@@ -75,9 +78,13 @@ const AppContent = () => {
 
         <Route path="/makeDiary" element={<MakeDiary />} />
         <Route path="/pieceBoxMakeDiary" element={<PieceBoxMakeDiary />} />
+
+        <Route path="/collaborative-diary-invite" element={<CollaborativeDiaryInvite />} />
+<Route path="/collaborative-diary/:diaryId" element={<CollaborativeDiary />} />
+<Route path="/invitations" element={<InvitationList />} />
+
       </Routes>
 
-      {/* ✅ 현재 페이지가 제외 목록에 없을 때만 광고 표시 */}
       {!excludedPaths.includes(location.pathname) && <AdBanner />}
     </div>
   );
@@ -91,11 +98,4 @@ const App = () => {
   );
 };
 
-
 export default App;
-
-
-
-
-
-
