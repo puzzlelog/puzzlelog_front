@@ -42,7 +42,7 @@ import InvitationList from "./components/InvitationList";
 const AppContent = () => {
   const location = useLocation();
 
-  const excludedPaths = ["/home", "/signup", "/login", "/adminPage", "/adminEditChallenge", "/adminEditSticker", "/adminEditAds"];
+  const excludedPaths = ["/", "/home", "/signup", "/login", "/adminPage", "/adminEditChallenge", "/adminEditSticker", "/adminEditAds"];
 
   return (
     <div>
@@ -80,8 +80,8 @@ const AppContent = () => {
         <Route path="/pieceBoxMakeDiary" element={<PieceBoxMakeDiary />} />
 
         <Route path="/collaborative-diary-invite" element={<CollaborativeDiaryInvite />} />
-<Route path="/collaborative-diary/:diaryId" element={<CollaborativeDiary />} />
-<Route path="/invitations" element={<InvitationList />} />
+        <Route path="/collaborative-diary/:diaryId" element={<CollaborativeDiary />} />
+        <Route path="/invitations" element={<InvitationList />} />
 
       </Routes>
 

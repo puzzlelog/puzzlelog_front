@@ -74,7 +74,7 @@ const Home = () => {
   useEffect(() => {
     const checkNickname = async () => {
       const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
 
       if (!userId || !token) {
         navigate("/login");
@@ -297,55 +297,55 @@ const Home = () => {
                   }}
                 >
                   <div
-                className="puzzle-mask flex flex-col items-center justify-between w-full h-full"
-                style={{
-                  animation: "pulseGlow2 3s infinite",
-                  background: "rgba(255, 255, 255, 0.3)",
-                }}
-              >
-                <h3 className="font-semibold text-center text-base leading-none m-0 mb-2">{piece.type}</h3>
+                    className="puzzle-mask flex flex-col items-center justify-between w-full h-full"
+                    style={{
+                      animation: "pulseGlow2 3s infinite",
+                      background: "rgba(255, 255, 255, 0.3)",
+                    }}
+                  >
+                    <h3 className="font-semibold text-center text-base leading-none m-0 mb-2">{piece.type}</h3>
 
-                <div className="flex items-center justify-center w-full h-full">
-                  {piece.type === "TEXT" && (
-                    <p className="text-gray-600 text-base text-center overflow-hidden w-full h-20 flex items-center justify-center line-clamp-3 bg-transparent">
-                      {piece.content}
-                    </p>
-                  )}
+                    <div className="flex items-center justify-center w-full h-full">
+                      {piece.type === "TEXT" && (
+                        <p className="text-gray-600 text-base text-center overflow-hidden w-full h-20 flex items-center justify-center line-clamp-3 bg-transparent">
+                          {piece.content}
+                        </p>
+                      )}
 
-                  {piece.type === "IMAGE" && piece.mediaId && (
-                    <img
-                      src={piece.mediaId}
-                      alt="조각 이미지"
-                      className="w-full h-full object-contain bg-transparent"
-                    />
-                  )}
+                      {piece.type === "IMAGE" && piece.mediaId && (
+                        <img
+                          src={piece.mediaId}
+                          alt="조각 이미지"
+                          className="w-full h-full object-contain bg-transparent"
+                        />
+                      )}
 
-                  {piece.type === "VIDEO" && piece.mediaId && (
-                    <video controls className="w-full h-full object-cover bg-transparent">
-                      <source src={piece.mediaId} type="video/mp4" />
-                      브라우저가 비디오 태그를 지원하지 않습니다.
-                    </video>
-                  )}
+                      {piece.type === "VIDEO" && piece.mediaId && (
+                        <video controls className="w-full h-full object-cover bg-transparent">
+                          <source src={piece.mediaId} type="video/mp4" />
+                          브라우저가 비디오 태그를 지원하지 않습니다.
+                        </video>
+                      )}
 
-                  {piece.type === "AUDIO" && piece.mediaId && (
-                    <>
-                      <audio
-                        ref={(el) => (audioRefs.current[piece.id] = el)}
-                        src={piece.mediaId}
-                        className="hidden"
-                      />
-                      <button
-                        onClick={() => handleAudioPlay(piece.id, piece.mediaId)}
-                        className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full"
-                      >
-                        <svg className="w-12 h-12 text-gray-600" xmlns="https://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </button>
-                    </>
-                  )}
-                </div>
+                      {piece.type === "AUDIO" && piece.mediaId && (
+                        <>
+                          <audio
+                            ref={(el) => (audioRefs.current[piece.id] = el)}
+                            src={piece.mediaId}
+                            className="hidden"
+                          />
+                          <button
+                            onClick={() => handleAudioPlay(piece.id, piece.mediaId)}
+                            className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full"
+                          >
+                            <svg className="w-12 h-12 text-gray-600" xmlns="https://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </button>
+                        </>
+                      )}
+                    </div>
                     {/* 태그와 생성 날짜 표시 */}
                     <div className="mt-auto w-full flex flex-col items-center gap-1">
                       {piece.tags && piece.tags.length > 0 && (
@@ -380,7 +380,7 @@ const Home = () => {
           </div>
         )}
 
-{showNicknamePopup && (
+        {showNicknamePopup && (
           <div className="relative z-10 flex flex-row items-center justify-center w-full h-full text-black">
             <div
               className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center font-semibold"

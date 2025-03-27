@@ -83,7 +83,7 @@ const Login = () => {
         if (userRole === "ADMIN") {
           navigate("/adminPage");
         } else {
-          navigate("/home");
+          navigate("/");
         }
       } else {
         setMessage(response.data.message || "로그인 실패: 잘못된 로그인 정보입니다.");
@@ -149,9 +149,8 @@ const Login = () => {
 
             {message && (
               <p
-                className={`mt-4 text-center font-medium ${
-                  message.includes("성공") ? "text-green-600" : "text-red-600"
-                }`}
+                className={`mt-4 text-center font-medium ${message.includes("성공") ? "text-green-600" : "text-red-600"
+                  }`}
               >
                 {message}
               </p>
