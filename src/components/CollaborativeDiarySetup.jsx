@@ -9,6 +9,12 @@ const auroraStyle = `
   50% { box-shadow: 0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.8); }
   100% { box-shadow: 0 0 10px rgba(255,255,255,0.8), 0 0 30px rgba(255,255,255,0.6); }
 }
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
 `;
 
 function CollaborativeDiarySetup() {
@@ -18,7 +24,7 @@ function CollaborativeDiarySetup() {
 
   const [date, setDate] = useState("");
   const [friends, setFriends] = useState([]);
-  const [selectedFriend, setSelectedFriend] = useState(null);
+  const [selectedFriends, setSelectedFriends] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -41,19 +47,27 @@ function CollaborativeDiarySetup() {
     }
   }, [userId, accessToken]);
 
+  const handleFriendToggle = (friend) => {
+    if (selectedFriends.some(f => f.friendId === friend.friendId)) {
+      setSelectedFriends(selectedFriends.filter(f => f.friendId !== friend.friendId));
+    } else {
+      setSelectedFriends([...selectedFriends, friend]);
+    }
+  };
+
   const handleNext = () => {
     if (!date) {
       setError("날짜를 선택하세요.");
       return;
     }
-    if (!selectedFriend) {
-      setError("협업할 친구를 선택하세요.");
+    if (selectedFriends.length === 0) {
+      setError("최소 한 명 이상의 친구를 선택하세요.");
       return;
     }
     navigate('/collaborative-select-pieces', {
       state: {
         date,
-        friendId: selectedFriend.friendId,
+        friendIds: selectedFriends.map(friend => friend.friendId),
       },
     });
   };
@@ -62,54 +76,82 @@ function CollaborativeDiarySetup() {
     <div className="relative w-full min-h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764] font-cafe24">
       <style>{auroraStyle}</style>
       <Header />
-      <main className="mt-40 w-full max-w-xl mx-auto flex flex-col items-center px-4">
-        <div
-          className="rounded-lg shadow-2xl shadow-indigo-500/50 p-8 w-full text-white"
-          style={{ animation: "pulseGlow2 3s infinite", background: "rgba(255, 255, 255, 0.1)" }}
-        >
-          <h2 className="text-3xl font-bold mb-6 text-center">
-            협업 일기 생성 및 초대
-          </h2>
+      <main className="mt-40 w-full max-w-2xl mx-auto flex flex-col items-center px-6">
+  <div
+    className="rounded-xl shadow-2xl shadow-indigo-500/50 p-10 w-full text-white"
+    style={{
+      animation: 'pulseGlow2 3s infinite',
+      background: 'rgba(255, 255, 255, 0.1)',
+    }}
+  >
+    <h2 className="text-4xl font-bold mb-8 text-center">
+      협업 일기 생성 및 초대
+    </h2>
 
-          {error && <p className="text-red-400 text-center mb-4">{error}</p>}
+    {error && (
+      <p className="text-red-400 text-center mb-6 text-lg font-semibold">
+        {error}
+      </p>
+    )}
 
-          <div className="mb-4">
-            <label className="block mb-2 text-white">날짜 선택</label>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="w-full px-4 py-2 rounded-md text-black"
-            />
-          </div>
+    <div className="mb-6">
+      <label className="block mb-3 text-white text-lg">날짜 선택</label>
+      <input
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        className="w-full px-6 py-3 rounded-md text-black text-lg"
+      />
+    </div>
 
-          <div className="mb-6">
-            <label className="block mb-2 text-white">친구 선택</label>
-            <select
-              value={selectedFriend?.friendId || ""}
-              onChange={(e) => {
-                const friend = friends.find(f => f.friendId === e.target.value);
-                setSelectedFriend(friend);
-              }}
-              className="w-full px-4 py-2 rounded-md text-black"
-            >
-              <option value="">-- 친구 선택 --</option>
-              {friends.map(friend => (
-                <option key={friend.friendId} value={friend.friendId}>
-                  {friend.nickname}
-                </option>
-              ))}
-            </select>
-          </div>
+    <div className="mb-8">
+      <label className="block mb-3 text-white text-lg">
+        친구 선택 (복수 선택 가능)
+      </label>
+      <div className="max-h-48 overflow-y-auto pr-2">
+        {friends.map((friend) => {
+          const isSelected = selectedFriends.some(
+            (f) => f.friendId === friend.friendId
+          );
 
-          <button
-            onClick={handleNext}
-            className="w-full py-2 border border-white text-white rounded-md hover:bg-white hover:text-black transition-all duration-300"
-          >
-            협업 요청 보내기
-          </button>
-        </div>
-      </main>
+          return (
+            <div key={friend.friendId} className="flex items-center mb-3">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() => handleFriendToggle(friend)}
+                  className="hidden"
+                />
+                <span
+                  className={`w-8 h-8 mr-3 flex items-center justify-center rounded-full transition-all duration-300 ${
+                    isSelected
+                      ? 'bg-pink-400 text-white animate-heartBeat'
+                      : 'bg-white bg-opacity-30 text-transparent'
+                  }`}
+                  style={{
+                    animation: isSelected ? 'heartBeat 1s infinite' : 'none',
+                  }}
+                >
+                  {isSelected && '♥'}
+                </span>
+                <span className="text-white text-lg">{friend.nickname}</span>
+              </label>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
+    <button
+      onClick={handleNext}
+      className="w-full py-3 text-lg border border-white text-white rounded-md hover:bg-white hover:text-black transition-all duration-300"
+    >
+      협업 요청 보내기
+    </button>
+  </div>
+</main>
+
     </div>
   );
 }

@@ -34,28 +34,27 @@ function CollaborativeDiarySelectPieces() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // CollaborativeDiarySetup에서 전달된 date와 friendId
-  const { date, friendId } = location.state || {};
+  // ✅ 다중 친구 ID 받기
+  const { date, friendIds } = location.state || {};
 
   const userId = localStorage.getItem("userId");
   const accessToken = localStorage.getItem("accessToken");
 
   const [pieces, setPieces] = useState([]);
-  const [filteredPieces, setFilteredPieces] = useState([]); // 날짜로 필터링된 조각
+  const [filteredPieces, setFilteredPieces] = useState([]);
   const [selectedPieces, setSelectedPieces] = useState([]);
   const [error, setError] = useState("");
 
-  // 나와 친구의 조각을 불러오기
   useEffect(() => {
     const fetchPieces = async () => {
       try {
-        const userIds = [userId, friendId]; // 나와 친구의 ID 배열
-        console.log("🟢 API 호출 - 날짜:", date, "유저 IDs:", userIds); // 디버깅 로그
+        const userIds = [userId, ...(friendIds || [])]; // ✅ 나 + 친구들
+        console.log("🟢 API 호출 - 날짜:", date, "유저 IDs:", userIds);
 
         const res = await axios.get("https://api.puzzlelog.me/pieces", {
           params: {
-            date, // "YYYY-MM-DD" 형식
-            userIds: userIds.join(","), // 백엔드가 배열 대신 문자열로 받을 경우
+            date,
+            userIds: userIds.join(","),
           },
           headers: { Authorization: `Bearer ${accessToken}` },
           withCredentials: true,
@@ -63,7 +62,7 @@ function CollaborativeDiarySelectPieces() {
 
         const data = res.data.data;
         const piecesArray = Array.isArray(data) ? data : data.pieces || [];
-        console.log("🟢 불러온 조각:", piecesArray); // 디버깅 로그
+        console.log("🟢 불러온 조각:", piecesArray);
         setPieces(piecesArray);
       } catch (err) {
         console.error("조각 불러오기 실패:", err);
@@ -71,31 +70,28 @@ function CollaborativeDiarySelectPieces() {
       }
     };
 
-    if (date && friendId && userId && accessToken) {
+    if (date && friendIds && userId && accessToken) {
       fetchPieces();
     } else {
       setError("필수 정보가 누락되었습니다. (날짜, 친구 ID, 사용자 ID, 토큰)");
     }
-  }, [date, friendId, userId, accessToken]);
+  }, [date, friendIds, userId, accessToken]);
 
-  // 불러온 조각을 날짜로 필터링 (프론트엔드에서 추가 필터링)
   useEffect(() => {
     if (!date || !pieces.length) {
       setFilteredPieces([]);
       return;
     }
 
-    const selectedDate = new Date(date).toISOString().split("T")[0]; // "YYYY-MM-DD" 형식으로 변환
+    const selectedDate = new Date(date).toISOString().split("T")[0];
     const filtered = pieces.filter((piece) => {
       const pieceDate = new Date(piece.createdAt).toISOString().split("T")[0];
       return pieceDate === selectedDate;
     });
 
-    console.log("🟢 필터링된 조각:", filtered); // 디버깅 로그
     setFilteredPieces(filtered);
   }, [pieces, date]);
 
-  // 조각 선택/해제 토글
   const handleTogglePiece = (piece) => {
     setSelectedPieces((prev) => {
       const exists = prev.find((p) => p.id === piece.id);
@@ -111,7 +107,6 @@ function CollaborativeDiarySelectPieces() {
     });
   };
 
-  // 다음 버튼: 협업 일기 작성 페이지로 이동
   const handleNext = () => {
     if (selectedPieces.length === 0) {
       alert("최소 1개 이상의 조각을 선택해주세요!");
@@ -120,7 +115,7 @@ function CollaborativeDiarySelectPieces() {
     navigate("/collaborative-create-diary", {
       state: {
         date,
-        friendId,
+        friendIds, // ✅ friendIds 배열 그대로 넘김
         selectedPieces,
       },
     });
@@ -135,10 +130,9 @@ function CollaborativeDiarySelectPieces() {
         <h1 className="text-3xl font-semibold mb-6 text-center text-white">조각 선택</h1>
         {error && <p className="text-red-500">{error}</p>}
 
-        {/* 날짜 & 친구 정보 표시 */}
         <div className="text-white mb-4">
           <p>날짜: {date}</p>
-          <p>친구 ID: {friendId}</p>
+          <p>친구 ID: {(friendIds || []).join(', ')}</p>
         </div>
 
         <div className="w-full max-w-7xl p-6 rounded-lg h-[600px] overflow-y-auto">
@@ -161,10 +155,8 @@ function CollaborativeDiarySelectPieces() {
                       background: "rgba(255, 255, 255, 0.3)",
                     }}
                   >
-                    {/* 조각 타입 */}
                     <h3 className="font-semibold text-base mb-2">{piece.type}</h3>
 
-                    {/* 퍼즐 모양 마스크 */}
                     <div className="puzzle-mask flex flex-col items-center justify-center w-[200px] h-[245px]">
                       {piece.type === "TEXT" && (
                         <p className="text-gray-600 text-base text-center overflow-hidden w-[220px] h-20 flex items-center justify-center line-clamp-3">
@@ -179,10 +171,7 @@ function CollaborativeDiarySelectPieces() {
                         />
                       )}
                       {piece.type === "VIDEO" && piece.mediaId && (
-                        <video
-                          controls
-                          className="w-[220px] h-[220px] object-cover"
-                        >
+                        <video controls className="w-[220px] h-[220px] object-cover">
                           <source src={piece.mediaId} type="video/mp4" />
                           브라우저가 비디오 태그를 지원하지 않습니다.
                         </video>
@@ -194,7 +183,6 @@ function CollaborativeDiarySelectPieces() {
                       )}
                     </div>
 
-                    {/* 태그 & 날짜 & 작성자 */}
                     <div className="mt-auto w-full flex flex-col items-center gap-1">
                       {piece.tags && piece.tags.length > 0 && (
                         <p className="text-sm text-blue-500 text-center line-clamp-1">
@@ -215,7 +203,6 @@ function CollaborativeDiarySelectPieces() {
           )}
         </div>
 
-        {/* 다음 버튼 */}
         <button
           onClick={handleNext}
           className="mt-8 px-6 py-2 bg-[#D6B896] text-white rounded-lg shadow-md hover:bg-[#C6A87D]"

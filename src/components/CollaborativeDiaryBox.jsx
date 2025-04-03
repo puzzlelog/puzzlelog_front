@@ -44,10 +44,9 @@ const CollaborativeDiaryBox = () => {
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
 
-  // 쿼리 파라미터 읽기 (날짜 필터링 등)
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const dateParam = queryParams.get("date"); // 예: "2025-03-30"
+  const dateParam = queryParams.get("date");
 
   useEffect(() => {
     const fetchDiaries = async () => {
@@ -57,7 +56,6 @@ const CollaborativeDiaryBox = () => {
         if (!token) throw new Error("로그인이 필요합니다.");
         if (!userId) throw new Error("userId가 없습니다.");
 
-        // 전체 일기 데이터 불러오기 (협업일기도 포함됨)
         const res = await axios.get(
           `https://api.puzzlelog.me/diaries?includeElements=true`,
           {
@@ -70,11 +68,15 @@ const CollaborativeDiaryBox = () => {
         console.log("API 응답 전체:", JSON.stringify(res.data, null, 2));
         const diariesData = res.data.data?.diaries || res.data.diaries || [];
 
-        // 협업일기: participants 배열에 2명 이상 포함되어 있어야 함
+        // 협업일기 필터링: participants 배열에 2명 이상 포함 + 현재 사용자가 참여자에 포함
         const collaborativeDiaries = diariesData.filter((d) => {
-          return d.participants && d.participants.length > 1;
+          const isCollaborative = d.participants && d.participants.length > 1;
+          const userIsParticipant = d.participants?.includes(userId); // 문자열 배열로 처리
+          console.log(`Diary ${d.diaryId}: isCollaborative=${isCollaborative}, userIsParticipant=${userIsParticipant}`);
+          return isCollaborative && userIsParticipant;
         });
-        console.log("협업일기 필터링:", collaborativeDiaries);
+
+        console.log("필터링된 협업일기:", collaborativeDiaries);
         setDiaries(collaborativeDiaries);
       } catch (err) {
         console.error("일기 데이터를 불러오는 중 오류 발생:", err.response?.data || err.message);
@@ -99,7 +101,6 @@ const CollaborativeDiaryBox = () => {
     console.log("diaries 상태 업데이트됨:", diaries);
   }, [diaries]);
 
-  // 날짜 필터링: dateParam이 있으면 해당 날짜의 일기만 사용
   const diariesToShow =
     dateParam && dateParam !== "all"
       ? diaries.filter((d) => d.createdAt?.split("T")[0] === dateParam)
@@ -115,8 +116,6 @@ const CollaborativeDiaryBox = () => {
     setSelectedDiary(diary);
   };
 
-  
-
   if (loading)
     return <p className="text-center text-gray-700">로딩 중...</p>;
   if (error)
@@ -128,11 +127,10 @@ const CollaborativeDiaryBox = () => {
       <div className="relative w-full min-h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
         <Header />
         <div className="max-w-[1200px] mx-auto flex gap-14 pt-28 px-4">
-          {/* 왼쪽: 협업일기 목록 + 페이지네이션 */}
           <div className="w-1/3">
             {paginatedDiaries.length === 0 ? (
               <p className="text-center text-white text-xl font-cafe24">
-                협업 일기가 없습니다.
+                참여한 협업 일기가 없습니다.
               </p>
             ) : (
               <ul className="space-y-2">
@@ -199,27 +197,23 @@ const CollaborativeDiaryBox = () => {
               </div>
             )}
           </div>
-          {/* 오른쪽: 선택된 일기 미리보기 및 참여하기 버튼 */}
           <div className="w-2/3">
             {selectedDiary ? (
-              <>
-                <div
-                  className="rounded-xl shadow-2xl shadow-indigo-500/50 flex justify-center items-center w-full h-[800px] bg-white bg-opacity-30"
-                  style={{ animation: "pulseGlow2 3s infinite" }}
-                >
-                  <FabricCanvasViewer
-                    diary={selectedDiary}
-                    debugId={selectedDiary.diaryId}
-                  />
-                </div>
-
-              </>
+              <div
+                className="rounded-xl shadow-2xl shadow-indigo-500/50 flex justify-center items-center w-full h-[800px] bg-white bg-opacity-30"
+                style={{ animation: "pulseGlow2 3s infinite" }}
+              >
+                <FabricCanvasViewer
+                  diary={selectedDiary}
+                  debugId={selectedDiary.diaryId}
+                />
+              </div>
             ) : (
               <div className="flex items-center justify-center w-full h-[800px]">
-              <p className="text-center text-white   text-xl font-cafe24">
-                협업일기를 선택해주세요.
-              </p>
-            </div>
+                <p className="text-center text-white text-xl font-cafe24">
+                  협업일기를 선택해주세요.
+                </p>
+              </div>
             )}
           </div>
         </div>
