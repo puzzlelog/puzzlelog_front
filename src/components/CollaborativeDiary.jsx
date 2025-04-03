@@ -9,22 +9,38 @@ const CollaborativeDiary = () => {
   const [error, setError] = useState(null);
   const accessToken = localStorage.getItem("accessToken");
 
-  useEffect(() => {
-    const fetchDiary = async () => {
-      try {
-        const res = await axios.get(`https://api.puzzlelog.me/diaries/${diaryId}`, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-          withCredentials: true,
-        });
-        setDiary(res.data.data);
-      } catch (err) {
-        console.error("일기 불러오기 실패:", err);
-        setError("일기 정보를 불러오는 데 실패했습니다: " + (err.response?.data?.message || err.message));
-      }
-    };
+  // 서버에서 일기 정보를 받아오는 함수
+  const fetchDiary = async () => {
+    try {
+      const res = await axios.get(`https://api.puzzlelog.me/diaries/${diaryId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        withCredentials: true,
+      });
+      setDiary(res.data.data);
+    } catch (err) {
+      console.error("일기 불러오기 실패:", err);
+      setError(
+        "일기 정보를 불러오는 데 실패했습니다: " +
+          (err.response?.data?.message || err.message)
+      );
+    }
+  };
 
-    if (diaryId && accessToken) fetchDiary();
-    else setError("로그인이 필요합니다.");
+  useEffect(() => {
+    if (diaryId && accessToken) {
+      fetchDiary();
+    } else {
+      setError("로그인이 필요합니다.");
+    }
+
+    // 폴링: 5초 간격으로 최신 일기 상태를 불러옵니다.
+    const intervalId = setInterval(() => {
+      if (diaryId && accessToken) {
+        fetchDiary();
+      }
+    }, 5000);
+
+    return () => clearInterval(intervalId);
   }, [diaryId, accessToken]);
 
   return (
@@ -39,11 +55,15 @@ const CollaborativeDiary = () => {
           <div className="bg-white p-6 rounded-xl shadow w-full max-w-3xl">
             <h3 className="text-xl font-semibold mb-2">{diary.title}</h3>
             <p className="text-sm text-gray-500 mb-4">
-              날짜: {new Date(diary.openAt).toLocaleDateString("ko-KR", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })} | 참여자: {diary.participants?.join(", ")}
+              날짜:{" "}
+              {diary.openAt
+                ? new Date(diary.openAt).toLocaleDateString("ko-KR", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : "미정"}{" "}
+              | 참여자: {diary.participants?.join(", ")}
             </p>
             <div className="space-y-3">
               {diary.elements.map((el, idx) => (

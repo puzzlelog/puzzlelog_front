@@ -93,7 +93,7 @@ const WriteTextPiece = () => {
   return (
     <>
       <style>{auroraStyle}</style>
-      <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-blue-200 to-purple-300">
+      <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
 
         {/* 헤더 추가 */}
         <Header />
@@ -101,7 +101,7 @@ const WriteTextPiece = () => {
         <main className="mt-44 w-full max-w-7xl font-cafe24 mx-auto flex justify-center items-center">
           <div className="text-center">
 
-            <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">Text Piece</h2>
+            <h2 className="text-4xl font-bold text-center text-white mb-6">Text Piece</h2>
 
             <div 
               className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl"
@@ -118,7 +118,9 @@ const WriteTextPiece = () => {
                 height: 'auto', 
                 padding: '40px', 
             }}>
-              <p className="text-lg text-gray-700 mb-4 text-center">당신의 감정과 생각을 자유롭게 남겨보세요. 이곳은 당신만의 공간입니다.</p>
+              <p className="text-lg text-white font-bold mb-4 text-center">
+  당신의 감정과 생각을 자유롭게 남겨보세요. 이곳은 당신만의 공간입니다.
+</p>
               <textarea className="w-full p-4 border rounded-lg h-32 text-lg focus:outline-none focus:ring-2 focus:ring-white" placeholder="당신의 조각을 남겨보세요..." value={text} onChange={(e) => setText(e.target.value)} />
               <input className="w-full p-4 border rounded-lg text-lg mt-4 focus:outline-none focus:ring-2 focus:ring-white" placeholder="태그 입력 (쉼표로 구분)" value={tags} onChange={(e) => setTags(e.target.value)} />
               <div className="w-full flex justify-between mt-6">

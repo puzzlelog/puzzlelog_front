@@ -57,19 +57,18 @@ const Login = () => {
     try {
       const response = await axios.post(
         "https://api.puzzlelog.me/users/login",
+        // "http://localhost:8080/users/login",
         formData,
         {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true, // 백엔드에서 쿠키를 설정하는 경우 필요
+          withCredentials: true,
         }
       );
 
       if (response.data.success) {
         setMessage("로그인 성공!");
-
-        // 토큰과 사용자 정보를 localStorage에 저장 (키 이름 통일)
         localStorage.setItem("accessToken", response.data.data.token);
         localStorage.setItem("userId", response.data.data.userId);
 
@@ -79,11 +78,10 @@ const Login = () => {
         }
         localStorage.setItem("role", userRole);
 
-        // 역할에 따라 리다이렉트
         if (userRole === "ADMIN") {
           navigate("/adminPage");
         } else {
-          navigate("/");
+          navigate("/home");
         }
       } else {
         setMessage(response.data.message || "로그인 실패: 잘못된 로그인 정보입니다.");
@@ -98,7 +96,7 @@ const Login = () => {
   return (
     <>
       <style>{auroraStyle}</style>
-      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
         <Header2 />
 
         <div className="w-full h-screen flex justify-center items-center">
@@ -110,38 +108,38 @@ const Login = () => {
               transition: "all 0.3s ease",
             }}
           >
-            <h2 className="text-4xl font-bold text-[#5A3E2B] mb-6 text-center">PuzzleLog</h2>
+            <h2 className="text-4xl font-bold text-white mb-6 text-center">PuzzleLog</h2>
 
             <form onSubmit={handleSubmit} className="space-y-4 w-full">
               <div>
-                <label className="block text-sm font-medium text-black">아이디</label>
+                <label className="block text-sm font-medium text-white">아이디</label>
                 <input
                   type="text"
                   name="userId"
                   placeholder="아이디 입력"
                   value={formData.userId}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white bg-transparent placeholder-white"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-black">비밀번호</label>
+                <label className="block text-sm font-medium text-white">비밀번호</label>
                 <input
                   type="password"
                   name="userPwd"
                   placeholder="비밀번호 입력"
                   value={formData.userPwd}
                   onChange={handleChange}
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white bg-transparent placeholder-white"
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                className="px-6 py-2 hover:bg-white border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:text-black transition-all w-full duration-300 transition hover:border-transparent hover:scale-105"
+                className="px-6 py-2 hover:bg-white border border-white bg-white/20 text-white rounded-md font-cafe24pretty text-lg hover:text-black transition-all w-full duration-300 transition hover:border-transparent hover:scale-105"
               >
                 로그인
               </button>
@@ -149,8 +147,9 @@ const Login = () => {
 
             {message && (
               <p
-                className={`mt-4 text-center font-medium ${message.includes("성공") ? "text-green-600" : "text-red-600"
-                  }`}
+                className={`mt-4 text-center font-medium ${
+                  message.includes("성공") ? "text-green-600" : "text-red-600"
+                }`}
               >
                 {message}
               </p>

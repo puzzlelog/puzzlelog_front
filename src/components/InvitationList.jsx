@@ -3,7 +3,6 @@ import axios from "axios";
 import Header from "./Header";
 import { useNavigate } from "react-router-dom";
 
-// CommunityPage에서 사용한 오로라 애니메이션 및 글로우 스타일
 const auroraStyle = `
 @keyframes aurora {
   0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
@@ -42,7 +41,7 @@ const InvitationList = () => {
         );
         const allInvitations = res.data.data || [];
 
-        // 'REJECTED' 상태인 초대는 제외
+        // 'REJECTED' 및 'ACCEPTED' 상태인 초대 제외
         const filtered = allInvitations.filter(
           (inv) => inv.status !== "REJECTED" && inv.status !== "ACCEPTED"
         );
@@ -111,62 +110,77 @@ const InvitationList = () => {
 
   return (
     <>
-      {/* 오로라 애니메이션 스타일 주입 */}
       <style>{auroraStyle}</style>
 
-      {/* 배경: CommunityPage와 동일한 그라디언트 */}
-      <div className="relative w-full min-h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300 font-cafe24">
+      <div className="relative w-full min-h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764] font-cafe24">
         <Header />
 
-        {/* 메인 컨테이너 */}
         <main className="mt-40 w-full max-w-3xl mx-auto flex flex-col items-center px-4">
           <div
-            className="rounded-lg shadow-2xl shadow-indigo-500/50 p-8 w-full"
+            className="rounded-lg shadow-2xl shadow-indigo-500/50 p-8 w-full text-white"
             style={{ animation: "pulseGlow2 3s infinite", background: "rgba(255, 255, 255, 0.1)" }}
           >
-            <h2 className="text-3xl font-bold text-[#5A3E2B] mb-6 text-center">
+            <h2 className="text-3xl font-bold mb-6 text-center">
               받은 초대 목록
             </h2>
-            {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
+            {error && <p className="text-red-400 text-center mb-4">{error}</p>}
+
             {invitations.length === 0 ? (
-              <p className="text-center text-gray-500">받은 초대가 없습니다.</p>
+              <p className="text-center text-gray-300">받은 초대가 없습니다.</p>
             ) : (
               <ul className="space-y-4">
                 {invitations.map((invitation) => (
                   <li
-                  key={invitation.invitationId}
-                  className="p-4 rounded-lg shadow flex justify-between items-center"
-                  style={{ background: "rgba(255, 255, 255, 0.1)" }}
-                >
-                  <div>
-                    <p className="font-medium">
-                      날짜:{" "}
-                      {new Date(invitation.diaryDate).toLocaleDateString("ko-KR", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      보낸 사람: {invitation.senderId}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      상태: {invitation.status}
-                    </p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleAccept(invitation.invitationId, invitation.diaryId)}
-                      className="px-6 py-2 hover:bg-white border border-white bg-white/20 text-gray rounded-md text-lg hover:text-gray transition-all duration-300 hover:border-transparent hover:scale-105"
-                    >
-                      수락
-                    </button>
-                    <button
-                      onClick={() => handleReject(invitation.invitationId)}
-                      className="px-6 py-2 hover:bg-white border border-white bg-white/20 text-gray rounded-md text-lg hover:text-gray transition-all duration-300 hover:border-transparent hover:scale-105"
-                    >
-                      거절
-                    </button>
+                    key={invitation.invitationId}
+                    className="p-4 rounded-lg shadow flex justify-between items-center bg-white/10"
+                  >
+                    <div>
+                      <p className="font-medium text-base">
+                        날짜:{" "}
+                        {new Date(invitation.diaryDate).toLocaleDateString(
+                          "ko-KR",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )}
+                      </p>
+                      <p className="text-sm text-gray-200 mt-1">
+                        보낸 사람: {invitation.senderId}
+                      </p>
+                      <p className="text-sm text-gray-200">
+                        상태: {invitation.status}
+                      </p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() =>
+                          handleAccept(invitation.invitationId, invitation.diaryId)
+                        }
+                        className="
+                          px-6 py-2 
+                          border border-white bg-white/20 text-white
+                          rounded-md text-lg 
+                          hover:bg-white hover:text-gray-900 
+                          transition-all duration-300 hover:border-transparent hover:scale-105
+                        "
+                      >
+                        수락
+                      </button>
+                      <button
+                        onClick={() => handleReject(invitation.invitationId)}
+                        className="
+                          px-6 py-2 
+                          border border-white bg-white/20 text-white
+                          rounded-md text-lg 
+                          hover:bg-white hover:text-gray-900
+                          transition-all duration-300 hover:border-transparent hover:scale-105
+                        "
+                      >
+                        거절
+                      </button>
                     </div>
                   </li>
                 ))}

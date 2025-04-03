@@ -54,19 +54,31 @@ const PieceBox = () => {
       setLoading(false);
       return;
     }
-
+  
     setUserId(storedUserId);
-
+  
     const fetchPieces = async () => {
       try {
+        const token = localStorage.getItem("accessToken");
+  
         const response = await fetch(
-          `https://api.puzzlelog.me/pieces?userId=${storedUserId}&deleted=false&page=0&size=100`
+           `https://api.puzzlelog.me/pieces?userId=${storedUserId}&deleted=false&page=0&size=100`,
+          //`http://localhost:8080/pieces?userId=${storedUserId}&deleted=false&page=0&size=100`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
         );
+  
         if (!response.ok) {
           throw new Error("서버 연결 실패");
         }
+  
         const data = await response.json();
-
+  
         if (data.success) {
           const filteredPieces = data.data.pieces.filter(piece => !piece.deleted);
           setPieces(filteredPieces);
@@ -79,7 +91,7 @@ const PieceBox = () => {
         setLoading(false);
       }
     };
-
+  
     fetchPieces();
   }, []);
 
@@ -87,9 +99,18 @@ const PieceBox = () => {
     if (!window.confirm("정말로 삭제하시겠습니까?")) return;
 
     try {
-      const response = await fetch(`https://api.puzzlelog.me/pieces/${pieceId}`, {
-        method: "DELETE",
-      });
+      const token = localStorage.getItem("accessToken");
+
+      const response = await fetch(
+        `https://api.puzzlelog.me/pieces/${pieceId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("삭제 실패");
@@ -97,7 +118,7 @@ const PieceBox = () => {
 
       const data = await response.json();
       if (data.success) {
-        setPieces(prevPieces => prevPieces.filter(piece => piece.id !== pieceId));
+        setPieces(prev => prev.filter(p => p.id !== pieceId));
       } else {
         throw new Error(data.message);
       }
@@ -106,7 +127,7 @@ const PieceBox = () => {
     }
   };
 
-  const handleAudioPlay = (pieceId, mediaId) => {
+  const handleAudioPlay = (pieceId) => {
     Object.keys(audioRefs.current).forEach((id) => {
       if (id !== pieceId.toString()) {
         audioRefs.current[id].pause();
@@ -136,21 +157,20 @@ const PieceBox = () => {
   const paginatedPieces = filteredPieces.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredPieces.length / itemsPerPage);
 
-  if (loading) return <p className="text-center text-gray-500">로딩 중...</p>;
+  if (loading) return <p className="text-center text-white">로딩 중...</p>;
   if (error) return <p className="text-center text-red-500">오류 발생: {error}</p>;
 
   return (
     <>
       <style>{auroraStyle}</style>
-      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
         <Header />
         <main className="mt-28 w-full max-w-7xl font-cafe24 mx-auto flex justify-center items-center">
           <div className="text-center">
-            <h2 className="text-3xl font-semibold text-center text-[#6B4F35]">조각 모음집</h2>
+            <h2 className="text-3xl font-semibold text-center text-white">조각 모음집</h2>
 
             <div className="sticky top-0 z-10 py-4">
               <div className="flex gap-4 justify-center items-center">
-                {/* Type Filter Buttons */}
                 {["ALL", "TEXT", "IMAGE", "VIDEO", "AUDIO"].map(type => (
                   <button
                     key={type}
@@ -159,12 +179,11 @@ const PieceBox = () => {
                       setCurrentPage(1);
                     }}
                     className={`px-4 py-2 opacity-60 transition hover:border-transparent border hover:scale-105 rounded-md 
-                      ${filterType === type ? "bg-[#7430B7] text-white" : "bg-gray-200"}`}
+                      ${filterType === type ? "bg-[#7430B7] text-white" : "bg-white/20 text-white hover:bg-white/30"}`}
                   >
                     {type === "ALL" ? "전체 보기" : type}
                   </button>
                 ))}
-                {/* Date Filter Input */}
                 <input
                   type="date"
                   value={filterDate}
@@ -172,14 +191,14 @@ const PieceBox = () => {
                     setFilterDate(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#7430B7]"
+                  className="px-4 py-2 rounded-md border border-white text-white bg-transparent focus:outline-none focus:ring-2 focus:ring-[#7430B7]"
                 />
                 <button
                   onClick={() => {
                     setFilterDate("");
                     setCurrentPage(1);
                   }}
-                  className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+                  className="px-4 py-2 bg-white/20 text-white rounded-md hover:bg-white/30"
                 >
                   날짜 필터 초기화
                 </button>
@@ -188,12 +207,10 @@ const PieceBox = () => {
 
             <div className="rounded-lg w-full max-w-7xl">
               {paginatedPieces.length === 0 ? (
-                <div className="grid grid-cols-4 gap-6">
-                  <p className="text-center text-gray-500">조각이 없습니다.</p>
-                </div>
+                <div className="text-center text-white">조각이 없습니다.</div>
               ) : (
                 <div className="grid grid-cols-5 gap-6">
-                  {paginatedPieces.map((piece) => (
+                  {paginatedPieces.map(piece => (
                     <div
                       key={piece.id}
                       className="flex flex-col items-center w-56 h-80 justify-between p-3"
@@ -202,15 +219,14 @@ const PieceBox = () => {
                         background: "rgba(255, 255, 255, 0.3)",
                       }}
                     >
-                      <h3 className="font-semibold text-center text-base leading-none m-0 mb-2">{piece.type}</h3>
+                      <h3 className="font-semibold text-center text-base text-white mb-2">{piece.type}</h3>
 
                       <div className="puzzle-mask flex flex-col items-center justify-center w-[200px] h-[245px]">
                         {piece.type === "TEXT" && (
-                          <p className="text-gray-600 text-base text-center overflow-hidden w-[220px] h-20 flex items-center justify-center line-clamp-3 bg-transparent">
-                            {piece.content}
+                          <p className="text-white text-base text-center overflow-hidden w-[220px] h-20 flex items-center justify-center line-clamp-3 bg-transparent">
+                            {piece.text}
                           </p>
                         )}
-
                         {piece.type === "IMAGE" && piece.mediaId && (
                           <img
                             src={piece.mediaId}
@@ -218,45 +234,28 @@ const PieceBox = () => {
                             className="w-[220px] h-[190px] object-contain bg-transparent"
                           />
                         )}
-
-                        {piece.type === "VIDEO" && piece.mediaId && (
-                          <video controls className="w-[220px] h-[220px] object-cover bg-transparent">
-                            <source src={piece.mediaId} type="video/mp4" />
-                            브라우저가 비디오 태그를 지원하지 않습니다.
-                          </video>
-                        )}
+                     {piece.type === "VIDEO" && piece.mediaId && (
+  <video
+    controls
+    className="w-[220px] h-[190px] object-contain bg-transparent"
+  >
+    <source src={piece.mediaId} type="video/mp4" />
+    브라우저가 비디오 태그를 지원하지 않습니다.
+  </video>
+)}
 
                         {piece.type === "AUDIO" && piece.mediaId && (
                           <>
                             <audio
-                              ref={(el) => (audioRefs.current[piece.id] = el)}
+                              ref={el => (audioRefs.current[piece.id] = el)}
                               src={piece.mediaId}
                               className="hidden"
                             />
                             <button
-                              onClick={() => handleAudioPlay(piece.id, piece.mediaId)}
-                              className="w-[220px] h-[190px] flex items-center justify-center bg-gray-200 rounded-full"
+                              onClick={() => handleAudioPlay(piece.id)}
+                              className="w-[220px] h-[190px] flex items-center justify-center bg-white/20 text-white rounded-full hover:bg-white/30"
                             >
-                              <svg
-                                xmlns="https://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                className="w-12 h-12 text-gray-600"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                                />
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                />
-                              </svg>
+                              🎵
                             </button>
                           </>
                         )}
@@ -264,17 +263,17 @@ const PieceBox = () => {
 
                       <div className="mt-auto w-full flex flex-col items-center gap-1">
                         {piece.tags && piece.tags.length > 0 && (
-                          <p className="text-sm text-blue-500 text-center line-clamp-1 leading-none m-0">
+                          <p className="text-sm text-blue-300 text-center line-clamp-1 leading-none">
                             태그: {piece.tags.join(", ")}
                           </p>
                         )}
-                        <p className="text-xs text-gray-400 text-center leading-none m-0">
+                        <p className="text-xs text-white text-center leading-none">
                           {new Date(piece.createdAt).toLocaleDateString()}
                         </p>
                         <div className="w-full flex justify-center mt-2">
                           <button
                             onClick={() => handleDelete(piece.id)}
-                            className="px-3 py-1.5 bg-red-300 text-red-800 rounded hover:bg-red-400 w-10/12"
+                            className="px-3 py-1.5 bg-red-500 text-white rounded hover:bg-red-600 w-10/12"
                           >
                             삭제
                           </button>
@@ -290,17 +289,17 @@ const PieceBox = () => {
                   <button
                     disabled={currentPage === 1}
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    className="px-4 py-2 bg-[#EDE7DC] text-[#6B4F35] rounded-lg hover:bg-[#D6C8B8] disabled:bg-gray-300"
+                    className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 disabled:bg-gray-500"
                   >
                     이전
                   </button>
-                  <span className="text-lg font-semibold text-[#6B4F35]">
+                  <span className="text-lg font-semibold text-white">
                     {currentPage} / {totalPages}
                   </span>
                   <button
                     disabled={currentPage === totalPages}
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    className="px-4 py-2 bg-[#EDE7DC] text-[#6B4F35] rounded-lg hover:bg-[#D6C8B8] disabled:bg-gray-300"
+                    className="px-4 py-2 bg-white/20 text-white rounded-lg hover:bg-white/30 disabled:bg-gray-500"
                   >
                     다음
                   </button>

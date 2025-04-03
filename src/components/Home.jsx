@@ -4,10 +4,12 @@ import axios from "axios";
 import Header from "./Header";
 
 const auroraStyle = `
-@keyframes aurora {
-  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
-  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
-  100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
+@keyframes float {
+  0% { transform: translate(0, 0); opacity: 0.8; }
+  25% { transform: translate(${Math.random() * 100 - 50}vw, ${Math.random() * 100 - 50}vh); opacity: 0.9; }
+  50% { transform: translate(${Math.random() * 100 - 50}vw, ${Math.random() * 100 - 50}vh); opacity: 0.7; }
+  75% { transform: translate(${Math.random() * 100 - 50}vw, ${Math.random() * 100 - 50}vh); opacity: 0.9; }
+  100% { transform: translate(0, 0); opacity: 0.8; }
 }
 
 @keyframes pulseGlow {
@@ -40,6 +42,11 @@ const auroraStyle = `
   }
 }
 
+@keyframes orbit {
+  0% { transform: rotate(0deg) translateX(20rem) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(20rem) rotate(-360deg); }
+}
+
 .puzzle-mask {
   background: rgba(255, 255, 255, 0.3);
   clip-path: polygon(
@@ -65,7 +72,6 @@ const Home = () => {
   const [nicknameMessage, setNicknameMessage] = useState("");
   const [isNicknameAvailable, setIsNicknameAvailable] = useState(null);
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [pieces, setPieces] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -74,7 +80,7 @@ const Home = () => {
   useEffect(() => {
     const checkNickname = async () => {
       const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("accessToken");
+      const token = localStorage.getItem("token");
 
       if (!userId || !token) {
         navigate("/login");
@@ -83,9 +89,9 @@ const Home = () => {
 
       try {
         const response = await axios.get(`https://api.puzzlelog.me/users?userId=${userId}`, {
+          // const response = await axios.get(`http://localhost:8080/users?userId=${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-
         if (response.data?.success) {
           const userData = response.data?.data?.users?.[0] || {};
           if (!userData.nickname) {
@@ -113,9 +119,7 @@ const Home = () => {
         const response = await fetch(
           `https://api.puzzlelog.me/pieces?userId=${storedUserId}&deleted=false&page=0&size=100`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
         if (!response.ok) {
@@ -123,16 +127,16 @@ const Home = () => {
         }
         const data = await response.json();
         console.log("🔍 fetchPieces 응답 (MongoDB 데이터):", data);
-
         if (data.success && data.data.pieces && Array.isArray(data.data.pieces)) {
-          const filteredPieces = data.data.pieces.map((piece) => ({
+          const filteredPieces = data.data.pieces.map((piece, index) => ({
             id: piece.id,
             type: piece.type,
             content: piece.content || "",
             mediaId: piece.mediaId || null,
-            size: 224, // PieceBox와 동일한 크기 (w-56 = 224px)
+            size: 224,
             tags: piece.tags || [],
             createdAt: piece.createdAt || "",
+            angleOffset: Math.random() * 360, // 랜덤 초기 각도 (0~360도)
           }));
           setPieces(filteredPieces);
           console.log("🔍 필터링된 조각:", filteredPieces);
@@ -164,7 +168,9 @@ const Home = () => {
 
     setIsCheckingNickname(true);
     try {
-      const response = await axios.get(`https://api.puzzlelog.me/users/check?type=nickname&value=${nickname}`);
+      const response = await axios.get(
+        `https://api.puzzlelog.me/users/check?type=nickname&value=${nickname}`
+      );
       if (response.data.success) {
         setNicknameMessage("사용 가능한 닉네임입니다.");
         setIsNicknameAvailable(true);
@@ -206,16 +212,15 @@ const Home = () => {
     }
 
     const data = {
-      userId: userId,
+      userId,
       email: `${userId}@example.com`,
-      nickname: nickname,
+      nickname,
       birthDate: "2000-01-01",
       gender: "MALE",
     };
 
     const formData = new FormData();
     formData.append("data", new Blob([JSON.stringify(data)], { type: "application/json" }));
-
     if (profileImg) {
       formData.append("file", profileImg);
     }
@@ -223,15 +228,11 @@ const Home = () => {
     try {
       const response = await fetch(`https://api.puzzlelog.me/users/${userId}`, {
         method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-
       const result = await response.json();
       console.log("🔍 PATCH 응답:", result);
-
       if (result.success) {
         alert("닉네임 및 프로필 설정 완료!");
         setShowNicknamePopup(false);
@@ -244,19 +245,13 @@ const Home = () => {
     }
   };
 
-  const handleCircleClick = () => {
-    setIsExpanded((prev) => !prev);
-    console.log("🔍 isExpanded 상태:", !isExpanded);
-  };
-
-  const handleAudioPlay = (pieceId, mediaId) => {
+  const handleAudioPlay = (pieceId) => {
     Object.keys(audioRefs.current).forEach((id) => {
       if (id !== pieceId.toString()) {
         audioRefs.current[id].pause();
         audioRefs.current[id].currentTime = 0;
       }
     });
-
     const audio = audioRefs.current[pieceId];
     if (audio.paused) {
       audio.play();
@@ -266,137 +261,92 @@ const Home = () => {
     }
   };
 
-  if (loading) return <p className="text-center text-gray-500">로딩 중...</p>;
-  if (error) return <p className="text-center text-red-500">오류 발생: {error}</p>;
+  if (loading) return <p className="text-center text-white">로딩 중...</p>;
 
   return (
     <>
       <style>{auroraStyle}</style>
-      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
-        {/* 헤더 추가 */}
+      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
         <Header />
+        <div className="relative z-10 flex items-center justify-center w-full h-full text-white">
+          {/* PuzzleLog 원 */}
+          <div
+            className="w-84 h-84 bg-gradient-to-r rounded-full shadow-2xl shadow-indigo-500/50 flex items-center justify-center text-xl font-semibold z-10"
+            style={{
+              width: "22rem",
+              height: "22rem",
+              animation: "pulseGlow 3s infinite",
+              zIndex: 50,
+            }}
+          >
+            <span className="text-6xl font-bold animate-pulse mb-4">PuzzleLog</span>
+          </div>
 
-        {/* 중앙 콘텐츠 */}
-        {!showNicknamePopup && (
-          <div className="relative z-10 flex items-center justify-center w-full h-full text-white">
-            {/* 퍼지는 퍼즐 조각들 */}
-            {Array.isArray(pieces) && pieces.length > 0 ? (
-              pieces.map((piece) => (
+          {/* 조각들이 랜덤 각도에서 시작해 원 주변을 돌도록 설정 */}
+          {pieces
+            .filter((piece) => piece.type === "IMAGE")
+            .map((piece, index) => (
+              <div
+                key={piece.id}
+                className="absolute transition-all duration-700 z-20"
+                style={{
+                  width: "224px",
+                  height: "320px",
+                  animation: `orbit ${6 + index * 1.5}s infinite linear`,
+                  transformOrigin: "center center",
+                  transform: `rotate(${piece.angleOffset}deg) translateX(20rem) rotate(-${piece.angleOffset}deg)`, // 랜덤 초기 각도 적용
+                  filter: "drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.3))",
+                  zIndex: 20,
+                }}
+              >
                 <div
-                  key={piece.id}
-                  className="absolute transition-all duration-700 z-20"
+                  className="puzzle-mask flex flex-col items-center justify-between w-full h-full"
                   style={{
-                    width: "224px", // PieceBox와 동일한 크기 (w-56 = 224px)
-                    height: "320px", // PieceBox와 동일한 크기 (h-80 = 320px)
-                    transform: isExpanded
-                      ? `translate(${Math.random() * 800 - 400}px, ${Math.random() * 800 - 400}px)`
-                      : `translate(0,0)`, // Increase the random range to 800px (adjust as needed)
-                    opacity: isExpanded ? 1 : 0,
-                    filter: "drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.3))",
-                    zIndex: 20,
+                    animation: "pulseGlow2 3s infinite",
+                    background: "rgba(255, 255, 255, 0.3)",
                   }}
                 >
-                  <div
-                    className="puzzle-mask flex flex-col items-center justify-between w-full h-full"
-                    style={{
-                      animation: "pulseGlow2 3s infinite",
-                      background: "rgba(255, 255, 255, 0.3)",
-                    }}
-                  >
-                    <h3 className="font-semibold text-center text-base leading-none m-0 mb-2">{piece.type}</h3>
-
-                    <div className="flex items-center justify-center w-full h-full">
-                      {piece.type === "TEXT" && (
-                        <p className="text-gray-600 text-base text-center overflow-hidden w-full h-20 flex items-center justify-center line-clamp-3 bg-transparent">
-                          {piece.content}
-                        </p>
-                      )}
-
-                      {piece.type === "IMAGE" && piece.mediaId && (
-                        <img
-                          src={piece.mediaId}
-                          alt="조각 이미지"
-                          className="w-full h-full object-contain bg-transparent"
-                        />
-                      )}
-
-                      {piece.type === "VIDEO" && piece.mediaId && (
-                        <video controls className="w-full h-full object-cover bg-transparent">
-                          <source src={piece.mediaId} type="video/mp4" />
-                          브라우저가 비디오 태그를 지원하지 않습니다.
-                        </video>
-                      )}
-
-                      {piece.type === "AUDIO" && piece.mediaId && (
-                        <>
-                          <audio
-                            ref={(el) => (audioRefs.current[piece.id] = el)}
-                            src={piece.mediaId}
-                            className="hidden"
-                          />
-                          <button
-                            onClick={() => handleAudioPlay(piece.id, piece.mediaId)}
-                            className="w-full h-full flex items-center justify-center bg-gray-200 rounded-full"
-                          >
-                            <svg className="w-12 h-12 text-gray-600" xmlns="https://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                          </button>
-                        </>
-                      )}
-                    </div>
-                    {/* 태그와 생성 날짜 표시 */}
-                    <div className="mt-auto w-full flex flex-col items-center gap-1">
-                      {piece.tags && piece.tags.length > 0 && (
-                        <p className="text-sm text-blue-500 text-center line-clamp-1 leading-none m-0">
-                          태그: {piece.tags.join(", ")}
-                        </p>
-                      )}
-                      <p className="text-xs text-gray-400 text-center leading-none m-0">
-                        {new Date(piece.createdAt).toLocaleDateString()}
+                  <h3 className="font-semibold text-center text-base text-white leading-none m-0 mb-2">
+                    {piece.type}
+                  </h3>
+                  <div className="flex items-center justify-center w-full h-full">
+                    {piece.mediaId && (
+                      <img
+                        src={piece.mediaId}
+                        alt="조각 이미지"
+                        className="w-full h-full object-contain bg-transparent"
+                      />
+                    )}
+                  </div>
+                  <div className="mt-auto w-full flex flex-col items-center gap-1">
+                    {piece.tags && piece.tags.length > 0 && (
+                      <p className="text-sm text-blue-500 text-center line-clamp-1 leading-none m-0">
+                        태그: {piece.tags.join(", ")}
                       </p>
-                    </div>
+                    )}
+                    <p className="text-xs text-white text-center leading-none m-0">
+                      {new Date(piece.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
                 </div>
-              ))
-            ) : (
-              <p className="text-white text-base">조각이 없습니다.</p>
-            )}
+              </div>
+            ))}
+        </div>
 
-            {/* 중앙 원 */}
-            <div
-              className="w-84 h-84 bg-gradient-to-r rounded-full shadow-2xl shadow-indigo-500/50 flex items-center justify-center text-xl font-semibold cursor-pointer z-10"
-              style={{
-                width: "22rem",
-                height: "22rem",
-                animation: "pulseGlow 3s infinite",
-                zIndex: 50,
-              }}
-              onClick={handleCircleClick}
-            >
-              <span className="text-6xl font-bold animate-pulse mb-4">PuzzleLog</span>
-            </div>
-          </div>
-        )}
-
+        {/* 닉네임 설정 팝업 */}
         {showNicknamePopup && (
-          <div className="relative z-10 flex flex-row items-center justify-center w-full h-full text-black">
+          <div className="absolute inset-0 z-50 flex items-center justify-center text-black">
             <div
-              className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center font-semibold"
+              className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-col items-center justify-center font-semibold"
               style={{
                 width: "24rem",
                 height: "24rem",
                 animation: "pulseGlow2 3s infinite",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
                 background: "rgba(255, 255, 255, 0.3)",
               }}
             >
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "10px" }}>
-                <h2 style={{ marginBottom: "20px", fontSize: "24px" }}>닉네임 설정</h2>
+                <h2 style={{ marginBottom: "20px", fontSize: "24px", color: "white" }}>닉네임 설정</h2>
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <input
                     type="text"
@@ -409,21 +359,32 @@ const Home = () => {
                       border: "1px solid #ccc",
                       borderRadius: "4px",
                       flex: 1,
+                      color: "white",
+                      background: "transparent",
+                      placeholderColor: "white",
                     }}
                   />
                   <button
                     onClick={checkNicknameAvailability}
                     disabled={isCheckingNickname}
-                    className="hover:bg-white text-base px-4 py-2 cusor-pointer mt-2 w-full text-black rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105"
+                    className="hover:bg-white text-base px-4 py-2 cursor-pointer mt-2 w-full text-white rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105"
                   >
                     중복 확인
                   </button>
                 </div>
-                {nicknameMessage && <p style={{ color: isNicknameAvailable ? "green" : "red" }}>{nicknameMessage}</p>}
-                <input type="file" accept="image/*" onChange={handleFileChange} style={{ marginTop: "10px", cursor: "pointer", padding: "5px", fontSize: "16px", marginLeft: "30px" }} />
+                {nicknameMessage && (
+                  <p style={{ color: isNicknameAvailable ? "green" : "red" }}>{nicknameMessage}</p>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  style={{ marginTop: "10px", cursor: "pointer", padding: "5px", fontSize: "16px", marginLeft: "30px", color: "white" }}
+                />
                 <button
                   onClick={handleNicknameSubmit}
-                  className="mt-12 px-6 py-2 border rounded-lg text-base text-white transition hover:border-transparent hover:scale-105 bg-[#6A0DAD] hover:bg-[#7A3C98]" style={{ backgroundColor: "rgba(116, 48, 183, 0.6)" }}
+                  className="mt-12 px-6 py-2 border rounded-lg text-base text-white transition hover:border-transparent hover:scale-105 bg-[#6A0DAD] hover:bg-[#7A3C98]"
+                  style={{ backgroundColor: "rgba(116, 48, 183, 0.6)" }}
                   disabled={!isNicknameChecked || !isNicknameAvailable}
                 >
                   설정 완료

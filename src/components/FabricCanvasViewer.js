@@ -1,232 +1,292 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Canvas, Image, Textbox, Path, Group } from "fabric";
-import axios from "axios";
+import React, { useEffect, useRef } from "react";
+import { Canvas, Image, Textbox as ImportedTextbox, Path as ImportedPath } from "fabric";
 
-const FabricCanvasViewer = ({ diaryId }) => {
-    const canvasRef = useRef(null);
-    const fabricCanvas = useRef(null);
-    const [diaryData, setDiaryData] = useState(null);
-    const [backgroundURL, setBackgroundURL] = useState(null);
+const FabricCanvasViewer = ({ diary, debugId }) => {
+  const canvasRef = useRef(null);
 
-    // 1️⃣ diary 상세정보 가져오기
-    useEffect(() => {
-        const fetchDiaryDetails = async () => {
-            try {
-                const res = await axios.get(`https://api.puzzlelog.me/diaries/${diaryId}`, {
-                    withCredentials: true,
-                });
+  useEffect(() => {
+    console.log(`🐾 [${debugId}] useEffect 진입`);
 
-                console.log("📄 Diary 상세 데이터:", res.data);
+    const canvas = new Canvas(canvasRef.current, {
+      width: 800,
+      height: 800,
+      selection: false,
+      backgroundColor: diary.themeColor || "#f9ecdd",
+    });
 
-                const diary = res.data.data;
-                if (!diary.elements || diary.elements.length === 0) {
-                    console.warn("⚠️ elements 비어있는 상세 일기 발견! diaryId:", diaryId);
-                }
+    const imgElement = new window.Image();
+    imgElement.crossOrigin = "anonymous";
 
-                setDiaryData(diary);
-            } catch (err) {
-                console.error("Diary 상세 불러오기 실패:", err);
-            }
-        };
-        fetchDiaryDetails();
-    }, [diaryId]);
+    imgElement.onload = () => {
+      const bgImage = new Image(imgElement, {
+        left: 0,
+        top: 0,
+        scaleX: 800 / imgElement.width,
+        scaleY: 800 / imgElement.height,
+        selectable: false,
+        evented: false,
+        originX: "left",
+        originY: "top",
+      });
 
-    // 2️⃣ backgroundContentId 이미지 URL 가져오기
-    useEffect(() => {
+      bgImage.isBackground = true; // 배경 플래그 지정
+      canvas.add(bgImage);
 
-        if (diaryData?.backgroundContentId && diaryData.backgroundContentId !== "default-background-id") {
-            const fetchBackground = async () => {
-                try {
-                    const res = await axios.get(`https://api.puzzlelog.me/api/admin/stickers/${diaryData.backgroundContentId}`, {
-                        withCredentials: true,
-                    });
-                    if (res.data.success) {
-                        setBackgroundURL(res.data.data.imageUrl);
-                    }
-                } catch (err) {
-                    console.warn("배경 이미지 URL 불러오기 실패:", err);
-                }
+      canvas.renderAll();
+      renderElements(canvas);
+    };
+
+    imgElement.onerror = (e) => {
+      console.warn("❌ 배경 이미지 로딩 실패:", diary.background?.mediaId, e);
+    };
+
+    imgElement.src = diary.background?.mediaId;
+
+    console.log(`🎨 [${debugId}] fabric.Canvas 생성됨`);
+    console.log(`🎨 [${debugId}] canvas.backgroundColor:`, canvas.backgroundColor);
+    console.log(`🧩 [${debugId}] diary.elements.length:`, diary.elements?.length);
+
+    diary.elements?.forEach((el, i) => {
+      console.log(`🧩 [${debugId}] Element[${i}]`);
+      console.log(" - type:", el.elementType);
+      console.log(" - content:", el.content);
+      console.log(" - date:", el.date);
+      console.log(" - drawingData:", el.drawingData);
+    });
+
+    // fabric의 Textbox와 Path 클래스를 가져옵니다.
+    const fabricTextbox = window.fabric?.Textbox || ImportedTextbox;
+    const fabricPath = window.fabric?.Path || ImportedPath;
+
+    const renderElements = async () => {
+      const renderImages = async (elements) => {
+        for (const el of elements) {
+          const { content, position = [0, 0], scale = 1, rotation = 0 } = el;
+          const [x, y] = position;
+          await new Promise((resolve) => {
+            const imgElement = new window.Image();
+            imgElement.onload = () => {
+              const fabricImg = new Image(imgElement, {
+                left: x,
+                top: y,
+                scaleX: scale,
+                scaleY: scale,
+                angle: rotation,
+                selectable: false,
+                evented: false,
+                originX: "left",
+                originY: "top",
+              });
+              fabricImg.isSticker = false;
+              fabricImg.isBackground = false;
+              canvas.add(fabricImg);
+              resolve();
             };
-            fetchBackground();
+            imgElement.onerror = () => resolve();
+            imgElement.src = content?.mediaId;
+          });
         }
-    }, [diaryData]);
+      };
 
-    // 3️⃣ Canvas 렌더링
-    useEffect(() => {
-        if (!diaryData) return;
-
-        console.log("📥 렌더링할 elements:", diaryData.elements);
-        console.log("🟢 backgroundContentId:", diaryData.backgroundContentId);
-        console.log("🟢 backgroundURL:", backgroundURL);
-
-        (diaryData.elements || []).forEach((element, idx) => {
-            console.log(`📌 element[${idx}] 확인:`, element);
-        });
-
-
-        if (fabricCanvas.current) fabricCanvas.current.dispose();
-
-        const canvas = new Canvas(canvasRef.current, { selection: false });
-        fabricCanvas.current = canvas;
-
-
-
-        // 배경 이미지 적용
-        if (backgroundURL) {
-            Image.fromURL(backgroundURL, (img) => {
-                img.set({ selectable: false, evented: false });
-                canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas));
-            });
+      const renderStickers = async (elements) => {
+        for (const el of elements) {
+          const { content, position = [0, 0], scale = 1, rotation = 0 } = el;
+          const [x, y] = position;
+          await new Promise((resolve) => {
+            const imgElement = new window.Image();
+            imgElement.onload = () => {
+              const fabricImg = new Image(imgElement, {
+                left: x,
+                top: y,
+                scaleX: scale,
+                scaleY: scale,
+                angle: rotation,
+                selectable: false,
+                evented: false,
+                originX: "left",
+                originY: "top",
+              });
+              fabricImg.isSticker = true;
+              canvas.add(fabricImg);
+              resolve();
+            };
+            imgElement.onerror = () => resolve();
+            imgElement.src = content?.mediaId;
+          });
         }
+      };
 
-        // 요소 렌더링
-        (diaryData.elements || []).forEach((element) => {
-            switch (element.elementType) {
-                case 'STICKER':
-                case 'IMAGE':
-                    if (element.contentId && element.contentId.startsWith('http')) {
-                        Image.fromURL(element.contentId, (img) => {
-                            img.set({
-                                left: element.position[0],
-                                top: element.position[1],
-                                scaleX: element.scale,
-                                scaleY: element.scale,
-                                angle: element.rotation,
-                                selectable: false,
-                                evented: false,
-                            });
-                            canvas.add(img);
-                        }, { crossOrigin: 'anonymous' }); // crossOrigin 추가
-                    } else {
-                        console.warn("⚠️ 이미지 URL 잘못됨:", element.contentId);
-                    }
-                    break;
+      const renderDrawings = async (elements) => {
+        for (let i = 0; i < elements.length; i++) {
+          const el = elements[i];
+          const { drawingData, position = [0, 0], scale = 1, rotation = 0 } = el;
+          const [x, y] = position;
 
-                case 'TEXT':
-                    console.log(`🔤 TEXT 요소 확인:`, element);
+          if (!drawingData) continue;
 
-                    // 안전하게 기본값 설정
-                    const safeText = (typeof element.contentId === 'string' && element.contentId.trim() !== '')
-                        ? element.contentId.trim()
-                        : ' '; // 최소한 공백 문자 하나라도!
+          const fullSvg = `<svg xmlns="http://www.w3.org/2000/svg">${drawingData}</svg>`;
+          const parser = new DOMParser();
+          const svgDoc = parser.parseFromString(fullSvg, "image/svg+xml");
+          const pathNode = svgDoc.querySelector("path");
+          if (!pathNode) continue;
 
-                    if (safeText === ' ') {
-                        console.warn("⚠️ TEXT 요소 contentId가 null, 빈 문자열, 또는 비정상입니다:", element);
-                    }
+          const d = pathNode.getAttribute("d");
+          if (!d) continue;
 
-                    const text = new Textbox(safeText, {
-                        left: element.position[0],
-                        top: element.position[1],
-                        fontSize: 24,
-                        fill: 'black',
-                        scaleX: element.scale,
-                        scaleY: element.scale,
-                        angle: element.rotation,
-                        selectable: false,
-                        evented: false,
-                    });
+          let stroke = pathNode.getAttribute("stroke");
+          const styleAttr = pathNode.getAttribute("style");
 
-                    canvas.add(text);
-                    break;
+          console.log(`[${i}] styleAttr:`, styleAttr);
+          console.log(`[${i}] 초기 stroke:`, stroke);
 
+          if (!stroke && styleAttr) {
+            const match = styleAttr.match(/stroke:\s*(#[0-9a-fA-F]{3,6}|rgb\s*\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\))/);
+            if (match) stroke = match[1];
+          }
+          if (!stroke) stroke = "#000000";
 
+          let strokeWidth = parseFloat(pathNode.getAttribute("stroke-width"));
+          if (isNaN(strokeWidth) && styleAttr) {
+            const widthMatch = styleAttr.match(/stroke-width:\s*(\d+(?:\.\d+)?)/);
+            if (widthMatch) strokeWidth = parseFloat(widthMatch[1]);
+          }
+          if (isNaN(strokeWidth)) strokeWidth = 2;
 
+          console.log(`🎨 [${i}] stroke(final):`, stroke);
+          console.log(`🎨 [${i}] strokeWidth(final):`, strokeWidth);
 
+          const drawing = new fabricPath(d, {
+            left: x,
+            top: y,
+            scaleX: scale,
+            scaleY: scale,
+            angle: rotation,
+            stroke,
+            strokeWidth,
+            fill: null,
+            selectable: false,
+            evented: false,
+            originX: "left",
+            originY: "top",
+          });
 
+          canvas.add(drawing);
+        }
+      };
 
-                case 'DRAWING':
-                    if (element.drawingData) {
-                        const svg = decodeURIComponent(element.drawingData);
+      const renderTexts = async (elements) => {
+        for (const el of elements) {
+          const { elementType, content, date, position = [0, 0], scale = 1, rotation = 0, size = [] } = el;
+          const [x, y] = position;
+          const [width = 150, height = 40] = size;
+          // 수정: content?.text가 undefined이면 빈 문자열을 사용
+          const textStr = elementType === "DATE"
+            ? (date || content?.date || "날짜 없음")
+            : (content?.text || "");
+          // 텍스트 요소가 있을 때만 split 호출
+          // 예: 여기서 내부적으로 fabricTextbox 생성 시 문제가 없도록 함
+          const text = new fabricTextbox(textStr, {
+            left: x,
+            top: y,
+            width: width,
+            fontSize: (height / 2.5) || 24,
+            angle: rotation,
+            fill: "#000",
+            selectable: false,
+            evented: false,
+            originX: "left",
+            originY: "top",
+          });
+          canvas.add(text);
+        }
+      };
 
-                        // 여기서 svg를 DOMParser로 파싱
-                        const parser = new DOMParser();
-                        const svgDoc = parser.parseFromString(svg, "image/svg+xml");
-                        console.log("svgDoc:", svgDoc);
+      const imageElements = diary.elements.filter(el => el.elementType === "IMAGE");
+      const stickerElements = diary.elements.filter(el => el.elementType === "STICKER");
+      const drawingElements = diary.elements.filter(el => el.elementType === "DRAWING");
+      const textElements = diary.elements.filter(el => el.elementType === "TEXT" || el.elementType === "DATE");
 
-                        const paths = svgDoc.querySelectorAll("path");
-                        console.log("Found paths:", paths);
+      await renderImages(imageElements);
+      await renderStickers(stickerElements);
+      await renderDrawings(drawingElements);
+      await renderTexts(textElements);
 
-                        paths.forEach((path, index) => {
-                            const d = path.getAttribute('d');
-                            const fill = path.getAttribute('fill') || '#000000';
-                            const stroke = path.getAttribute('stroke') || '#000000';
-                            const strokeWidth = path.getAttribute('stroke-width') || 1;
+      const allObjects = canvas.getObjects();
+      const drawings = allObjects.filter(o => o.type === "path");
+      const stickers = allObjects.filter(o => o.type === "image" && o.isSticker);
+      const images = allObjects.filter(o => o.type === "image" && !o.isSticker && !o.isBackground);
+      const texts = allObjects.filter(o => o.type === "textbox");
+      const background = allObjects.find(o => o.type === "image" && o.isBackground);
 
-                            console.log(`path[${index}] d attribute:`, d);
+      const newOrder = [
+        ...(background ? [background] : []),
+        ...images,
+        ...stickers,
+        ...texts,
+        ...drawings,
+      ];
 
-                            if (d && d.trim() !== '') {
-                                try {
-                                    const fabricPath = new Path(d, {
-                                        left: element.position[0],
-                                        top: element.position[1],
-                                        scaleX: element.scale,
-                                        scaleY: element.scale,
-                                        angle: element.rotation,
-                                        fill: fill,
-                                        stroke: stroke,
-                                        strokeWidth: parseFloat(strokeWidth),
-                                        strokeLineCap: "round",
-                                        selectable: false,
-                                        evented: false,
-                                    });
-                                    canvas.add(fabricPath);
-                                    console.log(`✅ Path ${index} 추가됨:`, fabricPath);
-                                } catch (error) {
-                                    console.warn(`❌ Path 파싱 에러 (index ${index}):`, error, path);
-                                }
-                            } else {
-                                console.warn(`❌ Path d 속성 비어있음 (index ${index}):`, path);
-                            }
-                        });
+      canvas._objects = newOrder;
+      canvas.renderAll();
+      console.log("✅ canvas 최종 객체 순서:", canvas.getObjects().map(o => o.type || o.constructor.name));
+    };
 
-                        canvas.renderAll();
-                    }
-                    break;
+    renderElements();
 
+    return () => {
+      canvas.dispose();
+      console.log(`🧹 [${debugId}] 캔버스 정리 완료`);
+    };
+  }, [diary]);
 
+  const mediaElements = React.useMemo(() => {
+    return diary.elements
+      .filter(el => ["AUDIO", "VIDEO"].includes(el.elementType))
+      .map((el, i) => {
+        const [x, y] = el.position || [0, 0];
+        const scale = el.scale || 1;
+        const rotation = el.rotation || 0;
 
+        return (
+          <div
+            key={`media-${i}`}
+            style={{
+              position: "absolute",
+              top: `${y}px`,
+              left: `${x}px`,
+              width: `${300 * scale}px`,
+              height: `${200 * scale}px`,
+              transform: `rotate(${rotation}deg)`,
+              zIndex: 30,
+              pointerEvents: "auto",
+            }}
+          >
+            {el.elementType === "AUDIO" ? (
+              <audio src={el.content.mediaId} controls style={{ width: "100%" }} />
+            ) : (
+              <video src={el.content.mediaId} controls style={{ width: "100%", height: "100%" }} />
+            )}
+          </div>
+        );
+      });
+  }, [diary.elements]);
 
-                case 'DATE':
-                    const dateText = new Textbox(element.date, {
-                        left: element.position[0],
-                        top: element.position[1],
-                        fontSize: 20,
-                        fill: 'gray',
-                        selectable: false,
-                        evented: false,
-                    });
-                    canvas.add(dateText);
-                    break;
-                case 'VIDEO':
-                case 'AUDIO':
-                    const mediaElement = document.createElement(
-                        element.elementType === 'VIDEO' ? 'video' : 'audio'
-                    );
-                    mediaElement.src = element.contentId;
-                    mediaElement.controls = true;
-                    mediaElement.style.position = 'absolute';
-                    mediaElement.style.left = `${element.position[0]}px`;
-                    mediaElement.style.top = `${element.position[1]}px`;
-                    mediaElement.style.transform = `scale(${element.scale}) rotate(${element.rotation}deg)`;
-                    mediaElement.style.pointerEvents = 'none';
-                    mediaElement.style.zIndex = 50;
-                    canvas.wrapperEl.appendChild(mediaElement);
-                    break;
-                default:
-                    console.warn('알 수 없는 요소 타입:', element.elementType);
-            }
-        });
-
-        return () => {
-            canvas.dispose();
-        };
-    }, [diaryData, backgroundURL]);
-
-    return (
-        <div style={{ position: 'relative' }}>
-            <canvas ref={canvasRef} width={800} height={600} />
-        </div>
-    );
+  return (
+    <div className="relative w-[800px] h-[800px]">
+      <canvas
+        ref={canvasRef}
+        width={800}
+        height={800}
+        style={{
+          backgroundColor: "transparent",
+          border: "2px dashed red",
+          position: "absolute",
+          zIndex: 1,
+        }}
+      />
+      {mediaElements}
+    </div>
+  );
 };
 
 export default FabricCanvasViewer;

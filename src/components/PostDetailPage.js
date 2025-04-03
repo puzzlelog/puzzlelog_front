@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "./Header";
+import FabricCanvasViewer from './FabricCanvasViewer';
 
 const auroraStyle = `
 @keyframes aurora {
@@ -51,13 +52,34 @@ const PostDetailPage = () => {
             // 게시글 불러오기
             axios.get(`https://api.puzzlelog.me/posts/${id}`)
                 .then(response => {
-                    setPost(response.data.data);
+                    const postData = response.data.data;
+                    console.log("불러온 게시글 데이터:", postData);  // 게시글 데이터 확인
+                    setPost(postData);
+    
+                    // 게시글의 diaryId로 일기 데이터 불러오기
+                    if (postData.diaryId) {
+                        console.log("일기 ID:", postData.diaryId);  // 일기 ID 확인
+                        axios.get(`https://api.puzzlelog.me/diaries/${postData.diaryId}`)
+                            .then(res => {
+                                const diaryData = res.data.data;
+                                console.log("불러온 일기 데이터:", diaryData);  // 일기 데이터 확인
+                                setPost(prevPost => ({
+                                    ...prevPost,
+                                    diary: diaryData // post 객체에 diary 추가
+                                }));
+                            })
+                            .catch(error => {
+                                console.error("일기 데이터를 불러오는 중 오류 발생:", error);
+                            });
+                    } else {
+                        console.log("일기 ID가 없습니다.");
+                    }
                 })
                 .catch(error => {
                     console.error("게시글을 불러오는 중 오류 발생 : ", error);
                 });
-
-            // 댓글 불러오기 (게시글 로드 후)
+    
+            // 댓글 불러오기
             axios.get(`https://api.puzzlelog.me/posts/${id}/comments`)
                 .then(response => {
                     setComments(response.data.data);
@@ -66,7 +88,7 @@ const PostDetailPage = () => {
                     console.error("댓글 불러오는 중 오류 발생 : ", error);
                 });
         }
-    }, [id]);
+    }, [id]);     
 
     const toggleLike = (postId) => {
         axios.patch(`https://api.puzzlelog.me/posts/${postId}/like?userId=${userId}`)
@@ -96,7 +118,9 @@ const PostDetailPage = () => {
         axios.post(`https://api.puzzlelog.me/posts/${id}/comments`, commentData)
             .then(response => {
                 const newComment = response.data.data;
-                setComments(prevComments => [newComment, ...prevComments]); // 새로운 댓글 추가
+                setComments((prevComments) => (
+                    Array.isArray(prevComments) ? [newComment, ...prevComments] : [newComment]
+                ));
                 setCommentContent(""); // 입력 필드 초기화
             })
             .catch(error => {
@@ -104,11 +128,16 @@ const PostDetailPage = () => {
             });
     };
 
+    // 댓글 삭제 함수
     const handleDeleteComment = (commentId) => {
         if (window.confirm("정말 삭제하시겠습니까?")) {
             axios.delete(`https://api.puzzlelog.me/posts/${id}/comments/${commentId}`)
                 .then(() => {
-                    setComments(prevComments => prevComments.filter(comment => comment.id !== commentId)); // 댓글 삭제 후 업데이트
+                    setComments((prevComments) => (
+                        Array.isArray(prevComments) 
+                            ? prevComments.filter(comment => comment.id !== commentId)
+                            : []
+                    ));
                 })
                 .catch(error => {
                     console.error("댓글 삭제 중 오류 발생 : ", error);
@@ -146,7 +175,7 @@ const PostDetailPage = () => {
                     }}
                 >
                     <div className="flex justify-between items-center">
-                        <h2 className="text-3xl font-bold">{post.title}</h2>
+                        <h2 className="text-3xl font-bold mb-4">{post.title}</h2>
                         {post.userId === userId && (
                             <img
                                 className="w-6 h-6 cursor-pointer close"
@@ -157,8 +186,13 @@ const PostDetailPage = () => {
                         )}
                     </div>
 
-                    <p className="text-gray-700 mt-12">{post.content}</p>
-                    <div className="flex items-center justify-between mt-12">
+                    <FabricCanvasViewer
+                        diary={post?.diary || { elements: [] }}  // diary가 없으면 빈 배열로 전달
+                        debugId={post?.diaryId}
+                    />
+
+
+                    <div className="flex items-center justify-between mt-8">
                         <button
                             className="text-xl focus:outline-none"
                             onClick={() => toggleLike(post.id)}

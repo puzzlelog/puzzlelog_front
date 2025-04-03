@@ -181,7 +181,7 @@ const CollaborativeDiaryInvite = () => {
       <style>{auroraStyle}</style>
 
       {/* 배경: CommunityPage와 동일한 그라디언트 */}
-      <div className="relative w-full min-h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300 font-cafe24">
+      <div className="relative w-full min-h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764] font-cafe24">
         <Header />
 
         {/* 메인 컨테이너 */}
@@ -194,7 +194,7 @@ const CollaborativeDiaryInvite = () => {
               background: "rgba(255, 255, 255, 0.1)",
             }}
           >
-            <h2 className="text-3xl font-bold text-[#5A3E2B] mb-6 text-center">
+            <h2 className="text-3xl font-bold text-[#5A3E2B] mb-6 text-center text-white">
                협업 일기 생성 및 초대
             </h2>
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
@@ -242,11 +242,21 @@ const CollaborativeDiaryInvite = () => {
 
               {/* 협업 요청 버튼 */}
               <button
-                onClick={handleCreateDiaryAndInvite}
-                className="px-6 py-2 mt-6 hover:bg-white border border-white bg-white/20 text-gray rounded-md text-lg hover:text-gray transition-all duration-300 hover:border-transparent hover:scale-105"
-              >
-                협업 요청 보내기
-              </button>
+  onClick={handleCreateDiaryAndInvite}
+  className="
+    px-6 py-2 mt-6 
+    bg-white/20 text-white  /* 텍스트를 흰색으로 */
+    border border-white 
+    rounded-md text-lg 
+    hover:bg-white hover:text-gray-900 /* hover 시 배경은 흰색, 텍스트는 진한 회색 */
+    transition-all duration-300 
+    hover:border-transparent 
+    hover:scale-105
+  "
+>
+  협업 요청 보내기
+</button>
+
             </div>
           </div>
         </main>

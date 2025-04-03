@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Header from "../components/AdminHeader";
 
+
+
 const auroraStyle = `
 @keyframes aurora {
   0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
@@ -40,7 +42,8 @@ const auroraStyle = `
 
 const AdminEditAsset = () => {
   const navigate = useNavigate();
-  const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  // JWT 토큰을 관리하기 위한 상태
+  const [token, setToken] = useState("");
   const [assetName, setAssetName] = useState("");
   const [assetType, setAssetType] = useState("emoji");
   const [assetImage, setAssetImage] = useState(null);
@@ -53,39 +56,64 @@ const AdminEditAsset = () => {
   const itemsPerPage = 18;
 
   const API_URL = "https://api.puzzlelog.me/assets";
+  // const API_URL = "http://localhost:8080/assets";
+  const [lockedType, setLockedType] = useState(""); // 잠금된 타입을 추적
 
+
+  // 컴포넌트 마운트 시 JWT 토큰과 역할을 확인합니다.
   useEffect(() => {
-    const storedUserId = localStorage.getItem("userId");
-    setUserId(storedUserId);
-
-    if (storedUserId !== "admin") {
+    const accessToken = localStorage.getItem("accessToken");
+    const role = localStorage.getItem("role");
+    if (!accessToken || role !== "ADMIN") {
       alert("관리자만 접근할 수 있습니다.");
       navigate("/home");
+      return;
     }
-  }, []);
+    setToken(accessToken);
+  }, [navigate]);
 
+  // 토큰이 존재할 때 에셋 목록을 불러옵니다.
   useEffect(() => {
-    if (userId === "admin") {
+    if (token) {
       fetchAssets();
     }
-  }, [userId]);
+  }, [token]);
 
+  // 에셋 목록 필터링 (카테고리별)
   useEffect(() => {
     filterAssets(selectedType);
   }, [assets, selectedType]);
 
+
+
+  // 에셋 목록 불러오기 (JWT를 Authorization 헤더에 포함)
   const fetchAssets = async () => {
+    const userId = localStorage.getItem("userId"); // 추가
+
     try {
       const response = await axios.get(API_URL, {
-        headers: { userId: userId || "admin" },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          userId: userId, // 추가
+        },
         params: { timestamp: new Date().getTime() },
       });
       const filteredData = response.data.data.filter(asset => asset.type !== "AD");
       setAssets(filteredData);
     } catch (error) {
-      console.error("에셋 목록을 불러오는 중 오류가 발생했습니다.", error);
+      console.error("에셋 추가 중 오류가 발생했습니다.", error);
+      if (error.response) {
+        console.error("응답 상태코드:", error.response.status);
+        console.error("응답 데이터:", error.response.data);
+      } else if (error.request) {
+        console.error("요청은 됐지만 응답이 없습니다:", error.request);
+      } else {
+        console.error("요청 설정 중 오류:", error.message);
+      }
+      setErrorMessage("에셋 추가에 실패했습니다.");
     }
   };
+
 
   const filterAssets = (type) => {
     if (type === "ALL") {
@@ -96,20 +124,30 @@ const AdminEditAsset = () => {
     setCurrentPage(1);
   };
 
+  // 에셋 삭제 (JWT를 Authorization 헤더에 포함)
   const handleDeleteAsset = async (assetId) => {
+    const userId = localStorage.getItem("userId"); // 추가
+
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     try {
-      await axios.delete(`${API_URL}/${assetId}`, { headers: { userId: userId || "admin" } });
+      await axios.delete(`${API_URL}/${assetId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          userId: userId, // 추가
+        },
+      });
       fetchAssets();
     } catch (error) {
       console.error("에셋 삭제 중 오류가 발생했습니다.", error);
     }
   };
 
+
   const handleImageChange = (e) => {
     setAssetImage(e.target.files[0]);
   };
 
+  // 에셋 추가 (JWT를 Authorization 헤더에 포함)
   const handleAddAsset = async () => {
     if (!assetName || !assetImage) {
       setErrorMessage("에셋 이름과 이미지를 모두 입력해주세요.");
@@ -120,12 +158,16 @@ const AdminEditAsset = () => {
     formData.append("name", assetName);
     formData.append("type", assetType);
     formData.append("file", assetImage);
+    formData.append("tag", assetType); // 태그는 현재 타입과 동일하게 설정
+
+    const userId = localStorage.getItem("userId"); // userId 가져오기
 
     try {
       const response = await axios.post(API_URL, formData, {
         headers: {
-          userId: userId || "admin",
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
+          userId: userId, // userId를 헤더에 포함!
         },
       });
       if (response.data.success) {
@@ -146,14 +188,37 @@ const AdminEditAsset = () => {
     }
   };
 
+  // 페이지네이션 관련 계산
   const indexOfLastAsset = currentPage * itemsPerPage;
   const indexOfFirstAsset = indexOfLastAsset - itemsPerPage;
   const currentAssets = filteredAssets.slice(indexOfFirstAsset, indexOfLastAsset);
   const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
 
+  const toggleLockByType = async () => {
+    const userId = localStorage.getItem("userId");
+    try {
+      await axios.patch("http://localhost:8080/assets/lock-by-tag", {
+        tag: selectedType,      // 여기도 tag로! (type → tag로 수정)
+        locked: true,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          userId,
+        },
+      });
+      alert(`${selectedType} 카테고리가 잠금 처리되었습니다.`);
+      fetchAssets(); // 목록 갱신
+    } catch (error) {
+      console.error("카테고리 잠금 중 오류 발생:", error);
+      alert("카테고리 잠금 실패");
+    }
+  };
+
+
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
-      <Header /><style>{auroraStyle}</style>
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
+      <Header />
+      <style>{auroraStyle}</style>
       <main className="mt-28 w-full max-w-7xl flex justify-center flex-col mx-auto items-center">
         <h2 className="text-4xl font-semibold text-[#6B4F35] mb-6">Edit Asset</h2>
 
@@ -164,7 +229,7 @@ const AdminEditAsset = () => {
             onChange={(e) => setSelectedType(e.target.value)}
           >
             <option value="ALL">전체</option>
-            <option value="background">배경화면</option>
+            <option value="BACKGROUND">배경화면</option>
             <option value="emotion">감정일기이모티콘</option>
             <option value="dolls">인형</option>
             <option value="audio">오디오</option>
@@ -177,19 +242,29 @@ const AdminEditAsset = () => {
             <option value="tape">테이프</option>
             <option value="vintage">빈티지</option>
           </select>
-          <button
-            onClick={() => setIsPopupOpen(true)}
-            className="px-4 py-2 border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
-          >
-            에셋 추가
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsPopupOpen(true)}
+              className="px-4 py-2 border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
+            >
+              에셋 추가
+            </button>
+
+            <button
+              onClick={toggleLockByType}
+              className="px-4 py-2 border border-white bg-white/20 text-black rounded-md hover:bg-white"
+            >
+              선택한 카테고리 잠금
+            </button>
+          </div>
+
         </div>
 
         <div className="grid grid-cols-9 gap-4 w-full max-w-7xl">
           {currentAssets.map((asset) => (
             <div key={asset.id} className="p-4 w-50 bg-white rounded-lg shadow-lg text-center">
-              {asset.imageUrl ? (
-                <img src={asset.imageUrl} alt={asset.name} className="w-full h-24 object-contain" />
+              {asset.mediaId ? (
+                <img src={asset.mediaId} alt={asset.name} className="w-full h-24 object-contain" />
               ) : (
                 <div className="w-full h-24 flex items-center justify-center text-gray-500">
                   이미지가 없습니다
@@ -197,6 +272,9 @@ const AdminEditAsset = () => {
               )}
               <p className="mt-2 text-gray-700 font-medium">{asset.name}</p>
               <p className="text-gray-500 text-sm">{asset.type}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {asset.locked ? "🔒 잠금됨" : "🔓 사용 가능"}
+              </p>
               <button
                 onClick={() => handleDeleteAsset(asset.id)}
                 className="mt-2 px-3 py-1 bg-[#E76F51] text-white rounded-md hover:bg-[#D4A373] transition"
@@ -212,11 +290,10 @@ const AdminEditAsset = () => {
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={`mx-1 px-3 py-1 rounded-md ${
-                currentPage === i + 1
-                  ? 'bg-[#D4A373] text-white'
-                  : 'bg-[#EDE4D5] text-gray-700'
-              } hover:bg-[#F4A261] transition`}
+              className={`mx-1 px-3 py-1 rounded-md ${currentPage === i + 1
+                ? "bg-[#D4A373] text-white"
+                : "bg-[#EDE4D5] text-gray-700"
+                } hover:bg-[#F4A261] transition`}
             >
               {i + 1}
             </button>
@@ -240,7 +317,7 @@ const AdminEditAsset = () => {
                 value={assetType}
                 onChange={(e) => setAssetType(e.target.value)}
               >
-                <option value="background">배경화면</option>
+                <option value="BACKGROUND">배경화면</option>
                 <option value="emotion">감정일기이모티콘</option>
                 <option value="dolls">인형</option>
                 <option value="audio">오디오</option>
@@ -258,7 +335,8 @@ const AdminEditAsset = () => {
               <div className="flex justify-end gap-4">
                 <button
                   onClick={() => setIsPopupOpen(false)}
-                  className="px-6 py-2 bg-gray-400 text-white rounded-lg border hover:bg-gray-500 transition hover:border-transparent hover:scale-105" style={{ backgroundColor: "rgba(169, 169, 169, 0.6)" }}
+                  className="px-6 py-2 bg-gray-400 text-white rounded-lg border hover:bg-gray-500 transition hover:border-transparent hover:scale-105"
+                  style={{ backgroundColor: "rgba(169, 169, 169, 0.6)" }}
                 >
                   취소
                 </button>

@@ -57,76 +57,77 @@ const CommunityPage = () => {
     return (
         <>
             <style>{auroraStyle}</style>
-            <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+            <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
                 <Header />
 
                 <main className="mt-60 w-full max-w-7xl font-cafe24 mx-auto flex justify-center items-center">
-
                     {/* 두 div를 옆으로 배치, 가운데 정렬 */}
                     <div className="flex gap-12 w-full justify-center items-center">
                         {/* 첫 번째 div */}
-                        <div className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl transition-transform duration-300"
+                        <div
+                            className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl transition-transform duration-300"
                             style={{
                                 animation: "pulseGlow2 3s infinite",
                                 display: "flex",
-                                flexDirection: "column", // Flexbox의 방향을 column으로 변경
-                                justifyContent: "center", // 중앙 정렬
-                                alignItems: "center", // 중앙 정렬
-                                background: "rgba(255, 255, 255, 0.1)", 
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                background: "rgba(255, 255, 255, 0.1)",
                                 width: "110%",
-                                padding: "45px"
-                            }}>
+                                padding: "45px",
+                            }}
+                        >
                             <div className="flex flex-col gap-12 items-start justify-start w-full">
-                                <div className="text-4xl font-bold text-[#5A3E2B] mb-6 text-center">
+                                <div className="text-4xl font-bold text-white mb-6 text-center">
                                     함께 나누는 소중한 이야기
                                 </div>
-                                <div className="text-black text-left text-xl font-normal leading-[150%] w-full">
+                                <div className="text-white text-left text-xl font-normal leading-[150%] w-full">
                                     다른 사용자와 일기를 공유하고 소통하는 공간입니다.<br /> 함께 감정을 나누세요!
                                 </div>
                                 <div className="flex gap-4 items-start justify-start mt-20">
                                     <button
                                         onClick={handleCommunityClick}
-                                        className="px-6 py-2 hover:bg-white border border-white bg-white/20 text-gray rounded-md text-lg hover:text-gray transition-all duration-300 transition hover:border-transparent hover:scale-105"
+                                        className="px-6 py-2 border border-white bg-white/20 text-white rounded-md text-lg hover:bg-white hover:text-black transition-all duration-300 hover:border-transparent hover:scale-105"
                                     >
-                                            커뮤니티로 이동
+                                        커뮤니티로 이동
                                     </button>
                                 </div>
                             </div>
                         </div>
 
                         {/* 두 번째 div */}
-                        <div className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl transition-transform duration-300"
+                        <div
+                            className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl transition-transform duration-300"
                             style={{
                                 animation: "pulseGlow2 3s infinite",
                                 display: "flex",
-                                flexDirection: "column", // Flexbox의 방향을 column으로 변경
-                                justifyContent: "center", // 중앙 정렬
-                                alignItems: "center", // 중앙 정렬
-                                background: "rgba(255, 255, 255, 0.1)", 
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                background: "rgba(255, 255, 255, 0.1)",
                                 width: "110%",
-                                padding: "45px"
-                            }}>
+                                padding: "45px",
+                            }}
+                        >
                             <div className="flex flex-col gap-12 items-start justify-start w-full">
-                                <div className="text-4xl font-bold text-[#5A3E2B] mb-6 text-center">
+                                <div className="text-4xl font-bold text-white mb-6 text-center">
                                     당신의 이야기를 공유하세요
                                 </div>
-                                <div className="text-black text-left text-xl font-normal leading-[150%] w-full">
+                                <div className="text-white text-left text-xl font-normal leading-[150%] w-full">
                                     다른 사용자들과 함께 일기를 작성하고 소통하며<br /> 특별한 순간을 공유하세요.
                                 </div>
                                 <div className="flex gap-4 items-start justify-start mt-20">
                                     <button
                                         onClick={handleUploadClick}
-                                        className="px-6 py-2 hover:bg-white border border-white bg-white/20 text-gray rounded-md text-lg hover:text-gray transition-all duration-300 transition hover:border-transparent hover:scale-105"
+                                        className="px-6 py-2 border border-white bg-white/20 text-white rounded-md text-lg hover:bg-white hover:text-black transition-all duration-300 hover:border-transparent hover:scale-105"
                                     >
-                                            공유하기
+                                        공유하기
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </main>
-
             </div>
         </>
     );
