@@ -80,7 +80,7 @@ const Home = () => {
   useEffect(() => {
     const checkNickname = async () => {
       const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
 
       if (!userId || !token) {
         navigate("/login");
