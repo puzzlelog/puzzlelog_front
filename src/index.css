@@ -1,0 +1,52 @@
+@font-face {
+  font-family: "Cafe24Oneprettynight";
+  src: url("../public/fonts/Cafe24Oneprettynight-v2.0.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  html, body {
+    @apply bg-[#F7F3E5] min-h-screen;
+    height: 100%; /* 전체 높이를 보장 */
+    margin: 0;
+    padding: 0;
+  }
+}
+
+@font-face {
+  font-family: "Cafe24OhSquareAir";
+  src: url("../public/fonts/Cafe24OhsquareAir-v2.0.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: "Cafe24Oneprettynight", sans-serif;
+}
+
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.puzzle-mask {
+  width: 224px;
+  height: 320px;
+  background: linear-gradient(to bottom right, rgb(150, 180, 240), rgb(180, 150, 240));
+
+  -webkit-mask-image: url("./assets/PuzzlePiece.svg");
+  mask-image: url("./assets/PuzzlePiece.svg");
+
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+
+  -webkit-mask-position: center;
+  mask-position: center;
+}
