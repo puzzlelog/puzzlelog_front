@@ -279,7 +279,6 @@ const FabricCanvasViewer = ({ diary, debugId }) => {
         height={800}
         style={{
           backgroundColor: "transparent",
-          border: "2px dashed red",
           position: "absolute",
           zIndex: 1,
         }}

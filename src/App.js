@@ -34,18 +34,28 @@ import AlbumDetail from "./components/AlbumDetail";
 import MakeDiary from "./components/MakeDiary";
 import PieceBoxMakeDiary from "./components/PieceBoxMakeDiary";
 
-import CollaborativeDiaryInvite from "./components/CollaborativeDiaryInvite";
-import CollaborativeDiary from "./components/CollaborativeDiary";
-import InvitationList from "./components/InvitationList";
+// 협업 일기 읽기 관련 (협업 일기 모음집에서 조회)
 import CollaborativeDiaryBox from "./components/CollaborativeDiaryBox";
 
-import ShootingStarBackground from "./components/ShootingStarBackground"; // ⭐ 별똥별 애니메이션 추가
+// 새 협업 일기 작성 플로우 컴포넌트
+import CollaborativeDiarySetup from "./components/CollaborativeDiarySetup";
+import CollaborativeDiarySelectPieces from "./components/CollaborativeDiarySelectPieces";
+import CollaborativeDiaryCreate from "./components/CollaborativeDiaryCreate";
+import InvitationList from "./components/InvitationList";
 
+import ShootingStarBackground from "./components/ShootingStarBackground"; // 별똥별 애니메이션
 
 const AppContent = () => {
   const location = useLocation();
-
-  const excludedPaths = ["/home", "/signup", "/login", "/adminPage", "/adminEditChallenge", "/adminEditSticker", "/adminEditAds"];
+  const excludedPaths = [
+    "/home",
+    "/signup",
+    "/login",
+    "/adminPage",
+    "/adminEditChallenge",
+    "/adminEditAsset",
+    "/adminEditAds"
+  ];
 
   return (
     <>
@@ -80,12 +90,16 @@ const AppContent = () => {
           <Route path="/album/:albumId" element={<AlbumDetail />} />
           <Route path="/makeDiary" element={<MakeDiary />} />
           <Route path="/pieceBoxMakeDiary" element={<PieceBoxMakeDiary />} />
-          <Route path="/collaborative-diary-invite" element={<CollaborativeDiaryInvite />} />
-          <Route path="/collaborative-diary/:diaryId" element={<CollaborativeDiary />} />
-          <Route path="/invitations" element={<InvitationList />} />
+
+          {/* 협업 일기 읽기 (모음집 등) */}
+
           <Route path="/collaborativeDiaryBox" element={<CollaborativeDiaryBox />} />
 
-
+          {/* 새 협업 일기 작성 플로우 */}
+          <Route path="/collaborative-diary-setup" element={<CollaborativeDiarySetup />} />
+          <Route path="/collaborative-select-pieces" element={<CollaborativeDiarySelectPieces />} />
+          <Route path="/collaborative-create-diary" element={<CollaborativeDiaryCreate />} />
+          <Route path="/invitations" element={<InvitationList/>}/>
         </Routes>
 
         {!excludedPaths.includes(location.pathname) && <AdBanner />}
@@ -94,12 +108,10 @@ const AppContent = () => {
   );
 };
 
-const App = () => {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  );
-};
+const App = () => (
+  <Router>
+    <AppContent />
+  </Router>
+);
 
 export default App;

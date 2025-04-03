@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const auroraStyle = `
 @keyframes aurora {
   0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
-  50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
+  50% { transform: translate紛X(100%) rotate(10deg); opacity: 0.5; }
   100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
 }
 @keyframes pulseGlow2 {
@@ -74,7 +74,8 @@ const InvitationList = () => {
       setInvitations((prev) =>
         prev.filter((inv) => inv.invitationId !== invitationId)
       );
-      navigate(`/collaborative-diary/${diaryId}`); // 수락 후 일기 페이지로 이동
+      // 협업 일기 모음집 페이지로 이동
+      navigate("/collaborativeDiaryBox", { state: { diaryId } });
     } catch (err) {
       console.error("초대 수락 실패:", err);
       alert(

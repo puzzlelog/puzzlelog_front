@@ -221,45 +221,41 @@ const PieceBox = () => {
                     >
                       <h3 className="font-semibold text-center text-base text-white mb-2">{piece.type}</h3>
 
-                      <div className="puzzle-mask flex flex-col items-center justify-center w-[200px] h-[245px]">
-                        {piece.type === "TEXT" && (
-                          <p className="text-white text-base text-center overflow-hidden w-[220px] h-20 flex items-center justify-center line-clamp-3 bg-transparent">
-                            {piece.text}
-                          </p>
-                        )}
-                        {piece.type === "IMAGE" && piece.mediaId && (
-                          <img
-                            src={piece.mediaId}
-                            alt="조각 이미지"
-                            className="w-[220px] h-[190px] object-contain bg-transparent"
-                          />
-                        )}
-                     {piece.type === "VIDEO" && piece.mediaId && (
-  <video
-    controls
-    className="w-[220px] h-[190px] object-contain bg-transparent"
-  >
-    <source src={piece.mediaId} type="video/mp4" />
-    브라우저가 비디오 태그를 지원하지 않습니다.
-  </video>
-)}
-
-                        {piece.type === "AUDIO" && piece.mediaId && (
-                          <>
-                            <audio
-                              ref={el => (audioRefs.current[piece.id] = el)}
-                              src={piece.mediaId}
-                              className="hidden"
-                            />
-                            <button
-                              onClick={() => handleAudioPlay(piece.id)}
-                              className="w-[220px] h-[190px] flex items-center justify-center bg-white/20 text-white rounded-full hover:bg-white/30"
-                            >
-                              🎵
-                            </button>
-                          </>
-                        )}
-                      </div>
+                      <div className="puzzle-mask flex items-center justify-center w-[200px] h-[200px] overflow-hidden">
+  {piece.type === "TEXT" && (
+    <p className="text-white text-base text-center overflow-hidden w-full h-full flex items-center justify-center line-clamp-3">
+      {piece.text}
+    </p>
+  )}
+  {piece.type === "IMAGE" && piece.mediaId && (
+    <img
+      src={piece.mediaId}
+      alt="조각 이미지"
+      className="w-full h-full object-cover rounded-md"
+    />
+  )}
+  {piece.type === "VIDEO" && piece.mediaId && (
+    <video controls className="w-full h-full object-cover rounded-md">
+      <source src={piece.mediaId} type="video/mp4" />
+      브라우저가 비디오 태그를 지원하지 않습니다.
+    </video>
+  )}
+  {piece.type === "AUDIO" && piece.mediaId && (
+    <>
+      <audio
+        ref={(el) => (audioRefs.current[piece.id] = el)}
+        src={piece.mediaId}
+        className="hidden"
+      />
+      <button
+        onClick={() => handleAudioPlay(piece.id)}
+        className="w-full h-full flex items-center justify-center bg-white/30 text-white rounded-full hover:bg-white/40 text-3xl"
+      >
+        🎵
+      </button>
+    </>
+  )}
+</div>
 
                       <div className="mt-auto w-full flex flex-col items-center gap-1">
                         {piece.tags && piece.tags.length > 0 && (
