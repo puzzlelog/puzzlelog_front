@@ -48,8 +48,9 @@ const Header = () => {
             >
               타임캡슐
             </button>
+            {/* 협업 일기: 새로운 플로우로 이동 */}
             <button
-              onClick={() => navigate("/collaborative-diary-invite")}
+              onClick={() => navigate("/collaborative-diary-setup")}
               className="block w-full text-center px-4 py-3 text-white hover:bg-gray-100 transition-all duration-500 ease-in-out"
             >
               협업 일기
@@ -145,7 +146,7 @@ const Header = () => {
 
       <button
         onClick={handleLogout}
-        className="px-6 py-2 border border-white bg-white/20 text-white rounded-md font-cafe24pretty text-lg hover:bg-white hover:text-black transition-all duration-300 transition hover:border-transparent hover:scale-105"
+        className="px-6 py-2 border border-white bg-white/20 text-white rounded-md font-cafe24pretty text-lg hover:bg-white hover:text-black transition-all duration-300 hover:border-transparent hover:scale-105"
       >
         로그아웃
       </button>

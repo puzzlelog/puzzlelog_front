@@ -115,14 +115,7 @@ const CollaborativeDiaryBox = () => {
     setSelectedDiary(diary);
   };
 
-  const handleJoinCollaborativeDiary = () => {
-    if (selectedDiary) {
-      // 참여하기 버튼 클릭 시, 상세 협업 일기 편집 페이지로 이동
-      navigate(`/collaborative-diary/${selectedDiary.diaryId}`, {
-        state: { diary: selectedDiary },
-      });
-    }
-  };
+  
 
   if (loading)
     return <p className="text-center text-gray-700">로딩 중...</p>;
@@ -219,18 +212,11 @@ const CollaborativeDiaryBox = () => {
                     debugId={selectedDiary.diaryId}
                   />
                 </div>
-                <div className="flex justify-center mt-6">
-                  <button
-                    onClick={handleJoinCollaborativeDiary}
-                    className="px-6 py-2 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 transition-all duration-300"
-                  >
-                    참여하기
-                  </button>
-                </div>
+
               </>
             ) : (
               <div className="flex items-center justify-center w-full h-[800px]">
-              <p className="text-center text-white text-xl font-cafe24">
+              <p className="text-center text-white   text-xl font-cafe24">
                 협업일기를 선택해주세요.
               </p>
             </div>

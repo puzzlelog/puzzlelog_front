@@ -152,7 +152,7 @@ const WriteAudioPiece = () => {
             }}>
 
               <input type="file" accept="audio/*" onChange={handleAudioChange} className="w-full p-2 rounded-md mb-4" />
-              <button className="font-semobold hover:bg-white text-lg px-4 py-2 cusor-pointer mt-2 w-full text-black rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105" onClick={isRecording ? stopRecording : startRecording}>{isRecording ? "녹음 중지" : "오디오 녹음"}</button>
+              <button className="font-semobold hover:bg-white text-lg px-4 py-2 cusor-pointer mt-2 w-full text-white rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105" onClick={isRecording ? stopRecording : startRecording}>{isRecording ? "녹음 중지" : "오디오 녹음"}</button>
               {preview && <audio src={preview} controls className="mt-4 w-full rounded-md shadow-md border border-gray-300" />}
               <div className="w-full flex justify-between mt-6">
                 <button className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 border transition hover:border-transparent hover:scale-105" style={{ backgroundColor: "rgba(169, 169, 169, 0.6)" }} onClick={() => navigate("/makePiece")}>뒤로가기</button>
