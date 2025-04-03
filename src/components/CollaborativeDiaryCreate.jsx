@@ -11,7 +11,7 @@ function CollaborativeDiaryCreate() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { selectedPieces = [], date, friendId } = location.state || {};
+  const { selectedPieces = [], date, friendIds } = location.state || {}; // friendId -> friendIds로 변경
 
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -115,16 +115,16 @@ function CollaborativeDiaryCreate() {
         setError("제목을 입력해주세요.");
         return;
       }
-      if (!friendId) {
+      if (!friendIds || friendIds.length === 0) {
         setError("협업할 친구 정보가 없습니다.");
         return;
       }
-  
+
       setError("");
-  
+
       let elements = canvasRef.current.getCanvasElements();
       const backgroundId = canvasRef.current.getBackgroundImageId() || "default-background-id";
-  
+
       // DATE 요소 처리
       elements = elements.map((el) => {
         if (el.elementType === "DATE") {
@@ -133,12 +133,12 @@ function CollaborativeDiaryCreate() {
           console.log("📅 DATE 요소의 날짜 값:", extractedDate);
           return {
             ...el,
-            date: extractedDate, // date 필드 추가
+            date: extractedDate,
           };
         }
         return el;
       });
-  
+
       // 비디오 요소 추가
       videoControls.forEach((video) => {
         elements.push({
@@ -149,7 +149,7 @@ function CollaborativeDiaryCreate() {
           rotation: video.rotate || 0,
         });
       });
-  
+
       // 오디오 요소 추가
       audioControls.forEach((audio) => {
         elements.push({
@@ -160,9 +160,9 @@ function CollaborativeDiaryCreate() {
           rotation: audio.rotate || 0,
         });
       });
-  
+
       console.log("🟢 생성된 elements:", elements);
-  
+
       const diaryData = {
         userId,
         title: diaryTitle || "협업 일기",
@@ -174,9 +174,9 @@ function CollaborativeDiaryCreate() {
         timeZone: "Asia/Seoul",
         elements,
       };
-  
+
       console.log("🟢 일기 데이터:", diaryData);
-  
+
       const diaryRes = await axios.post(
         "https://api.puzzlelog.me/diaries",
         diaryData,
@@ -188,19 +188,19 @@ function CollaborativeDiaryCreate() {
           withCredentials: true,
         }
       );
-  
+
       const newDiaryId = diaryRes.data.data.diaryId;
-  
+
       console.log("🟢 초대 요청 본문:", {
-        receiverIds: [friendId],
+        receiverIds: friendIds, // friendId -> friendIds로 변경
         diaryId: newDiaryId,
         diaryDate: date.split("T")[0],
       });
-  
+
       await axios.post(
         "https://api.puzzlelog.me/invitations",
         {
-          receiverIds: [friendId],
+          receiverIds: friendIds, // friendId -> friendIds로 변경
           diaryId: newDiaryId,
           diaryDate: date.split("T")[0],
         },
@@ -209,7 +209,7 @@ function CollaborativeDiaryCreate() {
           withCredentials: true,
         }
       );
-  
+
       alert("협업 요청이 전송되었습니다.");
       navigate("/home");
     } catch (err) {
@@ -345,7 +345,7 @@ function CollaborativeDiaryCreate() {
 
         <div className="w-full flex justify-start space-x-4 mt-40 ml-24 p-8">
           <button
-            onClick={() => setShowEmotionSelector(true)} // 감정 선택기 유지
+            onClick={() => setShowEmotionSelector(true)}
             className="px-6 py-2 bg-purple-400 text-white rounded-lg shadow-md hover:bg-purple-500"
           >
             요청하기
