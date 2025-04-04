@@ -154,7 +154,7 @@ const WriteImagePiece = () => {
                 padding: '40px',
               }}>
               <input type="file" accept="image/*" onChange={handleImageChange} className="w-full p-2 rounded-md mb-4" />
-              <button className="font-semobold hover:bg-white text-lg px-4 py-2 cusor-pointer mt-2 w-full text-black rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105" onClick={startCamera}>사진 촬영</button>
+              <button className="font-semobold hover:bg-white text-lg px-4 py-2 cusor-pointer mt-2 w-full text-white rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105" onClick={startCamera}>사진 촬영</button>
               {isCameraOpen && (
                 <div className="mt-4 flex flex-col items-center gap-2 w-full">
                   <video ref={videoRef} autoPlay className="w-64 h-48 rounded-md shadow-md" />

@@ -265,6 +265,18 @@ const Home = () => {
 
   return (
     <>
+          {/* 🟡 에펠탑 반짝임 애니메이션 정의 */}
+          <style>{`
+        @keyframes glowPulse {
+          0%, 100% {
+            filter: drop-shadow(0 0 8px rgba(255, 223, 0, 0.4));
+          }
+          50% {
+            filter: drop-shadow(0 0 15px rgba(255, 223, 0, 0.8));
+          }
+        }
+      `}</style>
+      
       <style>{auroraStyle}</style>
       <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
         <Header />
@@ -281,6 +293,8 @@ const Home = () => {
           >
             <span className="text-6xl font-bold animate-pulse mb-4">PuzzleLog</span>
           </div>
+
+          
 
           {/* 조각들이 랜덤 각도에서 시작해 원 주변을 돌도록 설정 */}
           {pieces
@@ -299,6 +313,8 @@ const Home = () => {
                   zIndex: 20,
                 }}
               >
+
+                
                 <div
                   className="puzzle-mask flex flex-col items-center justify-between w-full h-full"
                   style={{
@@ -332,6 +348,20 @@ const Home = () => {
               </div>
             ))}
         </div>
+
+        <img
+  src="/assets/eiffel.png"
+  alt="Eiffel Tower"
+  className="absolute bottom-0 left-8 z-30"
+  style={{
+    
+    height: "80vh",
+    objectFit: "contain",
+    animation: "glowPulse 3s infinite ease-in-out",
+  }}
+/>
+
+
 
         {/* 닉네임 설정 팝업 */}
         {showNicknamePopup && (
@@ -394,8 +424,11 @@ const Home = () => {
           </div>
         )}
       </div>
+
+        
     </>
   );
 };
+
 
 export default Home;
