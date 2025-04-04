@@ -404,6 +404,7 @@ const MakeDiary = () => {
             저장하기
           </button>
           <button
+            onClick={() => navigate("/pieceBoxMakeDiary")} // 여기에 추가
             className="px-6 py-2 bg-blue-200 text-blue-800 rounded-lg shadow-md hover:bg-blue-300"
           >
             취소하기
