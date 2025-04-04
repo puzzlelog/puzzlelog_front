@@ -57,7 +57,7 @@ const MyPage = () => {
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     console.log("🔐 JWT 토큰:", token);
     console.log("🧪 Authorization 헤더:", `Bearer ${token}`);
 
@@ -118,7 +118,7 @@ const MyPage = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("userId");
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
     navigate("/login");
   };
 
@@ -152,7 +152,7 @@ const MyPage = () => {
 
   const handleUpdate = async () => {
     const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
     console.log("🔐 JWT 토큰:", token);
 
     if (!userId) {

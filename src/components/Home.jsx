@@ -80,7 +80,7 @@ const Home = () => {
   useEffect(() => {
     const checkNickname = async () => {
       const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
 
       if (!userId || !token) {
         navigate("/login");
@@ -105,7 +105,7 @@ const Home = () => {
 
     const fetchPieces = async () => {
       const storedUserId = localStorage.getItem("userId");
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("accessToken");
 
       if (!storedUserId || !token) {
         console.log("🔍 userId 또는 token이 없음. 빈 조각으로 설정.");
@@ -199,7 +199,7 @@ const Home = () => {
 
   const handleNicknameSubmit = async () => {
     const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("accessToken");
 
     if (!nickname.trim()) {
       alert("닉네임을 입력해주세요.");
@@ -226,11 +226,12 @@ const Home = () => {
     }
 
     try {
-      const response = await fetch(`https://api.puzzlelog.me/users/${userId}`, {
-        method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
+      const response = await fetch(`https://api.puzzlelog.me/users/me`, {
+  method: "PATCH",
+  headers: { Authorization: `Bearer ${token}` },
+  body: formData,
+});
+
       const result = await response.json();
       console.log("🔍 PATCH 응답:", result);
       if (result.success) {
