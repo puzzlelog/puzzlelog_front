@@ -4,6 +4,29 @@ import axios from "axios";
 import Header from "./Header";
 
 const auroraStyle = `
+/* 열기구가 왼쪽에서 오른쪽으로 이동 */
+@keyframes balloonLeftToRight {
+  0% {
+    left: -10%; /* 시작: 화면 왼쪽 바깥 */
+  }
+  100% {
+    left: 110%; /* 끝: 화면 오른쪽 바깥 */
+  }
+}
+
+/* 열기구가 위아래로 흔들리는 효과 */
+@keyframes balloonSway {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
 @keyframes float {
   0% { transform: translate(0, 0); opacity: 0.8; }
   25% { transform: translate(${Math.random() * 100 - 50}vw, ${Math.random() * 100 - 50}vh); opacity: 0.9; }
@@ -60,6 +83,36 @@ const auroraStyle = `
     0% 15%
   );
 }
+
+.cityscape {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 250px;  /* 건물 높이 */
+  display: flex;
+  z-index: 5;     /* Glow(4)보다 위로 오도록 */
+  overflow: hidden;
+  background: transparent;
+}
+
+.building {
+  height: 100%;
+  width: auto;
+  object-fit: cover;
+  flex-shrink: 0; /* 줄어들지 않도록 */
+}
+
+/* 열기구 스타일 */
+.air-balloon {
+  position: absolute;
+  top: 15%;        /* 화면에서 높이 위치 (원하는 값으로 조정) */
+  left: -10%;      /* 애니메이션 시작 위치 */
+  width: 120px;    /* 열기구 크기 (원하는 값으로 조정) */
+  z-index: 15;     /* 다른 요소보다 위에 위치 */
+  animation: balloonLeftToRight 30s linear infinite;
+}
+
 `;
 
 const Home = () => {
@@ -89,7 +142,6 @@ const Home = () => {
 
       try {
         const response = await axios.get(`https://api.puzzlelog.me/users?userId=${userId}`, {
-          // const response = await axios.get(`http://localhost:8080/users?userId=${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data?.success) {
@@ -136,7 +188,7 @@ const Home = () => {
             size: 224,
             tags: piece.tags || [],
             createdAt: piece.createdAt || "",
-            angleOffset: Math.random() * 360, // 랜덤 초기 각도 (0~360도)
+            angleOffset: Math.random() * 360,
           }));
           setPieces(filteredPieces);
           console.log("🔍 필터링된 조각:", filteredPieces);
@@ -227,10 +279,10 @@ const Home = () => {
 
     try {
       const response = await fetch(`https://api.puzzlelog.me/users/me`, {
-  method: "PATCH",
-  headers: { Authorization: `Bearer ${token}` },
-  body: formData,
-});
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
 
       const result = await response.json();
       console.log("🔍 PATCH 응답:", result);
@@ -266,18 +318,6 @@ const Home = () => {
 
   return (
     <>
-          {/* 🟡 에펠탑 반짝임 애니메이션 정의 */}
-          <style>{`
-        @keyframes glowPulse {
-          0%, 100% {
-            filter: drop-shadow(0 0 8px rgba(255, 223, 0, 0.4));
-          }
-          50% {
-            filter: drop-shadow(0 0 15px rgba(255, 223, 0, 0.8));
-          }
-        }
-      `}</style>
-      
       <style>{auroraStyle}</style>
       <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
         <Header />
@@ -295,8 +335,6 @@ const Home = () => {
             <span className="text-6xl font-bold animate-pulse mb-4">PuzzleLog</span>
           </div>
 
-          
-
           {/* 조각들이 랜덤 각도에서 시작해 원 주변을 돌도록 설정 */}
           {pieces
             .filter((piece) => piece.type === "IMAGE")
@@ -309,13 +347,11 @@ const Home = () => {
                   height: "320px",
                   animation: `orbit ${6 + index * 1.5}s infinite linear`,
                   transformOrigin: "center center",
-                  transform: `rotate(${piece.angleOffset}deg) translateX(20rem) rotate(-${piece.angleOffset}deg)`, // 랜덤 초기 각도 적용
+                  transform: `rotate(${piece.angleOffset}deg) translateX(20rem) rotate(-${piece.angleOffset}deg)`,
                   filter: "drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.3))",
                   zIndex: 20,
                 }}
               >
-
-                
                 <div
                   className="puzzle-mask flex flex-col items-center justify-between w-full h-full"
                   style={{
@@ -349,20 +385,24 @@ const Home = () => {
               </div>
             ))}
         </div>
+ {/* 도시 실루엣 뒤쪽 Glow */}
+ <div className="cityscape-glow" />
 
-        <img
-  src="/assets/eiffel.png"
-  alt="Eiffel Tower"
-  className="absolute bottom-0 left-8 z-30"
-  style={{
-    
-    height: "80vh",
-    objectFit: "contain",
-    animation: "glowPulse 3s infinite ease-in-out",
-  }}
-/>
-
-
+{/* 도시 실루엣 */}
+<div className="cityscape">
+  {Array.from({ length: 6 }).map((_, i) => (
+    <img
+      key={i}
+      src="/assets/building.png"
+      alt="Building silhouette"
+      className="building"
+    />
+  ))}
+</div>
+{/* 열기구 */}
+<div className="air-balloon">
+  <img src="/assets/airballon.png" alt="Hot Air Balloon" />
+</div>
 
         {/* 닉네임 설정 팝업 */}
         {showNicknamePopup && (
@@ -425,11 +465,8 @@ const Home = () => {
           </div>
         )}
       </div>
-
-        
     </>
   );
 };
-
 
 export default Home;
