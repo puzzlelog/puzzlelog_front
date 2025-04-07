@@ -279,6 +279,10 @@ const FabricCanvasViewer = ({ diary, debugId }) => {
         height={800}
         style={{
           backgroundColor: "transparent",
+<<<<<<< HEAD
+=======
+          border: "2px dashed red",
+>>>>>>> b504c1f (subscription)
           position: "absolute",
           zIndex: 1,
         }}
@@ -288,4 +292,8 @@ const FabricCanvasViewer = ({ diary, debugId }) => {
   );
 };
 
+<<<<<<< HEAD
 export default FabricCanvasViewer;
+=======
+export default FabricCanvasViewer;
+>>>>>>> b504c1f (subscription)

@@ -4,6 +4,7 @@ import axios from "axios";
 import Header from "./Header";
 
 const auroraStyle = `
+<<<<<<< HEAD
 /* 열기구가 왼쪽에서 오른쪽으로 이동 */
 @keyframes balloonLeftToRight {
   0% {
@@ -27,6 +28,8 @@ const auroraStyle = `
   }
 }
 
+=======
+>>>>>>> b504c1f (subscription)
 @keyframes float {
   0% { transform: translate(0, 0); opacity: 0.8; }
   25% { transform: translate(${Math.random() * 100 - 50}vw, ${Math.random() * 100 - 50}vh); opacity: 0.9; }
@@ -65,11 +68,14 @@ const auroraStyle = `
   }
 }
 
+<<<<<<< HEAD
 @keyframes orbit {
   0% { transform: rotate(0deg) translateX(20rem) rotate(0deg); }
   100% { transform: rotate(360deg) translateX(20rem) rotate(-360deg); }
 }
 
+=======
+>>>>>>> b504c1f (subscription)
 .puzzle-mask {
   background: rgba(255, 255, 255, 0.3);
   clip-path: polygon(
@@ -83,6 +89,7 @@ const auroraStyle = `
     0% 15%
   );
 }
+<<<<<<< HEAD
 
 .cityscape {
   position: absolute;
@@ -113,6 +120,8 @@ const auroraStyle = `
   animation: balloonLeftToRight 30s linear infinite;
 }
 
+=======
+>>>>>>> b504c1f (subscription)
 `;
 
 const Home = () => {
@@ -133,7 +142,11 @@ const Home = () => {
   useEffect(() => {
     const checkNickname = async () => {
       const userId = localStorage.getItem("userId");
+<<<<<<< HEAD
       const token = localStorage.getItem("accessToken");
+=======
+      const token = localStorage.getItem("token");
+>>>>>>> b504c1f (subscription)
 
       if (!userId || !token) {
         navigate("/login");
@@ -157,7 +170,11 @@ const Home = () => {
 
     const fetchPieces = async () => {
       const storedUserId = localStorage.getItem("userId");
+<<<<<<< HEAD
       const token = localStorage.getItem("accessToken");
+=======
+      const token = localStorage.getItem("token");
+>>>>>>> b504c1f (subscription)
 
       if (!storedUserId || !token) {
         console.log("🔍 userId 또는 token이 없음. 빈 조각으로 설정.");
@@ -180,7 +197,11 @@ const Home = () => {
         const data = await response.json();
         console.log("🔍 fetchPieces 응답 (MongoDB 데이터):", data);
         if (data.success && data.data.pieces && Array.isArray(data.data.pieces)) {
+<<<<<<< HEAD
           const filteredPieces = data.data.pieces.map((piece, index) => ({
+=======
+          const filteredPieces = data.data.pieces.map((piece) => ({
+>>>>>>> b504c1f (subscription)
             id: piece.id,
             type: piece.type,
             content: piece.content || "",
@@ -188,7 +209,12 @@ const Home = () => {
             size: 224,
             tags: piece.tags || [],
             createdAt: piece.createdAt || "",
+<<<<<<< HEAD
             angleOffset: Math.random() * 360,
+=======
+            initialX: Math.random() * 100,
+            initialY: Math.random() * 100,
+>>>>>>> b504c1f (subscription)
           }));
           setPieces(filteredPieces);
           console.log("🔍 필터링된 조각:", filteredPieces);
@@ -251,7 +277,11 @@ const Home = () => {
 
   const handleNicknameSubmit = async () => {
     const userId = localStorage.getItem("userId");
+<<<<<<< HEAD
     const token = localStorage.getItem("accessToken");
+=======
+    const token = localStorage.getItem("token");
+>>>>>>> b504c1f (subscription)
 
     if (!nickname.trim()) {
       alert("닉네임을 입력해주세요.");
@@ -278,12 +308,19 @@ const Home = () => {
     }
 
     try {
+<<<<<<< HEAD
       const response = await fetch(`https://api.puzzlelog.me/users/me`, {
+=======
+      const response = await fetch(`https://api.puzzlelog.me/users/${userId}`, {
+>>>>>>> b504c1f (subscription)
         method: "PATCH",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
+<<<<<<< HEAD
 
+=======
+>>>>>>> b504c1f (subscription)
       const result = await response.json();
       console.log("🔍 PATCH 응답:", result);
       if (result.success) {
@@ -314,11 +351,16 @@ const Home = () => {
     }
   };
 
+<<<<<<< HEAD
   if (loading) return <p className="text-center text-white">로딩 중...</p>;
+=======
+  if (loading) return <p className="text-center text-gray-500">로딩 중...</p>;
+>>>>>>> b504c1f (subscription)
 
   return (
     <>
       <style>{auroraStyle}</style>
+<<<<<<< HEAD
       <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
         <Header />
         <div className="relative z-10 flex items-center justify-center w-full h-full text-white">
@@ -336,6 +378,11 @@ const Home = () => {
           </div>
 
           {/* 조각들이 랜덤 각도에서 시작해 원 주변을 돌도록 설정 */}
+=======
+      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+        <Header />
+        <div className="relative z-10 flex items-center justify-center w-full h-full text-white">
+>>>>>>> b504c1f (subscription)
           {pieces
             .filter((piece) => piece.type === "IMAGE")
             .map((piece, index) => (
@@ -345,9 +392,15 @@ const Home = () => {
                 style={{
                   width: "224px",
                   height: "320px",
+<<<<<<< HEAD
                   animation: `orbit ${6 + index * 1.5}s infinite linear`,
                   transformOrigin: "center center",
                   transform: `rotate(${piece.angleOffset}deg) translateX(20rem) rotate(-${piece.angleOffset}deg)`,
+=======
+                  left: `${piece.initialX}vw`,
+                  top: `${piece.initialY}vh`,
+                  animation: `float ${6 + index * 1.5}s infinite ease-in-out`,
+>>>>>>> b504c1f (subscription)
                   filter: "drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.3))",
                   zIndex: 20,
                 }}
@@ -359,7 +412,11 @@ const Home = () => {
                     background: "rgba(255, 255, 255, 0.3)",
                   }}
                 >
+<<<<<<< HEAD
                   <h3 className="font-semibold text-center text-base text-white leading-none m-0 mb-2">
+=======
+                  <h3 className="font-semibold text-center text-base leading-none m-0 mb-2">
+>>>>>>> b504c1f (subscription)
                     {piece.type}
                   </h3>
                   <div className="flex items-center justify-center w-full h-full">
@@ -377,13 +434,18 @@ const Home = () => {
                         태그: {piece.tags.join(", ")}
                       </p>
                     )}
+<<<<<<< HEAD
                     <p className="text-xs text-white text-center leading-none m-0">
+=======
+                    <p className="text-xs text-gray-400 text-center leading-none m-0">
+>>>>>>> b504c1f (subscription)
                       {new Date(piece.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
               </div>
             ))}
+<<<<<<< HEAD
         </div>
  {/* 도시 실루엣 뒤쪽 Glow */}
  <div className="cityscape-glow" />
@@ -409,15 +471,44 @@ const Home = () => {
           <div className="absolute inset-0 z-50 flex items-center justify-center text-black">
             <div
               className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-col items-center justify-center font-semibold"
+=======
+          <div
+            className="w-84 h-84 bg-gradient-to-r rounded-full shadow-2xl shadow-indigo-500/50 flex items-center justify-center text-xl font-semibold z-10"
+            style={{
+              width: "22rem",
+              height: "22rem",
+              animation: "pulseGlow 3s infinite",
+              zIndex: 50,
+            }}
+          >
+            <span className="text-6xl font-bold animate-pulse mb-4">PuzzleLog</span>
+          </div>
+        </div>
+        {showNicknamePopup && (
+          <div className="relative z-10 flex flex-row items-center justify-center w-full h-full text-black">
+            <div
+              className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center font-semibold"
+>>>>>>> b504c1f (subscription)
               style={{
                 width: "24rem",
                 height: "24rem",
                 animation: "pulseGlow2 3s infinite",
+<<<<<<< HEAD
+=======
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+>>>>>>> b504c1f (subscription)
                 background: "rgba(255, 255, 255, 0.3)",
               }}
             >
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "10px" }}>
+<<<<<<< HEAD
                 <h2 style={{ marginBottom: "20px", fontSize: "24px", color: "white" }}>닉네임 설정</h2>
+=======
+                <h2 style={{ marginBottom: "20px", fontSize: "24px" }}>닉네임 설정</h2>
+>>>>>>> b504c1f (subscription)
                 <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                   <input
                     type="text"
@@ -430,15 +521,22 @@ const Home = () => {
                       border: "1px solid #ccc",
                       borderRadius: "4px",
                       flex: 1,
+<<<<<<< HEAD
                       color: "white",
                       background: "transparent",
                       placeholderColor: "white",
+=======
+>>>>>>> b504c1f (subscription)
                     }}
                   />
                   <button
                     onClick={checkNicknameAvailability}
                     disabled={isCheckingNickname}
+<<<<<<< HEAD
                     className="hover:bg-white text-base px-4 py-2 cursor-pointer mt-2 w-full text-white rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105"
+=======
+                    className="hover:bg-white text-base px-4 py-2 cusor-pointer mt-2 w-full text-black rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105"
+>>>>>>> b504c1f (subscription)
                   >
                     중복 확인
                   </button>
@@ -450,7 +548,11 @@ const Home = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
+<<<<<<< HEAD
                   style={{ marginTop: "10px", cursor: "pointer", padding: "5px", fontSize: "16px", marginLeft: "30px", color: "white" }}
+=======
+                  style={{ marginTop: "10px", cursor: "pointer", padding: "5px", fontSize: "16px", marginLeft: "30px" }}
+>>>>>>> b504c1f (subscription)
                 />
                 <button
                   onClick={handleNicknameSubmit}
@@ -469,4 +571,8 @@ const Home = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Home;
+=======
+export default Home;
+>>>>>>> b504c1f (subscription)

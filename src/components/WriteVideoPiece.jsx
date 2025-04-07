@@ -137,7 +137,11 @@ const WriteVideoPiece = () => {
   return (
     <>
       <style>{auroraStyle}</style>
+<<<<<<< HEAD
       <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
+=======
+      <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-blue-200 to-purple-300">
+>>>>>>> b504c1f (subscription)
 
         {/* 헤더 추가 */}
         <Header />
@@ -145,7 +149,11 @@ const WriteVideoPiece = () => {
         <main className="mt-44 w-full max-w-7xl font-cafe24 mx-auto flex justify-center items-center">
           <div className="text-center">
 
+<<<<<<< HEAD
             <h2 className="text-4xl font-bold text-center text-white mb-6">Video Piece</h2>
+=======
+            <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">Video Piece</h2>
+>>>>>>> b504c1f (subscription)
 
             <div className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl"
               style={{
@@ -162,7 +170,11 @@ const WriteVideoPiece = () => {
                 padding: '40px', 
             }}>
               <input type="file" accept="video/*" onChange={handleVideoChange} className="w-full p-2 rounded-md mb-4" />
+<<<<<<< HEAD
               <button className="font-semobold text-lg px-4 py-2 hover:bg-white cusor-pointer mt-2 w-full text-white rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105" onClick={startCamera}>동영상 촬영</button>
+=======
+              <button className="font-semobold text-lg px-4 py-2 hover:bg-white cusor-pointer mt-2 w-full text-black rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105" onClick={startCamera}>동영상 촬영</button>
+>>>>>>> b504c1f (subscription)
               {isCameraOpen && (
                 <div className="mt-4 flex flex-col items-center gap-2">
                   <video ref={videoRef} autoPlay className="w-64 h-auto rounded-md shadow-md" />

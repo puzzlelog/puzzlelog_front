@@ -1,5 +1,9 @@
 import React, { useState } from "react";
+<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
+=======
+import { useNavigate } from "react-router-dom"; 
+>>>>>>> b504c1f (subscription)
 import Header2 from "./Header2";
 
 const auroraStyle = `
@@ -35,6 +39,10 @@ const auroraStyle = `
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
   }
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> b504c1f (subscription)
 `;
 
 const SignUp = () => {
@@ -63,12 +71,20 @@ const SignUp = () => {
     }
 
     try {
+<<<<<<< HEAD
+=======
+      // FormData 객체 생성
+>>>>>>> b504c1f (subscription)
       const formDataToSend = new FormData();
       formDataToSend.append("data", new Blob([JSON.stringify(formData)], { type: "application/json" }));
 
       const response = await fetch("https://api.puzzlelog.me/users", {
         method: "POST",
+<<<<<<< HEAD
         body: formDataToSend,
+=======
+        body: formDataToSend,  // multipart/form-data 요청
+>>>>>>> b504c1f (subscription)
       });
 
       const result = await response.json();
@@ -89,11 +105,19 @@ const SignUp = () => {
   return (
     <>
       <style>{auroraStyle}</style>
+<<<<<<< HEAD
       <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
         <Header2 />
 
         <div className="w-full h-screen flex justify-center items-center">
           <div
+=======
+      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+        <Header2 />
+
+        <div className="w-full h-screen flex justify-center items-center">
+          <div 
+>>>>>>> b504c1f (subscription)
             className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-col items-center justify-center text-xl w-full max-w-md p-10"
             style={{
               animation: "pulseGlow2 3s infinite",
@@ -101,6 +125,7 @@ const SignUp = () => {
               transition: "all 0.3s ease",
             }}
           >
+<<<<<<< HEAD
             <h2 className="text-3xl font-bold text-white mb-6 text-center">회원가입</h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -157,9 +182,34 @@ const SignUp = () => {
             {message && <p className="mt-4 text-center text-white font-medium">{message}</p>}
           </div>
         </div>
+=======
+
+            <h2 className="text-3xl font-bold text-[#5A3E2B] mb-6 text-center">회원가입</h2>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input type="text" name="userId" placeholder="아이디" value={formData.userId} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white" />
+              <input type="password" name="userPwd" placeholder="비밀번호" value={formData.userPwd} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white" />
+              <input type="email" name="email" placeholder="이메일" value={formData.email} onChange={handleChange} required className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white" />
+              <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white" />
+              <select name="gender" value={formData.gender} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white">
+                <option value="MALE">남성</option>
+                <option value="FEMALE">여성</option>
+              </select>
+              <button type="submit" className="px-6 py-2 hover:bg-white border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:text-black transition-all w-full duration-300 transition hover:border-transparent hover:scale-105">회원가입</button>
+            </form>
+            {message && <p className="mt-4 text-center text-[#5A3E2B] font-medium">{message}</p>}
+        
+          </div>
+        </div>
+
+>>>>>>> b504c1f (subscription)
       </div>
     </>
   );
 };
 
+<<<<<<< HEAD
 export default SignUp;
+=======
+export default SignUp;
+>>>>>>> b504c1f (subscription)

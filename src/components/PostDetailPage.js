@@ -253,14 +253,22 @@ const PostDetailPage = () => {
 
                     <div className="flex justify-between items-center">
                         <button
+<<<<<<< HEAD
                             className="mt-4 px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition hover:border-transparent hover:scale-105"
+=======
+                            className="px-6 border py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition hover:border-transparent hover:scale-105"
+>>>>>>> b504c1f (subscription)
                             onClick={() => navigate(-1)}
                         >
                             뒤로 가기
                         </button>
                         <button
                             onClick={handleCommentSubmit}
+<<<<<<< HEAD
                             className="px-6 py-2 rounded-lg text-white transition hover:border-transparent hover:scale-105 bg-[#6A0DAD] hover:bg-[#7A3C98]"
+=======
+                            className="px-6 border py-2 rounded-lg text-white transition hover:border-transparent hover:scale-105 bg-[#6A0DAD] hover:bg-[#7A3C98]"
+>>>>>>> b504c1f (subscription)
                         >
                             댓글 작성
                         </button>

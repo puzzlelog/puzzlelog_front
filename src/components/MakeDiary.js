@@ -258,7 +258,11 @@ const MakeDiary = () => {
   }, [canvasRef.current]);
 
   return (
+<<<<<<< HEAD
     <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764] flex flex-col">
+=======
+    <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-[#1e1b4b] to-[#3b0764] flex flex-col">
+>>>>>>> b504c1f (subscription)
       <Header />
 
       <div className="flex flex-1 flex-col items-center">
@@ -404,7 +408,10 @@ const MakeDiary = () => {
             저장하기
           </button>
           <button
+<<<<<<< HEAD
             onClick={() => navigate("/pieceBoxMakeDiary")} // 여기에 추가
+=======
+>>>>>>> b504c1f (subscription)
             className="px-6 py-2 bg-blue-200 text-blue-800 rounded-lg shadow-md hover:bg-blue-300"
           >
             취소하기
@@ -439,4 +446,8 @@ const MakeDiary = () => {
   );
 };
 
+<<<<<<< HEAD
 export default MakeDiary;
+=======
+export default MakeDiary;
+>>>>>>> b504c1f (subscription)

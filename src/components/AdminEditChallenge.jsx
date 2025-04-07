@@ -83,7 +83,11 @@ const AdminChallenge = () => {
   };
 
   return (
+<<<<<<< HEAD
     <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
+=======
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+>>>>>>> b504c1f (subscription)
       <Header /><style>{auroraStyle}</style>
       <main className="mt-44 w-full max-w-6xl font-cafe24 mx-auto justify-center items-center">
         <h2 className="text-4xl font-semibold text-left text-[#6B4F35] mb-6">

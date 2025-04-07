@@ -122,7 +122,11 @@ const AdminEditAds = () => {
   
 
   return (
+<<<<<<< HEAD
     <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
+=======
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
+>>>>>>> b504c1f (subscription)
       <Header />
       <style>{auroraStyle}</style>
 

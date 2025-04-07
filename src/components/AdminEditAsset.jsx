@@ -50,13 +50,22 @@ const AdminEditAsset = () => {
   const [assets, setAssets] = useState([]);
   const [filteredAssets, setFilteredAssets] = useState([]);
   const [selectedType, setSelectedType] = useState("ALL");
+<<<<<<< HEAD
+=======
+  const [selectedLocked, setSelectedLocked] = useState(false); // 추가된 상태
+>>>>>>> b504c1f (subscription)
   const [currentPage, setCurrentPage] = useState(1);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const itemsPerPage = 18;
 
+<<<<<<< HEAD
   const API_URL = "https://api.puzzlelog.me/assets";
   // const API_URL = "http://localhost:8080/assets";
+=======
+  // const API_URL = "https://api.puzzlelog.me/assets";
+  const API_URL = "http://localhost:8080/assets";
+>>>>>>> b504c1f (subscription)
   const [lockedType, setLockedType] = useState(""); // 잠금된 타입을 추적
 
 
@@ -84,6 +93,18 @@ const AdminEditAsset = () => {
     filterAssets(selectedType);
   }, [assets, selectedType]);
 
+<<<<<<< HEAD
+=======
+  useEffect(() => {
+    const found = assets.find(a => a.type === selectedType);
+    console.log("🔍 선택한 타입:", selectedType, "/ 잠금 상태:", found?.locked);
+    if (found) {
+      setSelectedLocked(found.locked);
+    }
+  }, [selectedType, assets]);
+  
+
+>>>>>>> b504c1f (subscription)
 
 
   // 에셋 목록 불러오기 (JWT를 Authorization 헤더에 포함)
@@ -194,18 +215,50 @@ const AdminEditAsset = () => {
   const currentAssets = filteredAssets.slice(indexOfFirstAsset, indexOfLastAsset);
   const totalPages = Math.ceil(filteredAssets.length / itemsPerPage);
 
+<<<<<<< HEAD
   const toggleLockByType = async () => {
     const userId = localStorage.getItem("userId");
     try {
       await axios.patch("http://localhost:8080/assets/lock-by-tag", {
         tag: selectedType,      // 여기도 tag로! (type → tag로 수정)
         locked: true,
+=======
+  // const toggleLockByType = async () => {
+  //   const userId = localStorage.getItem("userId");
+  //   try {
+  //     await axios.patch("http://localhost:8080/assets/lock-by-tag", {
+  //       tag: selectedType,      // 여기도 tag로! (type → tag로 수정)
+  //       locked: true,
+  //     }, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //         userId,
+  //       },
+  //     });
+  //     alert(`${selectedType} 카테고리가 잠금 처리되었습니다.`);
+  //     fetchAssets(); // 목록 갱신
+  //   } catch (error) {
+  //     console.error("카테고리 잠금 중 오류 발생:", error);
+  //     alert("카테고리 잠금 실패");
+  //   }
+  // };
+
+
+  const toggleLockByType = async () => {
+    const userId = localStorage.getItem("userId");
+    const currentLocked = assets.find(a => a.type === selectedType)?.locked;
+    try {
+      await axios.patch("https://api.puzzlelog.me/assets/lock-by-tag", {
+        tag: selectedType,
+        locked: !currentLocked,
+>>>>>>> b504c1f (subscription)
       }, {
         headers: {
           Authorization: `Bearer ${token}`,
           userId,
         },
       });
+<<<<<<< HEAD
       alert(`${selectedType} 카테고리가 잠금 처리되었습니다.`);
       fetchAssets(); // 목록 갱신
     } catch (error) {
@@ -213,6 +266,21 @@ const AdminEditAsset = () => {
       alert("카테고리 잠금 실패");
     }
   };
+=======
+      setAssets(prev =>
+        prev.map(asset =>
+          asset.type === selectedType ? { ...asset, locked: !currentLocked } : asset
+        )
+      );
+      setSelectedLocked(!currentLocked);
+      alert(`${selectedType} 카테고리 ${!currentLocked ? "잠금" : "잠금 해제"} 처리되었습니다.`);
+    } catch (error) {
+      console.error("카테고리 잠금/해제 오류:", error);
+      alert("카테고리 상태 변경 실패");
+    }
+  };
+  
+>>>>>>> b504c1f (subscription)
 
 
   return (
@@ -254,7 +322,11 @@ const AdminEditAsset = () => {
               onClick={toggleLockByType}
               className="px-4 py-2 border border-white bg-white/20 text-black rounded-md hover:bg-white"
             >
+<<<<<<< HEAD
               선택한 카테고리 잠금
+=======
+              선택한 카테고리 {selectedLocked ? "잠금 해제" : "잠금"}
+>>>>>>> b504c1f (subscription)
             </button>
           </div>
 

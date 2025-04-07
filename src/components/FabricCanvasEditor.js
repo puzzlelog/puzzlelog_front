@@ -1,5 +1,9 @@
 import React, { useRef, useState, useLayoutEffect, useEffect, useImperativeHandle, forwardRef } from "react";
 import { Canvas, Image, Textbox, Rect, Text, PencilBrush } from "fabric";
+<<<<<<< HEAD
+=======
+import axios from "axios";
+>>>>>>> b504c1f (subscription)
 
 const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }, ref) => {
   const canvasRef = useRef(null);
@@ -18,6 +22,10 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
   const [isPenOptionsVisible, setIsPenOptionsVisible] = useState(false);
   const [isBackgroundSelectorVisible, setIsBackgroundSelectorVisible] = useState(false);
   const [backgroundId, setBackgroundId] = useState("default-background-id");
+<<<<<<< HEAD
+=======
+  const [isSubscribed, setIsSubscribed] = useState(false);  // ✅ 구독 상태 추가
+>>>>>>> b504c1f (subscription)
   const backgroundImageRef = useRef(null);
   const canvas = useRef(null);
   const undoStack = useRef([]);
@@ -36,6 +44,37 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
     vintage: "빈티지",
   };
 
+<<<<<<< HEAD
+=======
+  const userId = localStorage.getItem("userId");
+
+   // ✅ 구독 상태 확인 로직 추가
+   useEffect(() => {
+    if (!userId) return;
+
+    axios
+      .get(`https://api.puzzlelog.me/users/${userId}/subscription-status`)
+      .then((response) => {
+        if (response.data.success) {
+          setIsSubscribed(response.data.data === "ACTIVE");
+          console.log("구독 상태 확인: ", response.data.data);
+        }
+      })
+      .catch((error) => {
+        console.error("구독 상태 확인 오류: ", error.response?.data?.message || error.message);
+      });
+  }, [userId]);
+
+  // ✅ 스티커 사용 가능 여부 체크 함수 수정
+  const isStickerAvailable = async (sticker) => {
+    if (!sticker.locked) return true; // 잠겨있지 않다면 사용 가능
+    if (sticker.locked && isSubscribed) return true; // 잠겼지만 구독 중이라면 사용 가능
+
+    // 서버에 확인 요청
+    const canUse = await canUseSticker(sticker.id);
+    return canUse;
+  };
+>>>>>>> b504c1f (subscription)
 
   // props.allStickers 기반으로 sticker & background 정리
   useEffect(() => {
@@ -144,6 +183,7 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
 
 
 
+<<<<<<< HEAD
   useEffect(() => {
     fetch("https://api.puzzlelog.me/assets", {
       method: "GET",
@@ -165,6 +205,43 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
       })
       .catch((err) => console.error(" 배경 API fetch 실패:", err));
   }, []);
+=======
+  // 사용자별 스티커 목록 조회
+  useEffect(() => {
+    if (!userId) return;
+
+    axios
+      .get(`https://api.puzzlelog.me/assets/user/${userId}/type/STICKER`, { withCredentials: true })
+      .then((res) => {
+        console.log("사용자 스티커 API 응답 : ", res.data);
+
+        if (res.data.success && Array.isArray(res.data.data)) {
+          const stickerCategories = {};
+          const backgrounds = []; // 배경을 따로 분리하기 위한 배열 추가
+
+          res.data.data.forEach((item) => {
+            const category = item.tags?.[0] || item.type || "기타";
+
+            // 배경 이미지 필터링 추가
+            if (item.type === "BACKGROUND") {
+              backgrounds.push(item);
+              return;
+            }
+
+            if (!stickerCategories[category]) stickerCategories[category] = [];
+            stickerCategories[category].push(item);
+          });
+
+          setStickersData(stickerCategories);
+          setBackgroundImages(backgrounds); // 배경 이미지 상태 업데이트
+          setActiveCategory(Object.keys(stickerCategories)[0] || "");
+        } else {
+          console.error("스티커 API 데이터 형식 오류 : ", res.data);
+        }
+      })
+      .catch((err) => console.error("스티커 API fetch 실패 : ", err));
+  }, [userId]);
+>>>>>>> b504c1f (subscription)
 
 
   const sendObjectToBack = (canvas, obj) => {
@@ -559,6 +636,91 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
     return elements;
   };
 
+<<<<<<< HEAD
+=======
+  // ✅ 스티커를 캔버스에 추가하는 함수 수정
+  const addStickerToCanvas = async (sticker) => {
+    const canUse = await isStickerAvailable(sticker);
+    if (!canUse) {
+      alert("🔒 이 스티커는 결제 후 사용 가능합니다.");
+      return;
+    }
+
+    const imgElement = new window.Image();
+    imgElement.crossOrigin = "anonymous";
+    imgElement.src = sticker.mediaId;
+
+    imgElement.onload = () => {
+      const fabricImg = new Image(imgElement, {
+        left: 150,
+        top: 150,
+        scaleX: 0.4,
+        scaleY: 0.4,
+        selectable: true,
+        hasControls: true,
+        lockUniScaling: false,
+        cornerColor: "black",
+        borderColor: "black",
+      });
+
+      fabricImg.stickerId = sticker.id;
+      canvasRef.current.add(fabricImg);
+      canvasRef.current.setActiveObject(fabricImg);
+      canvasRef.current.renderAll();
+      saveState();
+    };
+  };
+
+  // ✅ 스티커 사용 가능 여부
+  const canUseSticker = async (stickerId) => {
+    try {
+      const response = await axios.get(
+        `https://api.puzzlelog.me/assets/user/${userId}/sticker/${stickerId}`
+      );
+      if (response.data.success) {
+        return response.data.data; // 사용 가능 여부 반환
+      } else {
+        console.error("스티커 사용 여부 확인 실패 : ", response.data.message);
+        return false;
+      }
+    } catch (error) {
+      console.error("스티커 사용 여부 조회 중 오류 : ", error);
+      return false;
+    }
+  };
+
+  // ✅ 스티커 렌더링 함수 수정
+  const renderSticker = (sticker) => {
+    const isLocked = sticker.locked && !isSubscribed;
+
+    return (
+      <div
+        key={sticker.id}
+        className="relative w-14 h-14 group"
+        style={{ position: "relative" }}
+      >
+        {/* 스티커 이미지 */}
+        <img
+          src={sticker.mediaId}
+          alt={sticker.name}
+          className={`w-full h-full object-contain cursor-pointer transition-opacity duration-300 
+            ${isLocked ? "opacity-40 cursor-not-allowed" : "opacity-100"}`}
+          onClick={() => {
+            if (!isLocked) addStickerToCanvas(sticker);
+          }}
+        />
+
+        {/* 잠금 상태 표시 */}
+        {isLocked && (
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center text-white text-xs rounded">
+            🔒 결제 후 사용 가능
+          </div>
+        )}
+      </div>
+    );
+  };
+
+>>>>>>> b504c1f (subscription)
   return (
     <div ref={containerRef} className="relative w-[800px] h-[500px] z-10 overflow-visible">
 
@@ -617,7 +779,10 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
       {/* 스티커 패널 */}
       {isStickerVisible && (
         <div className="fixed left-[200px] top-[300px] bg-[#3b0764] p-4 rounded-lg shadow-md max-h-[500px] overflow-y-auto z-20 w-[600px]">
+<<<<<<< HEAD
 
+=======
+>>>>>>> b504c1f (subscription)
           <div className="flex mb-2 space-x-2 flex-wrap">
             {stickersData &&
               Object.keys(stickersData).length > 0 &&
@@ -629,13 +794,17 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
                     ${activeCategory === category
                       ? "bg-[#D6B896] text-white"
                       : "bg-transparent text-[#F7F3E5] hover:bg-[#F7F3E5] hover:text-[#3b0764] border border-[#F7F3E5]"}`}
+<<<<<<< HEAD
 
+=======
+>>>>>>> b504c1f (subscription)
                 >
                   {categoryKorean[category] || category}
                 </button>
               ))}
           </div>
           <div className="flex flex-wrap gap-4 scrollbar-thin scrollbar-track-[#F7F3E5] scrollbar-thumb-[#D6B896] ">
+<<<<<<< HEAD
             {stickersData[activeCategory]?.map((sticker) => (
               <div
                 key={sticker.id}
@@ -688,6 +857,10 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
             ))}
           </div>
 
+=======
+            {stickersData[activeCategory]?.map((sticker) => renderSticker(sticker))}
+          </div>
+>>>>>>> b504c1f (subscription)
         </div>
       )}
 
@@ -714,7 +887,10 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
           })}
         </div>
       )}
+<<<<<<< HEAD
 
+=======
+>>>>>>> b504c1f (subscription)
     </div>
   );
 });

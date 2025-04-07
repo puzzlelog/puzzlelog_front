@@ -37,6 +37,7 @@ const auroraStyle = `
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 30px rgba(255, 255, 255, 0.6);
   }
 }
+<<<<<<< HEAD
 `;
 
 const NewAlbumPage = () => {
@@ -227,6 +228,203 @@ const NewAlbumPage = () => {
       </div>
     </>
   );
+=======
+
+`;
+
+const NewAlbumPage = () => {
+    const navigate = useNavigate();
+    const [diaries, setDiaries] = useState([]);
+    const [selectedDiaries, setSelectedDiaries] = useState([]);
+    const [title, setTitle] = useState("");
+    const [currentPage, setCurrentPage] = useState(0);
+    const userId = localStorage.getItem("userId");
+
+    const itemsPerPage = 4;  // 한 페이지당 8개의 일기 (2줄 × 4개)
+
+    useEffect(() => {
+        const fetchDiaries = async () => {
+            try {
+                if (!userId) {
+                    console.error("로그인이 필요합니다.");
+                    return;
+                }
+    
+                const response = await axios.get(`https://api.puzzlelog.me/diaries`, {
+                    params: { userId, includeElements: true } // includeElements 추가
+                });
+    
+                console.log("일기 데이터:", response.data);
+    
+                if (response.data.data && Array.isArray(response.data.data.diaries)) {
+                    const diariesData = response.data.data.diaries || [];
+                    // 공개되지 않은 일기 필터링 (openAt이 null 또는 빈 값)
+                    const filteredDiaries = diariesData.filter((d) => !d.openAt || d.openAt === "");
+                    // elements 필드 보강: 없으면 빈 배열 할당
+                    const diariesWithElements = filteredDiaries.map((d) => ({
+                        ...d,
+                        elements: d.elements || [],
+                        background: d.background || { mediaId: '' },
+                    }));
+                    setDiaries(diariesWithElements);
+                } else {
+                    setDiaries([]);
+                }
+    
+            } catch (error) {
+                console.error("일기 불러오기 실패: ", error);
+            }
+        };
+    
+        fetchDiaries();
+    }, [userId]);
+    
+
+    // 체크박스 선택 핸들러 (최대 5개 제한)
+    const handleCheckboxChange = (diaryId) => {
+        setSelectedDiaries((prevSelected) => {
+            if (prevSelected.includes(diaryId)) {
+                return prevSelected.filter((id) => id !== diaryId);
+            } else if (prevSelected.length >= 5) {
+                alert("최대 5개의 일기만 선택할 수 있습니다.");
+                return prevSelected;
+            } else {
+                return [...prevSelected, diaryId];
+            }
+        });
+    };
+
+    // 앨범 생성 요청
+    const handleCreateAlbum = async () => {
+        if (!title.trim()) {
+            alert("앨범 제목을 입력하세요.");
+            return;
+        }
+        if (selectedDiaries.length === 0) {
+            alert("적어도 하나의 일기를 선택해야 합니다.");
+            return;
+        }
+
+        const newAlbum = {
+            userId: userId,
+            title,
+            diaryId: selectedDiaries,
+            purchased: false
+        };
+
+        try {
+            const response = await fetch("https://api.puzzlelog.me/albums", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newAlbum),
+            });
+
+            if (!response.ok) {
+                throw new Error("앨범 저장 실패");
+            }
+
+            alert("앨범이 성공적으로 생성되었습니다.");
+            navigate("/digitalAlbum");
+        } catch (error) {
+            console.error("앨범 생성 중 오류: ", error);
+            alert("앨범 생성 중 오류가 발생했습니다.");
+        }
+    };
+
+    // 페이지 변경 핸들러
+    const changePage = (offset) => {
+        setCurrentPage((prevPage) => prevPage + offset);
+    };
+
+    // 현재 페이지에 해당하는 일기 목록
+    const paginatedDiaries = diaries.slice(currentPage * itemsPerPage, (currentPage + 1) * itemsPerPage);
+
+    return (
+        <>
+            <style>{auroraStyle}</style>
+            <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-blue-200 to-purple-300">
+                <Header />
+                <main className="mt-32 flex w-full max-w-8xl font-cafe24 mx-auto justify-center items-center">
+                    <div className="text-center">
+                        <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">나만의 디지털앨범</h2>
+                        <div 
+                            className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-col items-center justify-center text-xl mb-4"
+                            style={{
+                                animation: "pulseGlow2 3s infinite",
+                                background: "rgba(255, 255, 255, 0.2)",
+                                padding: '40px',
+                            }}
+                        >
+                            <label className="text-2lg font-semibold mb-4">
+                                앨범 제목 :
+                                <input
+                                    type="text"
+                                    value={title}
+                                    placeholder="제목 입력"
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    className="ml-2 p-1 border rounded"
+                                />
+                            </label>
+
+                            <div className="mb-6">
+                                <h3 className="text-lg font-semibold">앨범에 추가할 일기 선택 (최대 5개)</h3>
+                                <div className="grid grid-cols-2 gap-4">
+                                    {paginatedDiaries.map((diary) => (
+                                        <div key={diary.diaryId} className="p-2">
+                                            <label className="flex items-center space-x-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedDiaries.includes(diary.diaryId)}
+                                                    onChange={() => handleCheckboxChange(diary.diaryId)}
+                                                />
+                                                <span>{diary.title}</span>
+                                            </label>
+                                            {/* FabricCanvasViewer로 diary 객체 전체 전달 */}
+                                            <FabricCanvasViewer diary={diary} />
+                                        </div>
+                                    ))}
+                                </div>
+
+
+                                <div className="mt-4 flex justify-center space-x-2">
+                                    <button
+                                        disabled={currentPage === 0}
+                                        onClick={() => changePage(-1)}
+                                        className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+                                    >
+                                        이전
+                                    </button>
+                                    <button
+                                        disabled={(currentPage + 1) * itemsPerPage >= diaries.length}
+                                        onClick={() => changePage(1)}
+                                        className="px-3 py-1 bg-gray-300 rounded disabled:opacity-50"
+                                    >
+                                        다음
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-4">
+                                <button
+                                    className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+                                    onClick={() => navigate("/digitalAlbum")}
+                                >
+                                    취소
+                                </button>
+                                <button
+                                    className="px-6 py-2 bg-[#6A0DAD] text-white rounded-lg hover:bg-[#7A3C98]"
+                                    onClick={handleCreateAlbum}
+                                >
+                                    앨범 만들기
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </>
+    );
+>>>>>>> b504c1f (subscription)
 };
 
 export default NewAlbumPage;

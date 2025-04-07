@@ -70,7 +70,10 @@
     const fetchPieces = async () => {
       try {
         const response = await axios.get(`https://api.puzzlelog.me/pieces?userId=${userId}&token=${token}`, {
+<<<<<<< HEAD
           // const response = await axios.get(`http://localhost:8080/pieces?userId=${userId}&token=${token}`, {
+=======
+>>>>>>> b504c1f (subscription)
           withCredentials: true
         });
         setPieces(Array.isArray(response.data.data) ? response.data.data : response.data.data.pieces || []);
@@ -101,8 +104,13 @@
             return prev;
           }
           const updated = [...prev, piece];
+<<<<<<< HEAD
           console.log(`선택 추가됨: ${piece._id}`);
           console.log(" 선택 추가 후:", updated.map(p => p._id));
+=======
+          console.log(`✅ 선택 추가됨: ${piece._id}`);
+          console.log("✅ 선택 추가 후:", updated.map(p => p._id));
+>>>>>>> b504c1f (subscription)
           return updated;
         }
       });
@@ -124,7 +132,11 @@
 
       navigate('/makeDiary', { state: { selectedPieces, isTimeCapsule, openAt } });
     };
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> b504c1f (subscription)
     // 날짜 필터링된 조각 리스트
     const filteredPieces = pieces.filter(piece => {
       if (!filterDate) return true; // 날짜 필터가 없으면 모든 조각 표시
@@ -133,15 +145,23 @@
     });
 
     return (
+<<<<<<< HEAD
       <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764] flex flex-col">
+=======
+      <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-blue-200 to-purple-300 flex flex-col">
+>>>>>>> b504c1f (subscription)
         {/* 애니메이션 스타일 적용 */}
         <style>{auroraStyle}</style>
 
         <Header />
 
         <main className="flex flex-col items-center mt-10 px-6 pt-24">
+<<<<<<< HEAD
           <h1 className="text-3xl font-semibold mb-6 text-center text-white">조각 선택</h1>
 
+=======
+          <h1 className="text-3xl font-semibold mb-6 text-[#6B4F35]">조각 선택</h1>
+>>>>>>> b504c1f (subscription)
 
           {/* 날짜 필터링 UI 추가 */}
           <div className="flex gap-4 justify-center items-center mb-6">
