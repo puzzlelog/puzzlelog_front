@@ -57,30 +57,19 @@ const Login = () => {
     try {
       const response = await axios.post(
         "https://api.puzzlelog.me/users/login",
-<<<<<<< HEAD
-        // "http://localhost:8080/users/login",
-=======
->>>>>>> b504c1f (subscription)
         formData,
         {
           headers: {
             "Content-Type": "application/json",
           },
-<<<<<<< HEAD
-          withCredentials: true,
-=======
           withCredentials: true, // 백엔드에서 쿠키를 설정하는 경우 필요
->>>>>>> b504c1f (subscription)
         }
       );
 
       if (response.data.success) {
         setMessage("로그인 성공!");
-<<<<<<< HEAD
-=======
 
         // 토큰과 사용자 정보를 localStorage에 저장 (키 이름 통일)
->>>>>>> b504c1f (subscription)
         localStorage.setItem("accessToken", response.data.data.token);
         localStorage.setItem("userId", response.data.data.userId);
 
@@ -90,10 +79,7 @@ const Login = () => {
         }
         localStorage.setItem("role", userRole);
 
-<<<<<<< HEAD
-=======
         // 역할에 따라 리다이렉트
->>>>>>> b504c1f (subscription)
         if (userRole === "ADMIN") {
           navigate("/adminPage");
         } else {
@@ -112,11 +98,7 @@ const Login = () => {
   return (
     <>
       <style>{auroraStyle}</style>
-<<<<<<< HEAD
-      <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
-=======
       <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
->>>>>>> b504c1f (subscription)
         <Header2 />
 
         <div className="w-full h-screen flex justify-center items-center">
@@ -128,62 +110,38 @@ const Login = () => {
               transition: "all 0.3s ease",
             }}
           >
-<<<<<<< HEAD
-            <h2 className="text-4xl font-bold text-white mb-6 text-center">PuzzleLog</h2>
-
-            <form onSubmit={handleSubmit} className="space-y-4 w-full">
-              <div>
-                <label className="block text-sm font-medium text-white">아이디</label>
-=======
             <h2 className="text-4xl font-bold text-[#5A3E2B] mb-6 text-center">PuzzleLog</h2>
 
             <form onSubmit={handleSubmit} className="space-y-4 w-full">
               <div>
                 <label className="block text-sm font-medium text-black">아이디</label>
->>>>>>> b504c1f (subscription)
                 <input
                   type="text"
                   name="userId"
                   placeholder="아이디 입력"
                   value={formData.userId}
                   onChange={handleChange}
-<<<<<<< HEAD
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white bg-transparent placeholder-white"
-=======
                   className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
->>>>>>> b504c1f (subscription)
                   required
                 />
               </div>
 
               <div>
-<<<<<<< HEAD
-                <label className="block text-sm font-medium text-white">비밀번호</label>
-=======
                 <label className="block text-sm font-medium text-black">비밀번호</label>
->>>>>>> b504c1f (subscription)
                 <input
                   type="password"
                   name="userPwd"
                   placeholder="비밀번호 입력"
                   value={formData.userPwd}
                   onChange={handleChange}
-<<<<<<< HEAD
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white text-white bg-transparent placeholder-white"
-=======
                   className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-white"
->>>>>>> b504c1f (subscription)
                   required
                 />
               </div>
 
               <button
                 type="submit"
-<<<<<<< HEAD
-                className="px-6 py-2 hover:bg-white border border-white bg-white/20 text-white rounded-md font-cafe24pretty text-lg hover:text-black transition-all w-full duration-300 transition hover:border-transparent hover:scale-105"
-=======
                 className="px-6 py-2 hover:bg-white border border-white bg-white/20 text-black rounded-md font-cafe24pretty text-lg hover:text-black transition-all w-full duration-300 transition hover:border-transparent hover:scale-105"
->>>>>>> b504c1f (subscription)
               >
                 로그인
               </button>

@@ -3,18 +3,11 @@ import axios from "axios";
 import Header from "./Header";
 import { useNavigate } from "react-router-dom";
 
-<<<<<<< HEAD
-const auroraStyle = `
-@keyframes aurora {
-  0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
-  50% { transform: translate紛X(100%) rotate(10deg); opacity: 0.5; }
-=======
 // CommunityPage에서 사용한 오로라 애니메이션 및 글로우 스타일
 const auroraStyle = `
 @keyframes aurora {
   0% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
   50% { transform: translateX(100%) rotate(10deg); opacity: 0.5; }
->>>>>>> b504c1f (subscription)
   100% { transform: translateX(-100%) rotate(0deg); opacity: 0.3; }
 }
 @keyframes pulseGlow2 {
@@ -49,11 +42,7 @@ const InvitationList = () => {
         );
         const allInvitations = res.data.data || [];
 
-<<<<<<< HEAD
-        // 'REJECTED' 및 'ACCEPTED' 상태인 초대 제외
-=======
         // 'REJECTED' 상태인 초대는 제외
->>>>>>> b504c1f (subscription)
         const filtered = allInvitations.filter(
           (inv) => inv.status !== "REJECTED" && inv.status !== "ACCEPTED"
         );
@@ -86,12 +75,7 @@ const InvitationList = () => {
       setInvitations((prev) =>
         prev.filter((inv) => inv.invitationId !== invitationId)
       );
-<<<<<<< HEAD
-      // 협업 일기 모음집 페이지로 이동
-      navigate("/collaborativeDiaryBox", { state: { diaryId } });
-=======
       navigate(`/collaborative-diary/${diaryId}`); // 수락 후 일기 페이지로 이동
->>>>>>> b504c1f (subscription)
     } catch (err) {
       console.error("초대 수락 실패:", err);
       alert(
@@ -127,26 +111,6 @@ const InvitationList = () => {
 
   return (
     <>
-<<<<<<< HEAD
-      <style>{auroraStyle}</style>
-
-      <div className="relative w-full min-h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764] font-cafe24">
-        <Header />
-
-        <main className="mt-40 w-full max-w-3xl mx-auto flex flex-col items-center px-4">
-          <div
-            className="rounded-lg shadow-2xl shadow-indigo-500/50 p-8 w-full text-white"
-            style={{ animation: "pulseGlow2 3s infinite", background: "rgba(255, 255, 255, 0.1)" }}
-          >
-            <h2 className="text-3xl font-bold mb-6 text-center">
-              받은 초대 목록
-            </h2>
-
-            {error && <p className="text-red-400 text-center mb-4">{error}</p>}
-
-            {invitations.length === 0 ? (
-              <p className="text-center text-gray-300">받은 초대가 없습니다.</p>
-=======
       {/* 오로라 애니메이션 스타일 주입 */}
       <style>{auroraStyle}</style>
 
@@ -166,62 +130,10 @@ const InvitationList = () => {
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
             {invitations.length === 0 ? (
               <p className="text-center text-gray-500">받은 초대가 없습니다.</p>
->>>>>>> b504c1f (subscription)
             ) : (
               <ul className="space-y-4">
                 {invitations.map((invitation) => (
                   <li
-<<<<<<< HEAD
-                    key={invitation.invitationId}
-                    className="p-4 rounded-lg shadow flex justify-between items-center bg-white/10"
-                  >
-                    <div>
-                      <p className="font-medium text-base">
-                        날짜:{" "}
-                        {new Date(invitation.diaryDate).toLocaleDateString(
-                          "ko-KR",
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          }
-                        )}
-                      </p>
-                      <p className="text-sm text-gray-200 mt-1">
-                        보낸 사람: {invitation.senderId}
-                      </p>
-                      <p className="text-sm text-gray-200">
-                        상태: {invitation.status}
-                      </p>
-                    </div>
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() =>
-                          handleAccept(invitation.invitationId, invitation.diaryId)
-                        }
-                        className="
-                          px-6 py-2 
-                          border border-white bg-white/20 text-white
-                          rounded-md text-lg 
-                          hover:bg-white hover:text-gray-900 
-                          transition-all duration-300 hover:border-transparent hover:scale-105
-                        "
-                      >
-                        수락
-                      </button>
-                      <button
-                        onClick={() => handleReject(invitation.invitationId)}
-                        className="
-                          px-6 py-2 
-                          border border-white bg-white/20 text-white
-                          rounded-md text-lg 
-                          hover:bg-white hover:text-gray-900
-                          transition-all duration-300 hover:border-transparent hover:scale-105
-                        "
-                      >
-                        거절
-                      </button>
-=======
                   key={invitation.invitationId}
                   className="p-4 rounded-lg shadow flex justify-between items-center"
                   style={{ background: "rgba(255, 255, 255, 0.1)" }}
@@ -255,7 +167,6 @@ const InvitationList = () => {
                     >
                       거절
                     </button>
->>>>>>> b504c1f (subscription)
                     </div>
                   </li>
                 ))}
@@ -268,8 +179,4 @@ const InvitationList = () => {
   );
 };
 
-<<<<<<< HEAD
 export default InvitationList;
-=======
-export default InvitationList;
->>>>>>> b504c1f (subscription)

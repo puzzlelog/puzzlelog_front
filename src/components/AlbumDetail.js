@@ -40,128 +40,6 @@ const auroraStyle = `
 `;
 
 const AlbumDetail = () => {
-<<<<<<< HEAD
-  const { albumId } = useParams();
-  const navigate = useNavigate();
-  const [album, setAlbum] = useState(null);
-  const [diaries, setDiaries] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchAlbum = async () => {
-      try {
-        const response = await axios.get(`https://api.puzzlelog.me/albums/${albumId}`);
-        console.log("Fetched Album Data:", response.data);
-        setAlbum(response.data.data);
-      } catch (err) {
-        console.error("Error fetching album details:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAlbum();
-  }, [albumId]);
-
-  useEffect(() => {
-    if (album && album.diaryId && album.diaryId.length > 0) {
-      const fetchDiaries = async () => {
-        try {
-          const diaryPromises = album.diaryId.map((diaryId) =>
-            axios.get(`https://api.puzzlelog.me/diaries/${diaryId}?includeElements=true`)
-          );
-          const responses = await Promise.all(diaryPromises);
-          const diaryData = responses.map((res) => res.data.data);
-          console.log("Fetched Diaries Data:", diaryData);
-          setDiaries(diaryData);
-        } catch (err) {
-          console.error("Error fetching diary details:", err);
-        }
-      };
-      fetchDiaries();
-    }
-  }, [album]);
-
-  const handleDelete = async () => {
-    try {
-      const response = await fetch(`https://api.puzzlelog.me/albums/${albumId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        alert("앨범 삭제 실패");
-        return;
-      }
-
-      alert("앨범이 삭제되었습니다.");
-      navigate("/digitalAlbum");
-    } catch (error) {
-      console.error("Error deleting album:", error);
-      alert("삭제 처리 실패");
-    }
-  };
-
-  if (loading) return <div className="text-center mt-20 text-white">로딩 중...</div>;
-  if (!album) return <div className="text-center mt-20 text-white">앨범을 찾을 수 없습니다.</div>;
-
-  return (
-    <>
-      <style>{auroraStyle}</style>
-      <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
-        <Header />
-
-        <main className="mt-28 flex w-full max-w-9xl font-cafe24 mx-auto justify-center items-center">
-          <div className="text-center mb-4">
-            <div
-              className="w-full max-w-8xl p-6 rounded-lg shadow mt-4 border border-white"
-              style={{
-                animation: "pulseGlow2 3s infinite",
-                background: "rgba(0, 0, 0, 0.3)",
-                padding: "20px",
-              }}
-            >
-              <div className="flex flex-col gap-6 items-center justify-start w-full">
-                <div className="text-4xl font-bold text-white">
-                  제목 : {album.title}
-                </div>
-                <div className="text-xl font-bold text-gray-300">
-                  {new Date(album.createdAt).toLocaleString()}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                {diaries.length > 0 ? (
-                  diaries.map((diary) => (
-                    <div key={diary.diaryId} className="rounded-lg">
-                      <div className="p-2 rounded-lg">
-                        <FabricCanvasViewer diary={diary} debugId={diary.diaryId} />
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-300">이 앨범에 저장된 일기가 없습니다.</p>
-                )}
-              </div>
-
-              <div className="flex gap-4 justify-center">
-                <button
-                  className="px-4 py-2 bg-transparent border border-white text-white rounded-md hover:bg-white hover:text-[#1e1b4b] transition-all duration-300"
-                  onClick={() => navigate(-1)}
-                >
-                  뒤로 가기
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="px-4 py-2 bg-transparent border border-red-500 text-white rounded-lg hover:bg-red-500 hover:text-[#1e1b4b] transition-all duration-300"
-                >
-                  앨범 삭제
-                </button>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
-    </>
-  );
-=======
     const { albumId } = useParams();
     const navigate = useNavigate();
     const [album, setAlbum] = useState(null);
@@ -281,7 +159,6 @@ const AlbumDetail = () => {
             </div>
         </>
     );
->>>>>>> b504c1f (subscription)
 };
 
 export default AlbumDetail;

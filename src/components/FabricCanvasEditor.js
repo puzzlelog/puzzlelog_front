@@ -1,9 +1,6 @@
 import React, { useRef, useState, useLayoutEffect, useEffect, useImperativeHandle, forwardRef } from "react";
 import { Canvas, Image, Textbox, Rect, Text, PencilBrush } from "fabric";
-<<<<<<< HEAD
-=======
 import axios from "axios";
->>>>>>> b504c1f (subscription)
 
 const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }, ref) => {
   const canvasRef = useRef(null);
@@ -22,10 +19,7 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
   const [isPenOptionsVisible, setIsPenOptionsVisible] = useState(false);
   const [isBackgroundSelectorVisible, setIsBackgroundSelectorVisible] = useState(false);
   const [backgroundId, setBackgroundId] = useState("default-background-id");
-<<<<<<< HEAD
-=======
   const [isSubscribed, setIsSubscribed] = useState(false);  // ✅ 구독 상태 추가
->>>>>>> b504c1f (subscription)
   const backgroundImageRef = useRef(null);
   const canvas = useRef(null);
   const undoStack = useRef([]);
@@ -44,8 +38,6 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
     vintage: "빈티지",
   };
 
-<<<<<<< HEAD
-=======
   const userId = localStorage.getItem("userId");
 
    // ✅ 구독 상태 확인 로직 추가
@@ -74,7 +66,6 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
     const canUse = await canUseSticker(sticker.id);
     return canUse;
   };
->>>>>>> b504c1f (subscription)
 
   // props.allStickers 기반으로 sticker & background 정리
   useEffect(() => {
@@ -183,29 +174,6 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
 
 
 
-<<<<<<< HEAD
-  useEffect(() => {
-    fetch("https://api.puzzlelog.me/assets", {
-      method: "GET",
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        console.log(" 전체 스티커 API 응답 =", result);
-
-        if (result.success && Array.isArray(result.data)) {
-          const backgrounds = result.data.filter(
-            (item) => item.type === "background" && !item.Deleted
-          );
-          console.log(" background만 필터링 =", backgrounds);
-          setBackgroundImages(backgrounds);
-        } else {
-          console.error(" 스티커 API 데이터 형식 오류:", result);
-        }
-      })
-      .catch((err) => console.error(" 배경 API fetch 실패:", err));
-  }, []);
-=======
   // 사용자별 스티커 목록 조회
   useEffect(() => {
     if (!userId) return;
@@ -241,7 +209,6 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
       })
       .catch((err) => console.error("스티커 API fetch 실패 : ", err));
   }, [userId]);
->>>>>>> b504c1f (subscription)
 
 
   const sendObjectToBack = (canvas, obj) => {
@@ -636,8 +603,6 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
     return elements;
   };
 
-<<<<<<< HEAD
-=======
   // ✅ 스티커를 캔버스에 추가하는 함수 수정
   const addStickerToCanvas = async (sticker) => {
     const canUse = await isStickerAvailable(sticker);
@@ -720,7 +685,6 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
     );
   };
 
->>>>>>> b504c1f (subscription)
   return (
     <div ref={containerRef} className="relative w-[800px] h-[500px] z-10 overflow-visible">
 
@@ -779,10 +743,6 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
       {/* 스티커 패널 */}
       {isStickerVisible && (
         <div className="fixed left-[200px] top-[300px] bg-[#3b0764] p-4 rounded-lg shadow-md max-h-[500px] overflow-y-auto z-20 w-[600px]">
-<<<<<<< HEAD
-
-=======
->>>>>>> b504c1f (subscription)
           <div className="flex mb-2 space-x-2 flex-wrap">
             {stickersData &&
               Object.keys(stickersData).length > 0 &&
@@ -794,73 +754,14 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
                     ${activeCategory === category
                       ? "bg-[#D6B896] text-white"
                       : "bg-transparent text-[#F7F3E5] hover:bg-[#F7F3E5] hover:text-[#3b0764] border border-[#F7F3E5]"}`}
-<<<<<<< HEAD
-
-=======
->>>>>>> b504c1f (subscription)
                 >
                   {categoryKorean[category] || category}
                 </button>
               ))}
           </div>
           <div className="flex flex-wrap gap-4 scrollbar-thin scrollbar-track-[#F7F3E5] scrollbar-thumb-[#D6B896] ">
-<<<<<<< HEAD
-            {stickersData[activeCategory]?.map((sticker) => (
-              <div
-                key={sticker.id}
-                className="relative w-14 h-14 group"
-                style={{ position: 'relative' }}
-              >
-                <img
-                  src={sticker.mediaId}
-                  alt={sticker.name}
-                  className={`w-full h-full object-contain cursor-pointer 
-          ${sticker.locked ? "opacity-40 cursor-not-allowed" : ""}`}
-                  onClick={() => {
-                    if (sticker.locked) {
-                      alert("🔒 이 스티커는 결제 후 사용 가능합니다.");
-                      return;
-                    }
-
-                    const imgElement = new window.Image();
-                    imgElement.crossOrigin = "anonymous";
-                    imgElement.src = sticker.mediaId;
-
-                    imgElement.onload = () => {
-                      const fabricImg = new Image(imgElement, {
-                        left: 150,
-                        top: 150,
-                        scaleX: 0.4,
-                        scaleY: 0.4,
-                        selectable: true,
-                        hasControls: true,
-                        lockUniScaling: false,
-                        cornerColor: "black",
-                        borderColor: "black",
-                      });
-
-                      fabricImg.stickerId = sticker.id;
-                      canvasRef.current.add(fabricImg);
-                      canvasRef.current.setActiveObject(fabricImg);
-                      canvasRef.current.renderAll();
-                      saveState();
-                    };
-                  }}
-                />
-
-                {sticker.locked && (
-                  <div className="absolute inset-0 bg-black bg-opacity-50 text-white text-[10px] flex items-center justify-center text-center rounded">
-                    결제 후 사용 가능
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-=======
             {stickersData[activeCategory]?.map((sticker) => renderSticker(sticker))}
           </div>
->>>>>>> b504c1f (subscription)
         </div>
       )}
 
@@ -887,10 +788,6 @@ const FabricCanvasEditor = forwardRef(({ selectedPieces = [], allStickers = [] }
           })}
         </div>
       )}
-<<<<<<< HEAD
-
-=======
->>>>>>> b504c1f (subscription)
     </div>
   );
 });
