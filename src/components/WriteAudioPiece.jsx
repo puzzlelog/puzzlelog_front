@@ -97,7 +97,7 @@ const WriteAudioPiece = () => {
     try {
       const formData = new FormData();
       const pieceData = {
-        userId: userId,
+        userId,
         type: "AUDIO",
         tags: ["음성", "녹음"],
         location: { type: "Point", coordinates: [127.0276, 37.4979] },
@@ -105,10 +105,10 @@ const WriteAudioPiece = () => {
       };
       formData.append("data", new Blob([JSON.stringify(pieceData)], { type: "application/json" }));
       formData.append("file", audio, "audio.mp3");
+
       const response = await fetch(API_BASE_URL, { method: "POST", body: formData });
-      if (!response.ok) {
-        throw new Error(`HTTP 오류! 상태 코드: ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP 오류! 상태 코드: ${response.status}`);
+
       const result = await response.json();
       if (result.success) {
         alert("오디오가 저장되었습니다.");
@@ -126,55 +126,67 @@ const WriteAudioPiece = () => {
   return (
     <>
       <style>{auroraStyle}</style>
-<<<<<<< HEAD
-      <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
-=======
       <div className="relative w-full h-screen overflow-auto bg-gradient-to-br from-blue-200 to-purple-300">
->>>>>>> b504c1f (subscription)
-
-        {/* 헤더 추가 */}
         <Header />
 
         <main className="mt-44 w-full max-w-7xl font-cafe24 mx-auto flex justify-center items-center">
           <div className="text-center">
-
-<<<<<<< HEAD
-            <h2 className="text-4xl font-bold text-center text-white mb-6">Voice Piece</h2>
-=======
             <h2 className="text-4xl font-bold text-center text-[#6B4F35] mb-6">Voice Piece</h2>
->>>>>>> b504c1f (subscription)
 
-            <div className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl"
+            <div
+              className="rounded-lg shadow-2xl shadow-indigo-500/50 flex flex-row items-center justify-center text-xl"
               style={{
                 animation: "pulseGlow2 3s infinite",
                 display: "flex",
-                flexDirection: "column", // Flexbox의 방향을 column으로 변경
-                justifyContent: "center", // 중앙 정렬
-                alignItems: "center", // 중앙 정렬
-                background: "rgba(255, 255, 255, 0.2)", // 배경을 하얀색으로 설정하고 투명도 0.9로 설정
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                background: "rgba(255, 255, 255, 0.2)",
                 transition: "all 0.3s ease",
-                width: '100%', 
-                maxWidth: '900px', 
-                height: 'auto', 
-                padding: '40px', 
-            }}>
-
-              <input type="file" accept="audio/*" onChange={handleAudioChange} className="w-full p-2 rounded-md mb-4" />
-<<<<<<< HEAD
-              <button className="font-semobold hover:bg-white text-lg px-4 py-2 cusor-pointer mt-2 w-full text-white rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105" onClick={isRecording ? stopRecording : startRecording}>{isRecording ? "녹음 중지" : "오디오 녹음"}</button>
-=======
-              <button className="font-semobold hover:bg-white text-lg px-4 py-2 cusor-pointer mt-2 w-full text-black rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105" onClick={isRecording ? stopRecording : startRecording}>{isRecording ? "녹음 중지" : "오디오 녹음"}</button>
->>>>>>> b504c1f (subscription)
-              {preview && <audio src={preview} controls className="mt-4 w-full rounded-md shadow-md border border-gray-300" />}
+                width: "100%",
+                maxWidth: "900px",
+                height: "auto",
+                padding: "40px",
+              }}
+            >
+              <input
+                type="file"
+                accept="audio/*"
+                onChange={handleAudioChange}
+                className="w-full p-2 rounded-md mb-4"
+              />
+              <button
+                className="font-semobold hover:bg-white text-lg px-4 py-2 cusor-pointer mt-2 w-full text-black rounded-lg transition-all duration-300 border ease-in-out transform hover:bg-white-100 hover:scale-105"
+                onClick={isRecording ? stopRecording : startRecording}
+              >
+                {isRecording ? "녹음 중지" : "오디오 녹음"}
+              </button>
+              {preview && (
+                <audio
+                  src={preview}
+                  controls
+                  className="mt-4 w-full rounded-md shadow-md border border-gray-300"
+                />
+              )}
               <div className="w-full flex justify-between mt-6">
-                <button className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 border transition hover:border-transparent hover:scale-105" style={{ backgroundColor: "rgba(169, 169, 169, 0.6)" }} onClick={() => navigate("/makePiece")}>뒤로가기</button>
-                <button className="px-6 py-2 rounded-lg text-white transition hover:border-transparent border hover:scale-105 bg-[#6A0DAD] hover:bg-[#7A3C98]" style={{ backgroundColor: "rgba(116, 48, 183, 0.6)" }} onClick={handleSave}>저장하기</button>
+                <button
+                  className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 border transition hover:border-transparent hover:scale-105"
+                  style={{ backgroundColor: "rgba(169, 169, 169, 0.6)" }}
+                  onClick={() => navigate("/makePiece")}
+                >
+                  뒤로가기
+                </button>
+                <button
+                  className="px-6 py-2 rounded-lg text-white transition hover:border-transparent border hover:scale-105 bg-[#6A0DAD] hover:bg-[#7A3C98]"
+                  style={{ backgroundColor: "rgba(116, 48, 183, 0.6)" }}
+                  onClick={handleSave}
+                >
+                  저장하기
+                </button>
               </div>
             </div>
-
           </div>
         </main>
-
       </div>
     </>
   );

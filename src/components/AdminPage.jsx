@@ -53,11 +53,7 @@ const AdminPage = () => {
   }, []); //처음 렌더링될 때 한 번만 실행
 
   return (
-<<<<<<< HEAD
-    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
-=======
     <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
->>>>>>> b504c1f (subscription)
       <Header />
       <style>{auroraStyle}</style>
       <main className="mt-48 w-full max-w-7xl font-cafe24 mx-auto justify-center items-center">

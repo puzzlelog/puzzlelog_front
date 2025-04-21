@@ -32,11 +32,7 @@ const Friend = () => {
 
   useEffect(() => {
     if (!userId) {
-<<<<<<< HEAD
-      console.warn("로그인 정보 없음. 로그인 페이지로 이동합니다.");
-=======
       console.warn("🚨 로그인 정보 없음. 로그인 페이지로 이동합니다.");
->>>>>>> b504c1f (subscription)
       navigate("/login");
     }
   }, [userId, navigate]);
@@ -65,11 +61,6 @@ const Friend = () => {
           case "blocked":
             setBlocked(response.data.data.friends);
             break;
-<<<<<<< HEAD
-          default:
-            break;
-=======
->>>>>>> b504c1f (subscription)
         }
       }
     } catch (error) {
@@ -89,15 +80,7 @@ const Friend = () => {
       );
       if (response.data.success && response.data.data.users.length > 0) {
         const userData = response.data.data.users[0];
-<<<<<<< HEAD
-        setSearchResult({
-          exists: true,
-          id: userData.userId,
-          nickname: searchNickname,
-        });
-=======
         setSearchResult({ exists: true, id: userData.userId, nickname: searchNickname });
->>>>>>> b504c1f (subscription)
       } else {
         setSearchResult({ exists: false });
       }
@@ -109,28 +92,16 @@ const Friend = () => {
 
   const handleFriendAction = async (action, friendId) => {
     if (!friendId) return alert("친구 ID가 필요합니다.");
-<<<<<<< HEAD
-
-=======
   
->>>>>>> b504c1f (subscription)
     const accessToken = localStorage.getItem("accessToken");
     const headers = {
       Authorization: `Bearer ${accessToken}`,
       userId,
     };
-<<<<<<< HEAD
-
-    try {
-      let url = "",
-        method = "";
-
-=======
   
     try {
       let url = "", method = "";
   
->>>>>>> b504c1f (subscription)
       switch (action) {
         case "request":
           url = `https://api.puzzlelog.me/friends/${userId}/friends/${friendId}`;
@@ -155,22 +126,14 @@ const Friend = () => {
         default:
           return;
       }
-<<<<<<< HEAD
-
-=======
   
->>>>>>> b504c1f (subscription)
       let response;
       if (method === "DELETE") {
         response = await axios.delete(url, { headers });
       } else {
         response = await axios({ method, url, headers });
       }
-<<<<<<< HEAD
-
-=======
   
->>>>>>> b504c1f (subscription)
       if (response.data.success) {
         alert(response.data.message);
         fetchFriends(activeTab);
@@ -181,27 +144,16 @@ const Friend = () => {
       console.error(`${action} 요청 오류:`, error);
     }
   };
-<<<<<<< HEAD
-=======
   
->>>>>>> b504c1f (subscription)
 
   return (
     <>
       <style>{auroraStyle}</style>
-<<<<<<< HEAD
-      <div className="relative min-h-screen bg-gradient-to-br from-[#1e1b4b] to-[#3b0764] font-cafe24 overflow-auto">
-        <Header />
-
-        <main className="flex flex-col items-center justify-start mt-32 w-full">
-          <h2 className="text-3xl text-white font-semibold mb-8 animate-pulse">
-=======
       <div className="relative min-h-screen bg-gradient-to-br from-blue-200 to-purple-300 font-cafe24 overflow-auto">
         <Header />
 
         <main className="flex flex-col items-center justify-start mt-32 w-full">
           <h2 className="text-3xl text-[#6B4F35] font-semibold mb-8 animate-pulse">
->>>>>>> b504c1f (subscription)
             친구 관리
           </h2>
 
@@ -215,31 +167,16 @@ const Friend = () => {
                     key={index}
                     className="flex justify-between items-center bg-white rounded-lg p-2 shadow hover:bg-gray-100 transition"
                   >
-<<<<<<< HEAD
-                    <span className="text-gray-800">{friend.nickname}</span>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() =>
-                          handleFriendAction("delete", friend.friendId)
-                        }
-=======
                     <span>{friend.nickname}</span>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleFriendAction("delete", friend.friendId)}
->>>>>>> b504c1f (subscription)
                         className="text-sm text-red-500 hover:text-red-600"
                       >
                         삭제
                       </button>
                       <button
-<<<<<<< HEAD
-                        onClick={() =>
-                          handleFriendAction("block", friend.friendId)
-                        }
-=======
                         onClick={() => handleFriendAction("block", friend.friendId)}
->>>>>>> b504c1f (subscription)
                         className="text-sm text-gray-500 hover:text-gray-600"
                       >
                         차단
@@ -269,17 +206,10 @@ const Friend = () => {
                 {searchResult?.exists && (
                   <button
                     onClick={() => handleFriendAction("request", searchResult.id)}
-<<<<<<< HEAD
-                    className={`px-4 py-2 rounded-lg text-sm text-white ${
-                      searchResult.id === userId
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-green-500 hover:bg-green-600 hover:scale-105 transition"
-=======
                     className={`px-4 py-2 rounded-lg text-sm ${
                       searchResult.id === userId
                         ? "bg-gray-300 cursor-not-allowed"
                         : "bg-[#ACD8AA] hover:bg-[#9CCB9A] hover:scale-105 transition"
->>>>>>> b504c1f (subscription)
                     }`}
                     disabled={searchResult.id === userId}
                   >
@@ -296,19 +226,11 @@ const Friend = () => {
                       setActiveTab(tab);
                       fetchFriends(tab);
                     }}
-<<<<<<< HEAD
-                    className={`px-4 py-2 rounded-lg text-sm font-medium border-2 ${
-                      activeTab === tab
-                        ? "bg-[#5A3E2B] text-white border-[#5A3E2B]"
-                        : "bg-white text-[#5A3E2B] border-[#5A3E2B] hover:bg-[#5A3E2B] hover:text-white"
-                    } transition`}
-=======
                     className={`px-4 py-2 rounded-lg text-sm font-medium border border-[#5A3E2B] ${
                       activeTab === tab
                         ? "bg-[#5A3E2B] text-white"
                         : "bg-transparent text-[#5A3E2B] hover:bg-gray-100"
                     }`}
->>>>>>> b504c1f (subscription)
                   >
                     {tab === "your_request" ? "받은 요청" : "차단된 친구"}
                   </button>
@@ -323,47 +245,25 @@ const Friend = () => {
                         key={index}
                         className="flex justify-between items-center p-2 rounded hover:bg-gray-100 transition"
                       >
-<<<<<<< HEAD
-                        <span className="text-gray-800">{request.nickname}</span>
-                        <button
-                          onClick={() =>
-                            handleFriendAction("accept", request.friendId)
-                          }
-                          className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-=======
                         <span>{request.nickname}</span>
                         <button
                           onClick={() => handleFriendAction("accept", request.friendId)}
                           className="px-3 py-1 bg-[#ACD8AA] text-white rounded hover:bg-[#9CCB9A]"
->>>>>>> b504c1f (subscription)
                         >
                           수락
                         </button>
                       </li>
                     ))}
-<<<<<<< HEAD
-
-=======
->>>>>>> b504c1f (subscription)
                   {activeTab === "blocked" &&
                     blocked.map((friend, index) => (
                       <li
                         key={index}
                         className="flex justify-between items-center p-2 rounded hover:bg-gray-100 transition"
                       >
-<<<<<<< HEAD
-                        <span className="text-gray-800">{friend.nickname}</span>
-                        <button
-                          onClick={() =>
-                            handleFriendAction("unblock", friend.friendId)
-                          }
-                          className="px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700"
-=======
                         <span>{friend.nickname}</span>
                         <button
                           onClick={() => handleFriendAction("unblock", friend.friendId)}
                           className="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600"
->>>>>>> b504c1f (subscription)
                         >
                           차단 해제
                         </button>

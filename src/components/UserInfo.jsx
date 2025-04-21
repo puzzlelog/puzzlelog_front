@@ -7,11 +7,7 @@ const UserInfo = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-<<<<<<< HEAD
-        const response = await fetch(`https://localhost:8080/api/getMyInfo?num=${userId}`);
-=======
         const response = await fetch(`https://api.puzzlelog.me/api/getMyInfo?num=${userId}`);
->>>>>>> b504c1f (subscription)
         const data = await response.json();
         setUserInfo(data);
       } catch (error) {

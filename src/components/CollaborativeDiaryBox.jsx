@@ -44,16 +44,10 @@ const CollaborativeDiaryBox = () => {
   const userId = localStorage.getItem("userId");
   const navigate = useNavigate();
 
-<<<<<<< HEAD
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const dateParam = queryParams.get("date");
-=======
   // 쿼리 파라미터 읽기 (날짜 필터링 등)
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const dateParam = queryParams.get("date"); // 예: "2025-03-30"
->>>>>>> b504c1f (subscription)
 
   useEffect(() => {
     const fetchDiaries = async () => {
@@ -63,10 +57,7 @@ const CollaborativeDiaryBox = () => {
         if (!token) throw new Error("로그인이 필요합니다.");
         if (!userId) throw new Error("userId가 없습니다.");
 
-<<<<<<< HEAD
-=======
         // 전체 일기 데이터 불러오기 (협업일기도 포함됨)
->>>>>>> b504c1f (subscription)
         const res = await axios.get(
           `https://api.puzzlelog.me/diaries?includeElements=true`,
           {
@@ -79,23 +70,11 @@ const CollaborativeDiaryBox = () => {
         console.log("API 응답 전체:", JSON.stringify(res.data, null, 2));
         const diariesData = res.data.data?.diaries || res.data.diaries || [];
 
-<<<<<<< HEAD
-        // 협업일기 필터링: participants 배열에 2명 이상 포함 + 현재 사용자가 참여자에 포함
-        const collaborativeDiaries = diariesData.filter((d) => {
-          const isCollaborative = d.participants && d.participants.length > 1;
-          const userIsParticipant = d.participants?.includes(userId); // 문자열 배열로 처리
-          console.log(`Diary ${d.diaryId}: isCollaborative=${isCollaborative}, userIsParticipant=${userIsParticipant}`);
-          return isCollaborative && userIsParticipant;
-        });
-
-        console.log("필터링된 협업일기:", collaborativeDiaries);
-=======
         // 협업일기: participants 배열에 2명 이상 포함되어 있어야 함
         const collaborativeDiaries = diariesData.filter((d) => {
           return d.participants && d.participants.length > 1;
         });
         console.log("협업일기 필터링:", collaborativeDiaries);
->>>>>>> b504c1f (subscription)
         setDiaries(collaborativeDiaries);
       } catch (err) {
         console.error("일기 데이터를 불러오는 중 오류 발생:", err.response?.data || err.message);
@@ -120,10 +99,7 @@ const CollaborativeDiaryBox = () => {
     console.log("diaries 상태 업데이트됨:", diaries);
   }, [diaries]);
 
-<<<<<<< HEAD
-=======
   // 날짜 필터링: dateParam이 있으면 해당 날짜의 일기만 사용
->>>>>>> b504c1f (subscription)
   const diariesToShow =
     dateParam && dateParam !== "all"
       ? diaries.filter((d) => d.createdAt?.split("T")[0] === dateParam)
@@ -139,8 +115,6 @@ const CollaborativeDiaryBox = () => {
     setSelectedDiary(diary);
   };
 
-<<<<<<< HEAD
-=======
   const handleJoinCollaborativeDiary = () => {
     if (selectedDiary) {
       // 참여하기 버튼 클릭 시, 상세 협업 일기 편집 페이지로 이동
@@ -150,7 +124,6 @@ const CollaborativeDiaryBox = () => {
     }
   };
 
->>>>>>> b504c1f (subscription)
   if (loading)
     return <p className="text-center text-gray-700">로딩 중...</p>;
   if (error)
@@ -159,15 +132,6 @@ const CollaborativeDiaryBox = () => {
   return (
     <>
       <style>{auroraStyle}</style>
-<<<<<<< HEAD
-      <div className="relative w-full min-h-screen overflow-hidden bg-gradient-to-br from-[#1e1b4b] to-[#3b0764]">
-        <Header />
-        <div className="max-w-[1200px] mx-auto flex gap-14 pt-28 px-4">
-          <div className="w-1/3">
-            {paginatedDiaries.length === 0 ? (
-              <p className="text-center text-white text-xl font-cafe24">
-                참여한 협업 일기가 없습니다.
-=======
       <div className="relative w-full min-h-screen overflow-hidden bg-gradient-to-br from-blue-200 to-purple-300">
         <Header />
         <div className="max-w-[1200px] mx-auto flex gap-14 pt-28 px-4">
@@ -176,7 +140,6 @@ const CollaborativeDiaryBox = () => {
             {paginatedDiaries.length === 0 ? (
               <p className="text-center text-gray-700 text-xl font-cafe24">
                 협업 일기가 없습니다.
->>>>>>> b504c1f (subscription)
               </p>
             ) : (
               <ul className="space-y-2">
@@ -194,16 +157,6 @@ const CollaborativeDiaryBox = () => {
                     onClick={() => handleDiaryClick(diary)}
                   >
                     <div>
-<<<<<<< HEAD
-                      <h3 className="text-xl font-semibold text-white font-cafe24">
-                        {diary.title || "제목 없음"}
-                      </h3>
-                      <p className="text-lg text-white mt-1 font-cafe24">
-                        {new Date(diary.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <span className="text-white">➔</span>
-=======
                       <h3 className="text-xl font-semibold text-gray-800 font-cafe24">
                         {diary.title || "제목 없음"}
                       </h3>
@@ -212,7 +165,6 @@ const CollaborativeDiaryBox = () => {
                       </p>
                     </div>
                     <span className="text-gray-400">➔</span>
->>>>>>> b504c1f (subscription)
                   </li>
                 ))}
               </ul>
@@ -222,11 +174,7 @@ const CollaborativeDiaryBox = () => {
                 <button
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
                   disabled={currentPage === 0}
-<<<<<<< HEAD
-                  className="px-4 py-2 bg-white bg-opacity-30 text-white rounded-lg shadow-md hover:bg-opacity-50 transition disabled:opacity-50 font-cafe24"
-=======
                   className="px-4 py-2 bg-white bg-opacity-30 text-gray-800 rounded-lg shadow-md hover:bg-opacity-50 transition disabled:opacity-50 font-cafe24"
->>>>>>> b504c1f (subscription)
                   style={{ animation: "pulseGlow2 3s infinite" }}
                 >
                   «
@@ -238,11 +186,7 @@ const CollaborativeDiaryBox = () => {
                     className={`px-4 py-2 rounded-lg shadow-md font-cafe24 ${
                       currentPage === i
                         ? "bg-[#6B4F35] text-white"
-<<<<<<< HEAD
-                        : "bg-white bg-opacity-30 text-white hover:bg-opacity-50"
-=======
                         : "bg-white bg-opacity-30 text-gray-800 hover:bg-opacity-50"
->>>>>>> b504c1f (subscription)
                     }`}
                     style={{ animation: "pulseGlow2 3s infinite" }}
                   >
@@ -254,11 +198,7 @@ const CollaborativeDiaryBox = () => {
                     setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))
                   }
                   disabled={currentPage === totalPages - 1}
-<<<<<<< HEAD
-                  className="px-4 py-2 bg-white bg-opacity-30 text-white rounded-lg shadow-md hover:bg-opacity-50 transition disabled:opacity-50 font-cafe24"
-=======
                   className="px-4 py-2 bg-white bg-opacity-30 text-gray-800 rounded-lg shadow-md hover:bg-opacity-50 transition disabled:opacity-50 font-cafe24"
->>>>>>> b504c1f (subscription)
                   style={{ animation: "pulseGlow2 3s infinite" }}
                 >
                   »
@@ -266,24 +206,6 @@ const CollaborativeDiaryBox = () => {
               </div>
             )}
           </div>
-<<<<<<< HEAD
-          <div className="w-2/3">
-            {selectedDiary ? (
-              <div
-                className="rounded-xl shadow-2xl shadow-indigo-500/50 flex justify-center items-center w-full h-[800px] bg-white bg-opacity-30"
-                style={{ animation: "pulseGlow2 3s infinite" }}
-              >
-                <FabricCanvasViewer
-                  diary={selectedDiary}
-                  debugId={selectedDiary.diaryId}
-                />
-              </div>
-            ) : (
-              <div className="flex items-center justify-center w-full h-[800px]">
-                <p className="text-center text-white text-xl font-cafe24">
-                  협업일기를 선택해주세요.
-                </p>
-=======
           {/* 오른쪽: 선택된 일기 미리보기 및 참여하기 버튼 */}
           <div className="w-2/3">
             {selectedDiary ? (
@@ -309,7 +231,6 @@ const CollaborativeDiaryBox = () => {
             ) : (
               <div className="text-center text-gray-700 text-xl font-cafe24 mt-20">
                 협업 일기를 선택해주세요.
->>>>>>> b504c1f (subscription)
               </div>
             )}
           </div>
@@ -319,8 +240,4 @@ const CollaborativeDiaryBox = () => {
   );
 };
 
-<<<<<<< HEAD
 export default CollaborativeDiaryBox;
-=======
-export default CollaborativeDiaryBox;
->>>>>>> b504c1f (subscription)
